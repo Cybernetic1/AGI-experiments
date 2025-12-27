@@ -23,42 +23,59 @@ IF [?X, "is_a", "cat"] AND [?X, "color", "black"] THEN ...
 **Purpose**: Referring to specific individuals  
 **Lifetime**: Throughout the discourse/scenario  
 
+**Important**: Entities are represented as **integer IDs** internally (0, 1, 2, ...). Names like "Napoleon" are learned properties stored separately.
+
 **Example**:
 ```python
-# Entity 0 persists across all time steps
-t=0: [0, "is_a", "cat"]
-t=1: [0, "color", "black"]
-t=2: [0, "chases", 1]
-t=3: [1, "runs_away", location_2]
+# Actual internal representation (integer IDs only)
+t=0: [0, 2, 5]      # Entity 0, relation 2, entity 5
+t=1: [0, 3, 7]      # Entity 0, relation 3, value 7
+t=2: [0, 8, 1]      # Entity 0, relation 8, entity 1
+t=3: [1, 9, 12]     # Entity 1, relation 9, location 12
+
+# Human-readable interpretation (via lookup tables)
+# Entity 0 has name="cat" (learned)
+# Relation 2 = "is_a" (learned)
+# Entity 5 represents type "animal" (learned)
+# So [0, 2, 5] means "cat is_a animal"
 ```
-- Entity 0 persists across all time steps
-- Different rules can reference the same entity 0
+
+**Entity names are learned**:
+```python
+# Initially: entities are just IDs
+entity_0 = 0  # No name yet
+
+# Later: name property is learned from data
+name_registry.add(0, "cat")  # Learn that entity 0 is called "cat"
+
+# Now can resolve: "cat" → 0 and 0 → "cat"
+```
 
 ## How They Work Together
 
 Variables **bind to** entity IDs during rule matching:
 
 ```python
-# Rule with variable
+# Rule with variable (premise uses relation IDs internally)
 rule_premises = [
-    [?X, "is_a", "cat"],    # Variable in first position
-    [?X, "color", "black"]  # Same variable (must match)
+    [?X, 2, 5],    # Variable in first position (relation 2="is_a", entity 5="cat" type)
+    [?X, 3, 7]     # Same variable (relation 3="color", entity 7="black")
 ]
 
-# Working memory contains:
+# Working memory contains (all integers)
 wm = [
-    [0, "is_a", "cat"],
-    [0, "color", "black"],
-    [1, "is_a", "cat"],
-    [1, "color", "white"]
+    [0, 2, 5],     # Entity 0, is_a, cat
+    [0, 3, 7],     # Entity 0, color, black
+    [1, 2, 5],     # Entity 1, is_a, cat
+    [1, 3, 8]      # Entity 1, color, white
 ]
 
-# Step 1: Match first premise
-# Tries [0, "is_a", "cat"]: Matches!
+# Step 1: Match first premise [?X, 2, 5]
+# Tries [0, 2, 5]: Matches!
 # Binds ?X → 0 (temporarily)
 
-# Step 2: Match second premise with ?X=0
-# Tries [0, "color", "black"]: Matches!
+# Step 2: Match second premise [?X, 3, 7] with ?X=0
+# Tries [0, 3, 7]: Matches!
 # Confirms binding ?X → 0
 
 # Step 3: Execute rule with ?X=0
@@ -69,19 +86,48 @@ wm = [
 # Rule can match again with ?X → different entity
 ```
 
-## From Variable to Constant: Learning Names
-
-Entities evolve naturally from **unknown** → **familiar** → **named constants**.
-
-### Example: Learning About Napoleon
-
+**Human-readable version** (for documentation only):
 ```python
-# t=0: First encounter - create generic entity
-entity_1 = create_entity()  # ID = 1
-add_fact([1, "is_a", "general"])
-add_fact([1, "nationality", "french"])
+# Same as above, but with labels for readability
+wm = [
+    [cat_1, "is_a", "cat"],      # Really: [0, 2, 5]
+    [cat_1, "color", "black"],   # Really: [0, 3, 7]
+]
+```
+ (just an integer)
+add_fact([1, 2, 100])      # [entity_1, is_a, person_type]
+add_fact([1, 5, 101])      # [entity_1, nationality, french_type]
 
-# t=50: Learn his name
+# Relation IDs: 2="is_a", 5="nationality"
+# Entity IDs: 100="person" type, 101="french" type
+
+# t=50: Learn his name (stored in name registry)
+add_fact([1, 6, "Napoleon"])  # [entity_1, name_relation, name_string]
+# Update name registry: "Napoleon" → 1
+
+# t=100: Learn more facts
+add_fact([1, 7, 200])      # [entity_1, won_battle, austerlitz_entity]
+add_fact([1, 8, 102])      # [entity_1, emperor_of, france_entity]
+
+# Entity 1 now has accumulated knowledge
+# Can be referenced by ID (1) or by name ("Napoleon" → 1)
+```
+
+**How names are learned from text**:
+```python
+# NLP preprocessing extracts: "Napoleon was a general"
+# Creates:
+entity_id = create_entity()  # Returns 1
+name_registry.add(1, "Napoleon")  # Learn name
+add_fact([1, 2, 103])  # [1, is_a, general_type]
+
+# From text to IDs:
+text = "Napoleon was a general"
+entities_extracted = {"Napoleon": (1, "PERSON")}
+relations_extracted = [("Napoleon", "is_a", "general")]
+
+# Convert to integer IDs:
+propositions = [[1, 2, 103]]  # All integers
 add_fact([1, "name", "Napoleon"])
 # Update name registry: "Napoleon" → 1
 
@@ -95,23 +141,96 @@ add_fact([1, "emperor_of", "france"])
 
 ### Using Named Constants in Rules
 
-**Initially (unknown entity)**:
+**Important**: Keep both IDs (for computation) and tags (for inspection)
+
 ```python
-# Rule with variable
-IF [?X, "is_a", "general"] AND [?X, "nationality", "french"]
-THEN [?X, "likely_skilled", "military"]
+# Symbol Registries (bidirectional mappings)
+class SymbolRegistries:
+    def __init__(self):
+        self.entity_to_name = {}   # {1: "Napoleon", 2: "Wellington"}
+        self.name_to_entity = {}   # {"Napoleon": 1, "Wellington": 2}
+        self.relation_to_name = {} # {7: "won", 8: "fought_at"}
+        self.name_to_relation = {} # {"won": 7, "fought_at": 8}
+    
+    def decode_proposition(self, prop_ids):
+        """Convert [1, 7, 200] to [Napoleon, won, Austerlitz] for inspection"""
+        return [
+            self.entity_to_name.get(prop_ids[0], f"entity_{prop_ids[0]}"),
+            self.relation_to_name.get(prop_ids[1], f"rel_{prop_ids[1]}"),
+            self.entity_to_name.get(prop_ids[2], f"entity_{prop_ids[2]}")
+        ]
+
+# Example: Dual representation
+registries = SymbolRegistries()
+registries.add_entity(1, "Napoleon")
+registries.add_relation(7, "won")
+registries.add_entity(200, "Austerlitz")
+
+# For neural network: Use integer IDs
+proposition_ids = [1, 7, 200]
+concepts = logic_network(wm_as_integers)
+
+# For human inspection: Decode to strings
+print(registries.decode_proposition(proposition_ids))
+# Output: ['Napoleon', 'won', 'Austerlitz']
 ```
 
-**After learning name (becomes named constant)**:
-```python
-# Can now write rules with constant
-IF ["napoleon", "located_at", ?Y]  # napoleon = entity_1
-THEN [?Y, "historically_significant", true]
+**Benefits**:
+✅ **Neural network processes integers** (fast, efficient)  
+✅ **Humans inspect strings** (interpretable, debuggable)  
+✅ **Examine learned rules** in readable form  
+✅ **Trace reasoning steps** for debugging  
+✅ **Validate preprocessing** correctness
 
-# System internally: "napoleon" → 1 (lookup via entity registry)
+# Relation vocabulary (learned from text)
+relation_vocab = {
+    "is_a": 2,          # String relation → integer ID
+    "fought_at": 8,
+    "won": 7
+}
+
+# In logic rules, human-readable constants are converted to IDs:
+# Human writes (or we display):
+rule = IF ["napoleon", "fought", ?X] THEN ...
+
+# System internally converts to integers:
+rule = IF [1, 8, ?X] THEN ...  # napoleon→1, fought→8
+
+# When generating natural language OUTPUT:
+proposition = [1, 7, 200]  # Integer IDs internally
+# Lookup for display:
+subject_name = name_registry.reverse_lookup(1)    # "Napoleon"
+relation_name = relation_vocab.reverse_lookup(7)  # "won"
+object_name = name_registry.reverse_lookup(200)   # "Austerlitz"
+# Output: "Napoleon won Austerlitz"
 ```
 
-## Symbol Grounding Solution
+**Learning vocabularies from text**:
+```python
+# During preprocessing, build vocabularies
+relation_counter = Counter()
+entity_mentions = {}
+
+for text in corpus:
+    # Extract relations
+    relations = extract_relations(text)  # NLP tool
+    for rel in relations:
+        relation_counter[rel] += 1
+    
+    # Extract entity mentions
+    entities = extract_entities(text)  # NLP tool
+    for ent in entities:
+        if ent.text not in entity_mentions:
+            entity_id = next_id()
+            entity_mentions[ent.text] = entity_id
+
+# Build vocabularies
+relation_vocab = {rel: idx for idx, (rel, _) 
+                  in enumerate(relation_counter.most_common())}
+
+# Result:
+# relation_vocab = {"is_a": 0, "has": 1, "located_at": 2, ...}
+# entity_mentions = {"Napoleon": 0, "France": 1, ...}
 
 **Entity IDs are the ground truth** (numeric). **Names are properties**.
 
@@ -212,6 +331,11 @@ relation_input = concat([concepts, entity_embeddings[subject_id]])
 relation_logits = relation_head(relation_input)  # (batch, num_relations)
 relation_id = argmax(relation_logits)
 
+# Note on constants: If the network learns that a specific relation should 
+# always appear (e.g., "is_a" for type assertions), the relation_head will 
+# consistently output high scores for that relation ID. 
+# This effectively acts as a learned constant.
+
 # 2c. Select OBJECT entity (conditioned on subject + relation)
 object_input = concat([
     concepts, 
@@ -256,6 +380,59 @@ Entities evolve naturally as knowledge accumulates:
 ✅ **Names are learned**: Not hardcoded, discovered through experience  
 ✅ **Unified representation**: Variables bind to IDs, constants resolve to IDs  
 ✅ **Graceful scaling**: System works whether entity is unknown or famous  
+
+### Generating Constants in Practice
+
+**Q: Can the network generate a constant as subject/object/relation?**
+
+**A: Yes! Constants are just high-confidence selections:**
+
+```python
+# Example 1: Generating entity constant "Napoleon" as subject
+concepts = logic_rules(wm)  # Context: "The French emperor..."
+subject_query = subject_projection(concepts)
+subject_scores = subject_query @ entity_embeddings.T
+# subject_scores = [0.05, 0.93, 0.01, ...]  ← Very high for entity_1 (Napoleon)
+#                        ↑
+#                        Napoleon consistently selected → acts as constant
+
+# Example 2: Generating relation constant "is_a" (type assertion)
+relation_logits = relation_head(concat([concepts, subject_emb]))
+# relation_logits = [0.02, 0.01, 0.95, ...]  ← Very high for relation_2 (is_a)
+#                                  ↑
+#                                  "is_a" consistently selected → acts as constant
+
+# Example 3: Generating type constant "person" as object
+object_query = object_projection(concat([concepts, subject_emb, is_a_emb]))
+object_scores = object_query @ entity_embeddings.T
+# If entity_5 represents the type "person", it gets high score
+# object_scores = [..., 0.91, ...]  ← entity_5 (person type) selected
+```
+
+**Key insight**: 
+- Constants are **learned patterns**, not hardcoded
+- Network learns: "In this context, always select entity X"
+- High confidence = behaves like constant
+- Still differentiable and learnable
+
+**Types as entities**:
+```python
+# Types can be entities too!
+entity_registry = {
+    0: "Napoleon",     # Specific individual
+    1: "Wellington",   # Specific individual
+    2: "Austerlitz",   # Specific location
+    # Types/categories:
+    100: "person",     # Type constant
+    101: "location",   # Type constant
+    102: "battle",     # Type constant
+}
+
+# Then: [0, "is_a", 100] = "Napoleon is a person"
+# Subject: constant (entity 0 = Napoleon)
+# Relation: constant (is_a)
+# Object: constant (entity 100 = person type)
+```  
 
 ## Implementation Strategy
 
