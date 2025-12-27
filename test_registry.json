@@ -1,0 +1,62 @@
+{
+  "next_id": 3,
+  "entities": {
+    "0": {
+      "id": 0,
+      "name": "Mary",
+      "type": "person",
+      "properties": {
+        "gender": "female"
+      },
+      "relations": {
+        "located_at": [
+          2
+        ]
+      },
+      "mentions": [
+        "Mary"
+      ]
+    },
+    "1": {
+      "id": 1,
+      "name": "John",
+      "type": "person",
+      "properties": {},
+      "relations": {},
+      "mentions": [
+        "John"
+      ]
+    },
+    "2": {
+      "id": 2,
+      "name": "bathroom",
+      "type": "location",
+      "properties": {
+        "room_type": "bathroom"
+      },
+      "relations": {},
+      "mentions": [
+        "bathroom"
+      ]
+    }
+  },
+  "name_to_id": {
+    "Mary": 0,
+    "John": 1,
+    "bathroom": 2
+  },
+  "type_index": {
+    "person": [
+      0,
+      1
+    ],
+    "location": [
+      2
+    ]
+  },
+  "stats": {
+    "total_lookups": 0,
+    "total_creations": 3,
+    "total_merges": 0
+  }
+}

@@ -298,8 +298,8 @@ def main():
     
     for epoch in range(num_epochs):
         print(f"\nEpoch {epoch + 1}/{num_epochs}")
-        train_loss, train_acc = train_epoch(model, train_data[:100], optimizer, criterion, device)  # Start with subset
-        test_loss, test_acc = evaluate(model, test_data[:20], criterion, device)
+        train_loss, train_acc = train_epoch(model, train_data, optimizer, criterion, device)  # Full dataset
+        test_loss, test_acc = evaluate(model, test_data, criterion, device)  # Full dataset
         
         print(f"Train Loss: {train_loss:.4f}, Train Acc: {train_acc:.4f}")
         print(f"Test Loss: {test_loss:.4f}, Test Acc: {test_acc:.4f}")
