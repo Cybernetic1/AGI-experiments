@@ -237,12 +237,437 @@ else:
 - Chooses: Create entity, reference entity, or assert relation
 - Guided by attention over entity memory + NEW token
 
+## Long-Term Memory vs Working Memory
+
+### The Key Insight: Entities Persist, Propositions Move
+
+**Entities** are permanent references (numeric IDs). **Propositions** about them can be in:
+- **Working Memory (WM)**: Recent/active facts (small, fast)
+- **Long-Term Memory (LTM)**: Historical facts (large, retrieved when needed)
+
+### Example: Learning About Napoleon
+
+```python
+# t=0: First encounter - create generic entity
+entity_1 = create_entity()  # ID = 1
+LTM += [
+    [1, "is_a", general],
+    [1, "nationality", french],
+    [1, "era", 1800s]
+]
+WM = [[1, "is_a", general], [1, "nationality", french]]
+
+# t=50: Learn his name
+LTM += [[1, "name", "Napoleon"]]
+WM = [[1, "name", "Napoleon"], [1, "is_a", general]]  # Recent context
+
+# t=100: Learn more facts
+LTM += [
+    [1, "height", short],
+    [1, "won_battle", austerlitz],
+    [1, "emperor_of", france]
+]
+WM = [[1, "won_battle", austerlitz], [1, "emperor_of", france]]  # Most recent
+
+# Entity 1 now has accumulated knowledge
+# Can be referenced by ID (1) or by name ("Napoleon")
+```
+
+### From Variable to Constant: The Transition
+
+**Initially (unknown entity)**:
+```python
+# Rule with variable
+IF [?X, is_a, general] AND [?X, nationality, french]
+THEN [?X, likely_skilled, military]
+
+# ?X can bind to entity_1 (or any general)
+```
+
+**After learning name (becomes named constant)**:
+```python
+# Can now write rules with constant
+IF [napoleon, located_at, ?Y]  # napoleon = entity_1
+THEN [?Y, historically_significant, true]
+
+# System internally: napoleon → entity_1 (lookup)
+```
+
+### The Symbol Grounding Solution
+
+**Entity IDs are the ground truth** (numeric). **Names are properties**:
+
+```python
+# Name Resolution Layer
+name_registry = {
+    "Napoleon": 1,      # napoleon → entity_1
+    "Wellington": 2,    # wellington → entity_2
+    "France": 3         # france → entity_3 (countries are entities too)
+}
+
+# In logic rules, constants are syntactic sugar:
+rule = IF [napoleon, fought, ?X] THEN ...
+# Preprocessed to:
+rule = IF [1, fought, ?X] THEN ...
+
+# When generating natural language:
+entity_1.properties["name"] = "Napoleon"
+# Output: "Napoleon fought Wellington"
+# Instead of: "Entity 1 fought Entity 2"
+```
+
+### WM and LTM Interaction
+
+```python
+class Memory:
+    def __init__(self):
+        self.ltm = []  # All propositions (persistent)
+        self.wm = []   # Recent propositions (rolling window)
+        self.name_registry = {}  # Name → entity_id mapping
+        
+    def add_fact(self, proposition):
+        # All facts go to LTM
+        self.ltm.append(proposition)
+        
+        # Recent facts also in WM
+        self.wm.append(proposition)
+        if len(self.wm) > MAX_WM_SIZE:
+            self.wm.pop(0)  # Remove oldest
+            
+        # If it's a name fact, update registry
+        if proposition[1] == "name":
+            entity_id, _, name = proposition
+            self.name_registry[name] = entity_id
+    
+    def retrieve(self, query):
+        # Search WM first (fast, recent)
+        results = [p for p in self.wm if matches(p, query)]
+        
+        # If insufficient, search LTM (slow, comprehensive)
+        if len(results) < THRESHOLD:
+            results += [p for p in self.ltm if matches(p, query)]
+        
+        return results
+    
+    def resolve_name(self, name):
+        # Convert name constant to entity ID
+        return self.name_registry.get(name, None)
+```
+
+### Elegant Property: Gradual Solidification
+
+Entities evolve naturally from **unknown** → **familiar** → **named constants**:
+
+1. **Unknown**: `entity_42` (just an ID, few properties)
+2. **Familiar**: `entity_42` (rich properties, frequently referenced)
+3. **Named**: `entity_42` gets `name="Napoleon"` property
+4. **Constant**: Rules can use `napoleon` (syntactic sugar for entity_42)
+
+**The beauty**: Same underlying mechanism (entity IDs + propositions), but usage patterns change as knowledge accumulates.
+
+### Why This Is Elegant
+
+✅ **No special "constant" type**: Constants are just well-known entities  
+✅ **Names are learned**: Not hardcoded, discovered through experience  
+✅ **Unified representation**: Variables bind to IDs, constants resolve to IDs  
+✅ **Graceful scaling**: System works whether entity is unknown or famous  
+✅ **LTM/WM are storage tiers**: Not different data structures, same propositions  
+
+### Implementation Strategy
+
+```python
+# Entity creation (generic)
+entity_id = next_id()  # Returns 1, 2, 3, ...
+
+# Property accumulation (gradual)
+add_fact([entity_id, "is_a", general])
+add_fact([entity_id, "name", "Napoleon"])  # Aha! Now we know the name
+
+# Rule execution (unified)
+# Both syntaxes work:
+match([?X, is_a, general])        # Variable: matches any general (including entity_1)
+match([napoleon, is_a, general])  # Constant: resolve napoleon→1, then match
+
+# The system treats them the same internally (entity IDs)
+```
+
+## Training Acceleration via Logical Preprocessing
+
+### Key Advantage Over Traditional LLMs
+
+**Traditional LLMs**: Learn everything from raw tokens
+- Must discover: entities, relations, coreference, etc.
+- No explicit structure guidance
+- Slow, data-hungry learning
+
+**Logic-Structured AGI**: Can leverage NLP preprocessing
+- Pre-extract entities and relations from text
+- Provide explicit supervision signals
+- Faster, more sample-efficient learning
+
+### Preprocessing Pipeline
+
+```python
+# Input: Natural language text
+text = "A French general named Napoleon fought at Austerlitz. He won the battle."
+
+# Step 1: Entity Extraction (NLP)
+entities = [
+    {"id": 1, "mentions": ["French general", "Napoleon", "He"], "type": "PERSON"},
+    {"id": 2, "mentions": ["Austerlitz"], "type": "LOCATION"},
+    {"id": 3, "mentions": ["the battle"], "type": "EVENT"}
+]
+
+# Step 2: Relation Extraction (NLP)
+relations = [
+    [1, "name", "Napoleon"],
+    [1, "nationality", "French"],
+    [1, "occupation", "general"],
+    [1, "fought_at", 2],
+    [1, "won", 3],
+    [3, "location", 2]
+]
+
+# Step 3: Convert to Logic Format (Training Data)
+training_sequence = [
+    # t=0: Introduce entity
+    {"wm": [], "action": "CREATE", "entity_type": "PERSON", 
+     "properties": ["nationality=French", "occupation=general"]},
+    
+    # t=1: Add name property
+    {"wm": [[1, "is_a", "person"]], "action": "ADD_PROPERTY",
+     "entity": 1, "property": "name", "value": "Napoleon"},
+    
+    # t=2: Create location entity
+    {"wm": [[1, "name", "Napoleon"]], "action": "CREATE",
+     "entity_type": "LOCATION", "name": "Austerlitz"},
+    
+    # t=3: Add relation
+    {"wm": [[1, "name", "Napoleon"], [2, "name", "Austerlitz"]],
+     "action": "ADD_RELATION", "subject": 1, "relation": "fought_at", "object": 2},
+    
+    # t=4: Coreference ("He" → entity 1)
+    {"wm": [[1, "fought_at", 2]], "action": "ADD_PROPERTY",
+     "entity": 1, "property": "won", "value": 3}
+]
+
+# Step 4: Train on Logical Sequences
+# System learns to predict next action/proposition
+# With explicit entity IDs and structure
+```
+
+### Why This Accelerates Training
+
+1. **Explicit entity supervision**: System knows which mentions refer to same entity
+2. **Relation labels**: Direct supervision on relation types
+3. **Coreference resolution**: Pre-solved (He → Napoleon)
+4. **Type information**: Entity types guide creation decisions
+5. **Structured targets**: Predict logical propositions, not raw tokens
+
+### Comparison
+
+**Traditional LLM Training**:
+```
+Input:  "A French general named Napoleon fought"
+Target: " at Austerlitz"
+Loss: Cross-entropy on token prediction
+```
+→ Must implicitly learn: entities, relations, coreference, reasoning
+
+**Logic-AGI Training**:
+```
+Input:  WM = [[1, nationality, French], [1, occupation, general]]
+Target: Action = ADD_PROPERTY, entity=1, property=name, value=Napoleon
+Loss: Classification loss on action + entity + property
+```
+→ Explicitly supervised on structure
+
+## LTM/WM Interaction: Content-Addressable Retrieval
+
+### The Missing Piece: How LTM Is Queried
+
+**LTM as Content-Addressable Memory**: Use attention/similarity for retrieval
+
+```python
+class ContentAddressableLTM:
+    def __init__(self):
+        self.propositions = []  # All facts: [[subj, rel, obj], ...]
+        self.embeddings = []    # Corresponding embeddings
+        
+    def add(self, proposition):
+        self.propositions.append(proposition)
+        # Encode proposition as embedding
+        emb = encode(proposition)  # Neural encoder
+        self.embeddings.append(emb)
+    
+    def retrieve(self, query, k=10):
+        """
+        Query: Can be partial pattern or embedding
+        Returns: Top-k matching propositions
+        """
+        # Encode query
+        if isinstance(query, list):  # Pattern like [?X, fought_at, ?Y]
+            query_emb = encode(query)
+        else:  # Already an embedding (from WM context)
+            query_emb = query
+            
+        # Compute similarities
+        similarities = cosine_similarity(query_emb, self.embeddings)
+        
+        # Return top-k
+        top_indices = argsort(similarities)[-k:]
+        return [self.propositions[i] for i in top_indices]
+```
+
+### WM/LTM Interaction Flow
+
+```python
+def process_timestep(wm, ltm, logic_rules):
+    """
+    At each reasoning step:
+    1. Logic rules process WM (recent context)
+    2. If more context needed → query LTM
+    3. Retrieved facts temporarily added to WM
+    4. Continue reasoning
+    5. New facts added to both WM and LTM
+    """
+    
+    # Step 1: Apply logic rules to WM
+    concepts = logic_rules(wm)
+    
+    # Step 2: Check if retrieval needed
+    if needs_more_context(concepts):
+        # Generate retrieval query from current concepts
+        query = generate_query(concepts)  # e.g., [napoleon, ?, ?]
+        
+        # Retrieve from LTM
+        retrieved_facts = ltm.retrieve(query, k=5)
+        
+        # Temporarily augment WM
+        wm_augmented = wm + retrieved_facts
+        
+        # Re-apply logic rules with augmented context
+        concepts = logic_rules(wm_augmented)
+    
+    # Step 3: Generate next proposition
+    next_prop = generate_proposition(concepts)
+    
+    # Step 4: Update both memories
+    ltm.add(next_prop)  # Permanent storage
+    wm.append(next_prop)  # Recent context
+    if len(wm) > MAX_WM_SIZE:
+        wm.pop(0)  # Keep WM bounded
+    
+    return wm, ltm
+```
+
+### Example: Recalling Napoleon's Victories
+
+```python
+# Current WM (recent context)
+wm = [
+    [1, name, "Napoleon"],
+    [1, planning, battle],
+    [2, name, "Jena"]
+]
+
+# Logic rule activates: "When planning battle, recall past victories"
+# → Triggers LTM retrieval
+
+# Query generation
+query = [1, "won", ?X]  # "What did Napoleon win?"
+
+# LTM retrieval (content-addressable)
+ltm.retrieve(query) → [
+    [1, won, austerlitz],  # Retrieved from LTM
+    [1, won, jena],
+    [1, won, wagram],
+    [austerlitz, year, 1805],
+    [jena, year, 1806]
+]
+
+# Temporarily add to WM for this reasoning step
+wm_augmented = wm + retrieved_facts
+
+# Now logic rules can reason with both recent and recalled context
+concepts = logic_rules(wm_augmented)
+# → Might conclude: "Napoleon has winning track record"
+```
+
+### Three-Tier Memory Architecture
+
+```
+┌─────────────────────────────────────────┐
+│  Working Memory (WM)                    │
+│  - Size: ~20 propositions               │
+│  - Access: Direct (O(n) scan)           │
+│  - Content: Recent context              │
+└──────────┬──────────────────────────────┘
+           │ retrieve
+           ↓ when needed
+┌─────────────────────────────────────────┐
+│  Long-Term Memory (LTM)                 │
+│  - Size: Unlimited                      │
+│  - Access: Content-addressable (O(k))   │
+│  - Content: All historical facts        │
+│  - Structure: Embedding + proposition   │
+└──────────┬──────────────────────────────┘
+           │ ground
+           ↓ properties
+┌─────────────────────────────────────────┐
+│  Entity Registry                         │
+│  - Size: # of entities                  │
+│  - Access: Direct lookup by ID/name     │
+│  - Content: ID ↔ name mapping          │
+└─────────────────────────────────────────┘
+```
+
+### Why Content-Addressable?
+
+✅ **Flexible retrieval**: Can query by pattern, similarity, or specific entities  
+✅ **Efficient**: Don't scan all of LTM, only retrieve relevant facts  
+✅ **Differentiable**: Attention mechanism is trainable (soft retrieval)  
+✅ **Graceful scaling**: Works whether LTM has 100 or 1M facts  
+✅ **Biological plausibility**: Similar to hippocampal pattern completion  
+
+### Implementation: Soft vs Hard Retrieval
+
+**Hard Retrieval** (like databases):
+```python
+# Exact pattern matching
+ltm.query("[?X, fought_at, austerlitz]")
+# Returns: [[napoleon, fought_at, austerlitz], [french_army, fought_at, austerlitz]]
+```
+
+**Soft Retrieval** (differentiable, trainable):
+```python
+# Attention-based similarity
+query_emb = encode([?X, fought_at, austerlitz])
+attention_weights = softmax(query_emb @ ltm_embeddings.T / sqrt(d))
+retrieved_emb = attention_weights @ ltm_embeddings
+# Use retrieved_emb as additional context (fuzzy/soft facts)
+```
+
+**Hybrid** (best of both):
+```python
+# Use hard retrieval to filter candidates (fast)
+candidates = ltm.filter(subject=napoleon)  # O(n) but small n
+
+# Then use soft attention for final selection (accurate)
+attention_weights = softmax(query_emb @ candidate_embs.T)
+final_facts = attention_weights @ candidates
+```
+
 ## Next Steps for Implementation
 
-1. **Implement entity memory**: Simple dict with integer keys
-2. **Modify logic rules**: Match against entity IDs, lookup properties as needed
-3. **Add CREATE/REFERENCE decision**: Attention-based selection
-4. **Annotate training data**: Mark entity IDs explicitly
-5. **Train on simple multi-entity scenarios**: Test if distinction works
+1. **Implement unified memory**: LTM (all facts) + WM (recent facts)
+2. **Add content-addressable LTM**: Embedding + similarity-based retrieval
+3. **Add name registry**: Map symbolic names → entity IDs
+4. **Implement NLP preprocessing**: Entity + relation extraction from text
+5. **Modify logic rules**: Support both variables (?X) and named constants (napoleon)
+6. **Implement retrieval mechanism**: WM first, LTM query when needed
+7. **Train on entity persistence**: Same entity across multiple contexts
+8. **Test name learning**: Entity gets name property later in sequence
+9. **Benchmark**: Compare learning speed vs traditional LLM on same data
 
-This separation keeps variables as pattern-matching tools (local scope) while entities are discourse referents (global scope).
+This separation keeps variables as pattern-matching tools (local scope) while entities are discourse referents (global scope), and names are just special properties that enable constant-like usage. The preprocessing pipeline and content-addressable LTM provide significant advantages over traditional end-to-end neural approaches.

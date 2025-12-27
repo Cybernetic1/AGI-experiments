@@ -1,6 +1,3 @@
-# AGI-experiments
-AGI experiments: logic network + autoregression + reinforcement learning, created with the help of Copilot
-=======
 # AGI Experiments: Logic Networks for Language Understanding
 
 ## Overview
@@ -18,6 +15,21 @@ This repository explores scaling logic-based neural networks from toy domains (T
 Traditional LLMs excel at pattern matching but lack explicit reasoning capabilities. This project investigates whether **learned logic rules** can emerge from combining:
 1. Predictive learning (autoregression on text)
 2. Task-oriented learning (RL on reasoning/QA tasks)
+
+## Documentation
+
+**Core Concepts**:
+- [Memory Architecture](docs/MEMORY_ARCHITECTURE.md) - WM, LTM, and entity registry
+- [Variables and Entities](docs/VARIABLES_AND_ENTITIES.md) - Scoping, binding, and name learning
+- [Training Strategy](docs/TRAINING_STRATEGY.md) - NLP preprocessing and AR+RL protocol
+
+**Technical Details**:
+- [Scaling Challenges](docs/SCALING_CHALLENGES.md) - Rule retrieval, output space, efficiency
+- [First Experiment](docs/FIRST_EXPERIMENT.md) - Dataset size and preparation guide
+
+**Legacy Documents** (being phased out):
+- [SCALING_TO_AGI.md](SCALING_TO_AGI.md) - Original technical discussions
+- [VARIABLES_VS_ENTITIES.md](VARIABLES_VS_ENTITIES.md) - Original scoping clarifications
 
 ## Key Innovations from TTT Experiments
 
