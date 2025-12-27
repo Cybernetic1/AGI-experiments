@@ -179,21 +179,67 @@ if no_binding_found and context_suggests_new_entity:
     new_entity = entity_memory.create(...)
 ```
 
-### Option C: Attention-Based Resolution
+### Option C: Attention-Based Resolution (RECOMMENDED)
+
+**Key insight**: Use concepts from logic network to query entities
+
+**Important**: Concepts are NOT triplets - they're learned feature vectors (e.g., 256-dim)
 
 ```python
-# When generating next proposition:
-concepts = logic_rules(wm)
+# Step 1: Logic network extracts concepts (aggregate features)
+concepts = logic_rules(wm)  # Shape: (batch, 256)
+# concepts = [0.8, 0.3, ...] ← Numbers representing scenario features
+# NOT a triplet like [Napoleon, born_in, Corsica]
 
-# Decide subject:
-# Attention over existing entities vs "new entity" token
-entity_scores = attention(query=concepts, keys=[*entities, NEW_TOKEN])
+# Step 2: Generate proposition sequentially
 
-if argmax(entity_scores) == NEW_TOKEN:
-    subject = entity_memory.create(...)
-else:
-    subject = argmax(entity_scores)  # Reference existing
+# 2a. Select SUBJECT entity
+subject_query = subject_projection(concepts)  # (batch, entity_dim)
+# Projection learns: "Given scenario, which entity should be subject?"
+
+entity_embeddings = get_entity_embeddings()  # (num_entities, entity_dim)
+new_entity_token = trainable_parameter()  # Special "NEW" token
+all_keys = concat([entity_embeddings, new_entity_token])
+
+subject_scores = subject_query @ all_keys.T  # (batch, num_entities+1)
+subject_id = argmax(subject_scores)
+
+if subject_id == num_entities:  # Selected NEW
+    subject_id = entity_memory.create(...)
+
+# 2b. Select RELATION (conditioned on subject)
+relation_input = concat([concepts, entity_embeddings[subject_id]])
+relation_logits = relation_head(relation_input)  # (batch, num_relations)
+relation_id = argmax(relation_logits)
+
+# 2c. Select OBJECT entity (conditioned on subject + relation)
+object_input = concat([
+    concepts, 
+    entity_embeddings[subject_id],
+    relation_embeddings[relation_id]
+])
+object_query = object_projection(object_input)  # (batch, entity_dim)
+object_scores = object_query @ all_keys.T
+object_id = argmax(object_scores)
+
+if object_id == num_entities:  # Selected NEW
+    object_id = entity_memory.create(...)
+
+# Final proposition: [subject_id, relation_id, object_id]
 ```
+
+**Key insight**: 
+- Concepts describe "what's happening in the scenario"
+- Different projections for subject vs object role
+- Each step conditions on previous choices
+- Example: If subject=Napoleon, relation=won, then object likely=battle
+
+**Why this integrates well**:
+- ✅ Uses shared concept representation from logic network
+- ✅ Sequential generation allows conditioning
+- ✅ Separate projections for subject vs object roles
+- ✅ End-to-end differentiable
+- ✅ Same architecture pattern as TTT (shared concepts → multiple heads)
 
 ## Gradual Solidification
 
@@ -212,6 +258,69 @@ Entities evolve naturally as knowledge accumulates:
 ✅ **Graceful scaling**: System works whether entity is unknown or famous  
 
 ## Implementation Strategy
+
+### Architecture Integration
+
+```python
+class HierarchicalLogicNetwork(nn.Module):
+    def __init__(self, concept_dim=256, entity_dim=128, num_relations=50):
+        super().__init__()
+        
+        # Shared logic network (extracts concepts from WM)
+        self.logic_rules = LogicNetwork(concept_dim=concept_dim)
+        
+        # Entity embeddings
+        self.entity_embeddings = nn.Embedding(max_entities, entity_dim)
+        self.new_entity_token = nn.Parameter(torch.randn(entity_dim))
+        
+        # Proposition generation (sequential)
+        # Subject selection
+        self.subject_projection = nn.Linear(concept_dim, entity_dim)
+        
+        # Relation selection (conditioned on subject)
+        self.relation_head = nn.Linear(concept_dim + entity_dim, num_relations)
+        
+        # Object selection (conditioned on subject + relation)
+        self.object_projection = nn.Linear(
+            concept_dim + entity_dim + relation_embed_dim, 
+            entity_dim
+        )
+        
+        # Relation embeddings
+        self.relation_embeddings = nn.Embedding(num_relations, relation_embed_dim)
+    
+    def forward(self, wm, entity_registry):
+        # Step 1: Extract concepts (shared across all decisions)
+        concepts = self.logic_rules(wm)  # (batch, concept_dim=256)
+        
+        # Step 2: Select SUBJECT entity
+        subject_query = self.subject_projection(concepts)
+        entity_embs = self.entity_embeddings(entity_registry.get_ids())
+        all_keys = torch.cat([entity_embs, self.new_entity_token.unsqueeze(0)])
+        
+        subject_scores = subject_query @ all_keys.T
+        subject_id = torch.argmax(subject_scores, dim=-1)
+        
+        # Step 3: Select RELATION (conditioned on subject)
+        subject_emb = self.entity_embeddings(subject_id)
+        relation_input = torch.cat([concepts, subject_emb], dim=-1)
+        relation_logits = self.relation_head(relation_input)
+        relation_id = torch.argmax(relation_logits, dim=-1)
+        
+        # Step 4: Select OBJECT entity (conditioned on subject + relation)
+        relation_emb = self.relation_embeddings(relation_id)
+        object_input = torch.cat([concepts, subject_emb, relation_emb], dim=-1)
+        object_query = self.object_projection(object_input)
+        object_scores = object_query @ all_keys.T
+        object_id = torch.argmax(object_scores, dim=-1)
+        
+        # Final proposition
+        proposition = [subject_id, relation_id, object_id]
+        
+        return proposition
+```
+
+### Entity and Proposition Flow
 
 ```python
 # Entity creation (generic)

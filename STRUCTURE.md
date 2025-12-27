@@ -7,6 +7,7 @@ AGI-experiments/
 ├── venv/                          # Virtual environment
 │
 ├── docs/                          # Documentation (NEW!)
+│   ├── LOGIC_NETWORK.md          # Core reasoning architecture
 │   ├── MEMORY_ARCHITECTURE.md    # WM, LTM, entity registry
 │   ├── VARIABLES_AND_ENTITIES.md # Scoping, binding, names
 │   ├── TRAINING_STRATEGY.md      # NLP preprocessing, AR+RL

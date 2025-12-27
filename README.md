@@ -19,6 +19,7 @@ Traditional LLMs excel at pattern matching but lack explicit reasoning capabilit
 ## Documentation
 
 **Core Concepts**:
+- [Logic Network](docs/LOGIC_NETWORK.md) - Core reasoning architecture (fuzzy rules, concepts)
 - [Memory Architecture](docs/MEMORY_ARCHITECTURE.md) - WM, LTM, and entity registry
 - [Variables and Entities](docs/VARIABLES_AND_ENTITIES.md) - Scoping, binding, and name learning
 - [Training Strategy](docs/TRAINING_STRATEGY.md) - NLP preprocessing and AR+RL protocol
