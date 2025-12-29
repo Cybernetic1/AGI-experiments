@@ -146,11 +146,14 @@ def train_with_registry(model: Task1WithRegistry, data: List[Dict],
         for item_type, item in all_items:
             if item_type == "fact":
                 subject = item.get("subject", "")
-                obj = item.get("object", "").lower().strip()
+                obj = item.get("object", "")
                 
-                if subject in local_to_global and obj in local_to_global:
+                # Normalize by removing articles
+                obj_normalized = ' '.join(w for w in obj.split() if w.lower() not in ['the', 'a', 'an'])
+                
+                if subject in local_to_global and obj_normalized in local_to_global:
                     subj_id = local_to_global[subject]
-                    obj_id = local_to_global[obj]
+                    obj_id = local_to_global[obj_normalized]
                     
                     # Store in registry
                     registry.add_relation(subj_id, "located_at", obj_id)
@@ -161,15 +164,18 @@ def train_with_registry(model: Task1WithRegistry, data: List[Dict],
             
             elif item_type == "question":
                 question_text = item["text"]
-                answer = item["answer"].lower().strip()
+                answer = item["answer"]
+                
+                # Normalize answer by removing articles
+                answer_normalized = ' '.join(w for w in answer.split() if w.lower() not in ['the', 'a', 'an'])
                 
                 words = question_text.split()
                 if len(words) >= 3:
                     subject = words[2].rstrip('?').strip()
                     
-                    if subject in local_to_global and answer in local_to_global:
+                    if subject in local_to_global and answer_normalized in local_to_global:
                         subj_id = local_to_global[subject]
-                        answer_id = local_to_global[answer]
+                        answer_id = local_to_global[answer_normalized]
                         
                         # Query model
                         answer_logits = model.query(subj_id, 0)

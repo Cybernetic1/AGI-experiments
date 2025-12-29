@@ -44,12 +44,17 @@ def parse_babi_file(filepath: str) -> List[Dict]:
                 entities_in_fact = []
                 
                 for word in words:
+                    # Filter out articles
+                    clean_word = word.rstrip('.,?!')
+                    if clean_word.lower() in ['the', 'a', 'an']:
+                        continue
+                    
                     # Simple heuristic: capitalized words are entities/locations
-                    if word[0].isupper() or word in ['bathroom', 'hallway', 'garden', 'office', 'bedroom', 'kitchen']:
-                        if word not in entity_mapping:
-                            entity_mapping[word] = next_entity_id
+                    if clean_word[0].isupper() or clean_word.lower() in ['bathroom', 'hallway', 'garden', 'office', 'bedroom', 'kitchen']:
+                        if clean_word not in entity_mapping:
+                            entity_mapping[clean_word] = next_entity_id
                             next_entity_id += 1
-                        entities_in_fact.append(entity_mapping[word])
+                        entities_in_fact.append(entity_mapping[clean_word])
                 
                 current_story["facts"].append({
                     "line_num": line_num,
@@ -100,7 +105,10 @@ def convert_to_logical_format(stories: List[Dict]) -> List[Dict]:
             if "moved to" in text or "went to" in text or "travelled to" in text or "journeyed to" in text:
                 words = text.replace("moved to", "|").replace("went to", "|").replace("travelled to", "|").replace("journeyed to", "|").split("|")
                 subject = words[0].strip().split()[0].capitalize()
-                obj = words[1].strip().rstrip('.').capitalize()
+                obj_raw = words[1].strip().rstrip('.').capitalize()
+                
+                # Remove articles from object
+                obj = ' '.join(w for w in obj_raw.split() if w.lower() not in ['the', 'a', 'an'])
                 
                 if subject in entity_names.values() or obj in entity_names.values():
                     # Get entity IDs
