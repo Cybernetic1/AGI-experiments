@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="300mm"
+   height="220mm"
+   viewBox="0 0 300 220"
+   version="1.1"
+   id="svg1"
+   xmlns="http://www.w3.org/2000/svg">
+  <defs id="defs1">
+    <marker
+       style="overflow:visible"
+       id="arrow"
+       refX="0"
+       refY="0"
+       orient="auto"
+       markerWidth="4"
+       markerHeight="4"
+       viewBox="0 0 10 10">
+      <path
+         d="M 0,0 L 10,5 L 0,10 L 3,5 Z"
+         style="fill:#000000;stroke:none" />
+    </marker>
+  </defs>
+  
+  <!-- Title -->
+  <text x="150" y="10" font-size="6" font-weight="bold" text-anchor="middle">Neural Logic Network: Proposition Generation</text>
+  <text x="150" y="15" font-size="3" text-anchor="middle" fill="#666">(Sequential: Subject → Relation → Object, with conditioning)</text>
+  
+  <!-- Working Memory Input (top) -->
+  <g id="wm-input">
+    <rect x="120" y="20" width="60" height="12" fill="#e8f4f8" stroke="#2196F3" stroke-width="0.5" rx="2"/>
+    <text x="150" y="28" font-size="4" text-anchor="middle" fill="#1565C0">WM</text>
+    <text x="110" y="27" font-size="3" fill="#666">①</text>
+  </g>
+  
+  <!-- Arrows from WM to Logic Rules -->
+  <path d="M 150,32 L 150,45" stroke="#000" stroke-width="0.8" fill="none" marker-end="url(#arrow)"/>
+  
+  <!-- Logic Rules Layer -->
+  <g id="logic-rules">
+    <!-- Main box -->
+    <rect x="100" y="45" width="100" height="25" fill="#fff3e0" stroke="#FF9800" stroke-width="0.8" rx="2"/>
+    <text x="150" y="52" font-size="4.5" font-weight="bold" text-anchor="middle" fill="#E65100">Logic Rules</text>
+    <text x="93" y="57" font-size="3" fill="#666">②</text>
+    
+    <!-- Rule matching details -->
+    <text x="150" y="58" font-size="3" text-anchor="middle" fill="#666">fuzzy unification</text>
+    <text x="150" y="63" font-size="3" text-anchor="middle" fill="#666">γ: var/const</text>
+    <text x="150" y="68" font-size="3" text-anchor="middle" fill="#666">R activations</text>
+  </g>
+  
+  <!-- Arrow to Concepts -->
+  <path d="M 150,70 L 150,82" stroke="#000" stroke-width="0.8" fill="none" marker-end="url(#arrow)"/>
+  
+  <!-- Concepts (aggregate features) -->
+  <g id="concepts">
+    <ellipse cx="150" cy="90" rx="25" ry="8" fill="#f3e5f5" stroke="#9C27B0" stroke-width="0.8"/>
+    <text x="150" y="92" font-size="4" font-weight="bold" text-anchor="middle" fill="#4A148C">concepts</text>
+    <text x="170" y="91" font-size="3" fill="#666">③</text>
+    <text x="150" y="96" font-size="2.5" text-anchor="middle" fill="#666">(256-dim)</text>
+  </g>
+  
+  <!-- Fan out from concepts to three projections -->
+  <path d="M 140,97 L 60,110" stroke="#666" stroke-width="0.6" fill="none" stroke-dasharray="1,1"/>
+  <path d="M 150,97 L 150,110" stroke="#666" stroke-width="0.6" fill="none" stroke-dasharray="1,1"/>
+  <path d="M 160,97 L 240,110" stroke="#666" stroke-width="0.6" fill="none" stroke-dasharray="1,1"/>
+  
+  <!-- Subject Selection Branch (left) -->
+  <g id="subject-branch">
+    <rect x="30" y="110" width="60" height="15" fill="#e8f5e9" stroke="#4CAF50" stroke-width="0.6" rx="2"/>
+    <text x="60" y="116" font-size="3.5" text-anchor="middle" fill="#1B5E20">subj_proj</text>
+    <text x="60" y="121" font-size="2.5" text-anchor="middle" fill="#666">concepts→entity</text>
+    <text x="23" y="118" font-size="3" fill="#666">④</text>
+    
+    <!-- Attention over entities -->
+    <path d="M 60,125 L 60,135" stroke="#4CAF50" stroke-width="0.6" fill="none" marker-end="url(#arrow)"/>
+    <ellipse cx="60" cy="142" rx="20" ry="6" fill="#e8f5e9" stroke="#4CAF50" stroke-width="0.5"/>
+    <text x="60" y="143.5" font-size="3" text-anchor="middle" fill="#1B5E20">attn</text>
+    <text x="75" y="142" font-size="3" fill="#666">⑤</text>
+    
+    <!-- Entity embeddings -->
+    <rect x="80" y="138" width="25" height="8" fill="none" stroke="#4CAF50" stroke-width="0.4" stroke-dasharray="0.5,0.5" rx="1"/>
+    <text x="92.5" y="143" font-size="2.5" text-anchor="middle" fill="#666">entities</text>
+    <path d="M 80,142 L 80,142" stroke="#4CAF50" stroke-width="0.4" fill="none"/>
+    
+    <!-- Selected subject -->
+    <path d="M 60,148 L 60,158" stroke="#4CAF50" stroke-width="0.6" fill="none" marker-end="url(#arrow)"/>
+    <circle cx="60" cy="163" r="5" fill="#4CAF50" stroke="#1B5E20" stroke-width="0.5"/>
+    <text x="60" y="165" font-size="3" text-anchor="middle" fill="white">S</text>
+    <text x="52" y="164" font-size="3" fill="#666">⑧</text>
+  </g>
+  
+  <!-- Relation Selection Branch (middle) -->
+  <g id="relation-branch">
+    <rect x="120" y="110" width="60" height="15" fill="#fff9c4" stroke="#FFC107" stroke-width="0.6" rx="2"/>
+    <text x="150" y="116" font-size="3.5" text-anchor="middle" fill="#F57F17">rel_head</text>
+    <text x="150" y="121" font-size="2.5" text-anchor="middle" fill="#666">concepts+S→rel</text>
+    <text x="113" y="118" font-size="3" fill="#666">⑥</text>
+    
+    <!-- Conditioning arrow from Subject (PROMINENT) -->
+    <path d="M 65,165 L 120,117" stroke="#4CAF50" stroke-width="1.2" fill="none" marker-end="url(#arrow)"/>
+    <text x="85" y="138" font-size="2.5" fill="#4CAF50" font-weight="bold">subj</text>
+    
+    <!-- Softmax over relations -->
+    <path d="M 150,125 L 150,135" stroke="#FFC107" stroke-width="0.6" fill="none" marker-end="url(#arrow)"/>
+    <rect x="140" y="135" width="20" height="8" fill="#fff9c4" stroke="#FFC107" stroke-width="0.5" rx="1"/>
+    <text x="150" y="140" font-size="3" text-anchor="middle" fill="#F57F17">softmax</text>
+    
+    <!-- Relation vocab -->
+    <rect x="162" y="135" width="20" height="8" fill="none" stroke="#FFC107" stroke-width="0.4" stroke-dasharray="0.5,0.5" rx="1"/>
+    <text x="172" y="140" font-size="2.5" text-anchor="middle" fill="#666">R vocab</text>
+    
+    <!-- Selected relation -->
+    <path d="M 150,143 L 150,153" stroke="#FFC107" stroke-width="0.6" fill="none" marker-end="url(#arrow)"/>
+    <rect x="145" y="153" width="10" height="10" fill="#FFC107" stroke="#F57F17" stroke-width="0.5" rx="1"/>
+    <text x="150" y="160" font-size="3" text-anchor="middle" fill="white">R</text>
+    <text x="141" y="159" font-size="3" fill="#666">⑨</text>
+  </g>
+  
+  <!-- Object Selection Branch (right) -->
+  <g id="object-branch">
+    <rect x="210" y="110" width="60" height="15" fill="#fce4ec" stroke="#E91E63" stroke-width="0.6" rx="2"/>
+    <text x="240" y="116" font-size="3.5" text-anchor="middle" fill="#880E4F">obj_proj</text>
+    <text x="240" y="121" font-size="2.5" text-anchor="middle" fill="#666">concepts+S+R→ent</text>
+    <text x="203" y="118" font-size="3" fill="#666">⑦</text>
+    
+    <!-- Conditioning arrows (PROMINENT) -->
+    <path d="M 65,165 L 210,117" stroke="#4CAF50" stroke-width="1.2" fill="none" marker-end="url(#arrow)"/>
+    <text x="120" y="135" font-size="2.5" fill="#4CAF50" font-weight="bold">subj</text>
+    <path d="M 155,158 L 210,120" stroke="#FFC107" stroke-width="1.2" fill="none" marker-end="url(#arrow)"/>
+    <text x="175" y="135" font-size="2.5" fill="#FFC107" font-weight="bold">rel</text>
+    
+    <!-- Attention over entities -->
+    <path d="M 240,125 L 240,135" stroke="#E91E63" stroke-width="0.6" fill="none" marker-end="url(#arrow)"/>
+    <ellipse cx="240" cy="142" rx="20" ry="6" fill="#fce4ec" stroke="#E91E63" stroke-width="0.5"/>
+    <text x="240" y="143.5" font-size="3" text-anchor="middle" fill="#880E4F">attn</text>
+    
+    <!-- Entity embeddings -->
+    <rect x="215" y="138" width="25" height="8" fill="none" stroke="#E91E63" stroke-width="0.4" stroke-dasharray="0.5,0.5" rx="1"/>
+    <text x="227.5" y="143" font-size="2.5" text-anchor="middle" fill="#666">entities</text>
+    
+    <!-- Selected object -->
+    <path d="M 240,148 L 240,158" stroke="#E91E63" stroke-width="0.6" fill="none" marker-end="url(#arrow)"/>
+    <circle cx="240" cy="163" r="5" fill="#E91E63" stroke="#880E4F" stroke-width="0.5"/>
+    <text x="240" y="165" font-size="3" text-anchor="middle" fill="white">O</text>
+    <text x="232" y="164" font-size="3" fill="#666">⑩</text>
+  </g>
+  
+  <!-- Combine to final proposition -->
+  <path d="M 60,168 L 150,180" stroke="#4CAF50" stroke-width="0.6" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 150,163 L 150,180" stroke="#FFC107" stroke-width="0.6" fill="none" marker-end="url(#arrow)"/>
+  <path d="M 240,168 L 150,180" stroke="#E91E63" stroke-width="0.6" fill="none" marker-end="url(#arrow)"/>
+  
+  <!-- Final Proposition -->
+  <g id="output-prop">
+    <rect x="120" y="180" width="60" height="12" fill="#f5f5f5" stroke="#424242" stroke-width="0.8" rx="2"/>
+    <text x="150" y="188" font-size="4" font-weight="bold" text-anchor="middle" fill="#212121">[S, R, O]</text>
+    <text x="112" y="187" font-size="3" fill="#666">⑪</text>
+  </g>
+  
+  <!-- Legend/Annotations below -->
+  <g id="legend" transform="translate(10, 200)">
+    <text x="0" y="0" font-size="4" font-weight="bold" fill="#000">Component Descriptions:</text>
+    
+    <text x="0" y="5" font-size="3" fill="#666">① Working Memory: Recent propositions (batch × N × 3 × d)</text>
+    <text x="0" y="9" font-size="3" fill="#666">② Logic Rules: Fuzzy unification with γ params → R rule activations</text>
+    <text x="0" y="13" font-size="3" fill="#666">③ Concepts: Aggregate features (256-dim) from rule activations</text>
+    <text x="0" y="17" font-size="3" fill="#666">④ Subject Projection: Linear map concepts → entity query space</text>
+    
+    <text x="150" y="5" font-size="3" fill="#666">⑤ Attention: Soft selection over entity embeddings + NEW token</text>
+    <text x="150" y="9" font-size="3" fill="#666">⑥ Relation Head: Conditioned on concepts + subject (↑ green arrow)</text>
+    <text x="150" y="13" font-size="3" fill="#666">⑦ Object Projection: Conditioned on concepts + subj (↑ green) + rel (↑ yellow)</text>
+    <text x="150" y="17" font-size="3" fill="#666">⑧-⑩ S, R, O: Subject entity, Relation, Object entity (integers)</text>
+    
+    <text x="0" y="21" font-size="3" fill="#666">⑪ Output: Final proposition [subj_id, rel_id, obj_id] for next timestep</text>
+    <text x="0" y="25" font-size="2.8" fill="#999" font-style="italic">Note: Upward arrows (↑) show sequential conditioning: S selected first, then conditions R, then S+R condition O</text>
+  </g>
+</svg>
