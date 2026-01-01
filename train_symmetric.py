@@ -313,6 +313,10 @@ def train_epoch(model, dataloader, optimizer, device, lambda_cycle=0.5):
         
         loss = results['loss']
         loss.backward()
+        
+        # Clip gradients to prevent explosion
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+        
         optimizer.step()
         
         # Track losses
@@ -494,7 +498,7 @@ if __name__ == "__main__":
                        help='Number of epochs')
     parser.add_argument('--batch_size', type=int, default=32,
                        help='Batch size')
-    parser.add_argument('--lr', type=float, default=0.001,
+    parser.add_argument('--lr', type=float, default=0.0001,
                        help='Learning rate')
     parser.add_argument('--lambda_cycle', type=float, default=0.5,
                        help='Cycle consistency weight')
