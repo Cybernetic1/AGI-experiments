@@ -487,7 +487,7 @@ def main(args):
         json.dump(results, f, indent=2)
     
     print("\n" + "=" * 70)
-    print(f"Training complete! Best validation accuracy: {best_val_acc:.4f}")
+    print(f"Training complete! Best loss: {best_val_loss:.4f}")
     print("=" * 70)
 
 

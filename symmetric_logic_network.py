@@ -74,6 +74,9 @@ class SymmetricLogicNetwork(nn.Module):
         Returns:
             encoding: (batch, seq_len, hidden_dim)
         """
+        # Clamp text_ids to valid vocabulary range
+        text_ids = torch.clamp(text_ids, 0, self.vocab_size - 1)
+        
         embedded = self.text_embedder(text_ids)
         encoded, _ = self.text_encoder(embedded)
         return encoded
