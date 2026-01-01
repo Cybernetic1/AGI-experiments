@@ -84,9 +84,7 @@ class TinyStoriesLogicDataset(Dataset):
                 ds = load_dataset(
                     'roneneldan/TinyStories', 
                     split='train', 
-                    streaming=True,
-                    trust_remote_code=True,
-                    download_mode='reuse_cache_if_exists'
+                    streaming=True
                 )
                 print("✓ Dataset loaded successfully")
                 break
