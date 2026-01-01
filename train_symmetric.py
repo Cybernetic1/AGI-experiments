@@ -109,8 +109,8 @@ class TinyStoriesLogicDataset(Dataset):
                     samples.append({
                         'text': tokens,
                         'text_ids': token_ids,
-                        'propositions': propositions,
-                        'doc': sent  # For evaluation
+                        'propositions': propositions
+                        # Note: Don't cache spaCy doc objects (not picklable)
                     })
         
         return samples
@@ -200,8 +200,8 @@ class TinyStoriesLogicDataset(Dataset):
         
         return {
             'text_ids': torch.tensor(text_ids, dtype=torch.long),
-            'propositions': torch.tensor(props, dtype=torch.long),
-            'text': sample['text']
+            'propositions': torch.tensor(props, dtype=torch.long)
+            # Don't include 'text' - causes collation issues with variable length lists
         }
 
 

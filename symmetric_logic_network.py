@@ -99,7 +99,9 @@ class SymmetricLogicNetwork(nn.Module):
         # Embed each component
         entity_emb = self.entity_embedder(entities)  # (batch, num_props, hidden_dim)
         relation_emb = self.relation_embedder(relations)  # (batch, num_props, hidden_dim)
-        value_emb = self.entity_embedder(values)  # Reuse entity embedder for values
+        # Values might be entities OR vocab IDs - clip to entity range for now
+        values = torch.clamp(values, 0, self.num_entities - 1)
+        value_emb = self.entity_embedder(values)  # (batch, num_props, hidden_dim)
         
         # Combine (simple sum for now)
         encoding = entity_emb + relation_emb + value_emb  # (batch, num_props, hidden_dim)
