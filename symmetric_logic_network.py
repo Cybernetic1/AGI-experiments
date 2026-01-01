@@ -96,11 +96,14 @@ class SymmetricLogicNetwork(nn.Module):
         relations = propositions[:, :, 1].long()  # (batch, num_props)
         values = propositions[:, :, 2].long()  # (batch, num_props)
         
+        # Clamp all indices to valid ranges to prevent CUDA index errors
+        entities = torch.clamp(entities, 0, self.num_entities - 1)
+        relations = torch.clamp(relations, 0, self.vocab_size - 1)
+        values = torch.clamp(values, 0, self.num_entities - 1)
+        
         # Embed each component
         entity_emb = self.entity_embedder(entities)  # (batch, num_props, hidden_dim)
         relation_emb = self.relation_embedder(relations)  # (batch, num_props, hidden_dim)
-        # Values might be entities OR vocab IDs - clip to entity range for now
-        values = torch.clamp(values, 0, self.num_entities - 1)
         value_emb = self.entity_embedder(values)  # (batch, num_props, hidden_dim)
         
         # Combine (simple sum for now)
