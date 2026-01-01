@@ -18,6 +18,7 @@ from datasets import load_dataset
 from tqdm import tqdm
 import argparse
 import json
+import time
 from pathlib import Path
 import numpy as np
 
@@ -73,8 +74,33 @@ class TinyStoriesLogicDataset(Dataset):
     
     def _process_stories(self, num_stories):
         """Process stories with spaCy."""
-        # Load TinyStories
-        ds = load_dataset('roneneldan/TinyStories', split='train', streaming=True)
+        # Load TinyStories with retry logic
+        max_retries = 3
+        ds = None
+        
+        for attempt in range(max_retries):
+            try:
+                print(f"Attempt {attempt + 1}/{max_retries} to load dataset...")
+                ds = load_dataset(
+                    'roneneldan/TinyStories', 
+                    split='train', 
+                    streaming=True,
+                    trust_remote_code=True,
+                    download_mode='reuse_cache_if_exists'
+                )
+                print("✓ Dataset loaded successfully")
+                break
+            except Exception as e:
+                print(f"✗ Attempt {attempt + 1} failed: {e}")
+                if attempt < max_retries - 1:
+                    import time
+                    wait_time = 2 ** attempt
+                    print(f"Waiting {wait_time} seconds before retry...")
+                    time.sleep(wait_time)
+                else:
+                    print("\n✗ All attempts failed. Using synthetic data...")
+                    ds = self._create_synthetic_data(num_stories)
+                    return self._process_synthetic_data(ds)
         
         samples = []
         for i, example in enumerate(tqdm(ds, total=num_stories, desc="Processing")):
@@ -111,6 +137,71 @@ class TinyStoriesLogicDataset(Dataset):
                         'text_ids': token_ids,
                         'propositions': propositions
                         # Note: Don't cache spaCy doc objects (not picklable)
+                    })
+        
+        return samples
+    
+    def _create_synthetic_data(self, num_stories):
+        """Create synthetic stories when download fails."""
+        print(f"Creating {num_stories} synthetic stories...")
+        
+        templates = [
+            "Once upon a time there was a {adj} {animal}.",
+            "The {animal} lived in a {place}.",
+            "One day the {animal} met a {other_animal}.",
+            "They became good friends.",
+            "The {animal} was very {emotion}.",
+        ]
+        
+        adj = ["happy", "sad", "big", "small", "red", "blue"]
+        animals = ["cat", "dog", "bird", "fish", "mouse"]
+        places = ["forest", "park", "house", "garden"]
+        emotions = ["happy", "sad", "excited", "tired"]
+        
+        stories = []
+        for i in range(num_stories):
+            story_sentences = []
+            for template in templates[:3]:  # 3 sentences per story
+                sent = template.format(
+                    adj=adj[i % len(adj)],
+                    animal=animals[i % len(animals)],
+                    other_animal=animals[(i + 1) % len(animals)],
+                    place=places[i % len(places)],
+                    emotion=emotions[i % len(emotions)]
+                )
+                story_sentences.append(sent)
+            
+            stories.append({'text': ' '.join(story_sentences)})
+        
+        return stories
+    
+    def _process_synthetic_data(self, stories):
+        """Process synthetic stories (already simple, no spaCy needed)."""
+        samples = []
+        
+        print(f"Processing {len(stories)} synthetic stories...")
+        for story in tqdm(stories, desc="Processing"):
+            text = story['text']
+            doc = self.nlp(text)
+            
+            for sent in doc.sents:
+                if len(sent) < 3:
+                    continue
+                
+                tokens = [token.text.lower() for token in sent]
+                
+                for token in tokens:
+                    if token not in self.vocab:
+                        self.vocab[token] = len(self.vocab)
+                
+                token_ids = [self.vocab.get(t, self.vocab["<UNK>"]) for t in tokens]
+                propositions = self._extract_propositions(sent)
+                
+                if len(propositions) > 0:
+                    samples.append({
+                        'text': tokens,
+                        'text_ids': token_ids,
+                        'propositions': propositions
                     })
         
         return samples
