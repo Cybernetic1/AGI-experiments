@@ -424,7 +424,7 @@ def main(args):
     
     # Training loop
     print("\nStarting training...")
-    best_val_acc = 0
+    best_val_loss = float('inf')  # Track best loss instead of accuracy
     results = []
     
     for epoch in range(args.epochs):
@@ -453,19 +453,34 @@ def main(args):
             'val': val_metrics
         })
         
-        # Save checkpoint
-        if val_metrics['parse_accuracy'] > best_val_acc:
-            best_val_acc = val_metrics['parse_accuracy']
+        # Save checkpoint based on LOSS (not accuracy, since accuracy is broken)
+        current_loss = train_metrics['loss']
+        if current_loss < best_val_loss:
+            best_val_loss = current_loss
             checkpoint = {
                 'epoch': epoch + 1,
                 'model_state_dict': model.state_dict(),
                 'optimizer_state_dict': optimizer.state_dict(),
-                'val_acc': best_val_acc,
+                'train_loss': current_loss,
+                'val_acc': val_metrics['parse_accuracy'],
                 'vocab': dataset.vocab,
                 'entity_to_id': dataset.entity_to_id
             }
             torch.save(checkpoint, args.output_dir / 'best_model.pt')
-            print(f"✓ Saved best model (acc: {best_val_acc:.4f})")
+            print(f"✓ Saved best model (loss: {best_val_loss:.4f})")
+        
+        # Also save checkpoint every 10 epochs
+        if (epoch + 1) % 10 == 0:
+            checkpoint = {
+                'epoch': epoch + 1,
+                'model_state_dict': model.state_dict(),
+                'optimizer_state_dict': optimizer.state_dict(),
+                'train_loss': current_loss,
+                'vocab': dataset.vocab,
+                'entity_to_id': dataset.entity_to_id
+            }
+            torch.save(checkpoint, args.output_dir / f'checkpoint_epoch_{epoch+1}.pt')
+            print(f"✓ Saved checkpoint at epoch {epoch+1}")
     
     # Save final results
     with open(args.output_dir / 'training_results.json', 'w') as f:
