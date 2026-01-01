@@ -23,6 +23,7 @@ from pathlib import Path
 import numpy as np
 
 from symmetric_logic_network import SymmetricLogicNetwork
+from pattern_priming import create_primed_network, print_pattern_info
 from implicit_graph_wm import ImplicitGraphWM
 
 
@@ -409,13 +410,29 @@ def main(args):
     
     # Create model
     print("\nCreating model...")
-    model = SymmetricLogicNetwork(
-        vocab_size=len(dataset.vocab),
-        hidden_dim=args.hidden_dim,
-        num_rules=args.num_rules,
-        prop_length=args.prop_length,
-        num_entities=dataset.next_entity_id
-    ).to(device)
+    
+    if args.use_priming:
+        # Use pattern-primed network
+        model, pattern_info = create_primed_network(
+            vocab_size=len(dataset.vocab),
+            num_entities=dataset.next_entity_id,
+            hidden_dim=args.hidden_dim,
+            num_primed_rules=min(10, args.num_rules),
+            num_learned_rules=max(0, args.num_rules - 10),
+            prop_length=args.prop_length
+        )
+        print_pattern_info(pattern_info)
+    else:
+        # Standard random initialization
+        model = SymmetricLogicNetwork(
+            vocab_size=len(dataset.vocab),
+            hidden_dim=args.hidden_dim,
+            num_rules=args.num_rules,
+            prop_length=args.prop_length,
+            num_entities=dataset.next_entity_id
+        )
+    
+    model = model.to(device)
     
     print(f"Model parameters: {sum(p.numel() for p in model.parameters()):,}")
     
@@ -503,8 +520,10 @@ if __name__ == "__main__":
     # Model
     parser.add_argument('--hidden_dim', type=int, default=128,
                        help='Hidden dimension')
-    parser.add_argument('--num_rules', type=int, default=16,
-                       help='Number of logic rules')
+    parser.add_argument('--num_rules', type=int, default=50,
+                       help='Number of logic rules (increased for better capacity)')
+    parser.add_argument('--use_priming', action='store_true',
+                       help='Use linguistic pattern priming for first 10 rules')
     parser.add_argument('--prop_length', type=int, default=5,
                        help='Proposition length')
     
