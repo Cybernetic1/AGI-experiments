@@ -1,0 +1,122 @@
+[
+  {
+    "epoch": 1,
+    "train": {
+      "loss": 462135.3486328125,
+      "parse_loss": 308874.5927734375,
+      "gen_loss": 6.57302363216877,
+      "cycle_loss": 306508.3700392246
+    },
+    "val": {
+      "parse_accuracy": 0.0
+    }
+  },
+  {
+    "epoch": 2,
+    "train": {
+      "loss": 440874.642578125,
+      "parse_loss": 292355.220703125,
+      "gen_loss": 5.534270718693733,
+      "cycle_loss": 297027.7811226845
+    },
+    "val": {
+      "parse_accuracy": 0.0
+    }
+  },
+  {
+    "epoch": 3,
+    "train": {
+      "loss": 430240.7421875,
+      "parse_loss": 284714.8056640625,
+      "gen_loss": 5.325747117400169,
+      "cycle_loss": 291041.2191596925
+    },
+    "val": {
+      "parse_accuracy": 0.0
+    }
+  },
+  {
+    "epoch": 4,
+    "train": {
+      "loss": 429846.6455078125,
+      "parse_loss": 286897.16015625,
+      "gen_loss": 5.182767674326897,
+      "cycle_loss": 285888.6067054421
+    },
+    "val": {
+      "parse_accuracy": 0.0
+    }
+  },
+  {
+    "epoch": 5,
+    "train": {
+      "loss": 440023.5361328125,
+      "parse_loss": 294307.607421875,
+      "gen_loss": 5.081161618232727,
+      "cycle_loss": 291421.7047159374
+    },
+    "val": {
+      "parse_accuracy": 0.0
+    }
+  },
+  {
+    "epoch": 6,
+    "train": {
+      "loss": 442294.16796875,
+      "parse_loss": 295861.6279296875,
+      "gen_loss": 4.999493286013603,
+      "cycle_loss": 292855.0770740062
+    },
+    "val": {
+      "parse_accuracy": 0.0
+    }
+  },
+  {
+    "epoch": 7,
+    "train": {
+      "loss": 440674.2578125,
+      "parse_loss": 293373.9892578125,
+      "gen_loss": 4.935581177473068,
+      "cycle_loss": 294590.6634347737
+    },
+    "val": {
+      "parse_accuracy": 0.0
+    }
+  },
+  {
+    "epoch": 8,
+    "train": {
+      "loss": 432101.2587890625,
+      "parse_loss": 288589.80126953125,
+      "gen_loss": 4.871592789888382,
+      "cycle_loss": 287013.17166656256
+    },
+    "val": {
+      "parse_accuracy": 0.0
+    }
+  },
+  {
+    "epoch": 9,
+    "train": {
+      "loss": 426106.09375,
+      "parse_loss": 284060.75439453125,
+      "gen_loss": 4.808764174580574,
+      "cycle_loss": 284081.0657348633
+    },
+    "val": {
+      "parse_accuracy": 0.0
+    }
+  },
+  {
+    "epoch": 10,
+    "train": {
+      "loss": 421136.6142578125,
+      "parse_loss": 280433.6083984375,
+      "gen_loss": 4.7465852200984955,
+      "cycle_loss": 281396.5164307207
+    },
+    "val": {
+      "parse_accuracy": 0.0
+    }
+  }
+]
