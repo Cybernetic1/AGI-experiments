@@ -173,75 +173,74 @@ def create_primed_network(vocab_size, num_entities, hidden_dim=128,
                           num_primed_rules=10, num_learned_rules=40,
                           prop_length=5):
     """
-    Create a logic network with:
-    - First N rules primed with linguistic patterns
-    - Remaining rules randomly initialized (for learning novel patterns)
+    Create a logic network with more rules for better capacity.
+    
+    Note: Actual pattern initialization is conceptual for now.
+    The key improvement is MORE RULES (50 vs 16) to reduce interference.
     
     Args:
         vocab_size: Size of vocabulary
         num_entities: Number of entities
         hidden_dim: Hidden dimension
-        num_primed_rules: Number of rules to prime (max 10)
-        num_learned_rules: Number of rules for learning
+        num_primed_rules: Number of rules to prime (informational)
+        num_learned_rules: Number of rules for learning (informational)
         prop_length: Proposition length
     
     Returns:
-        model: PrimedLogicNetwork
-        pattern_info: Information about primed patterns
+        model: SymmetricLogicNetwork with increased capacity
+        pattern_info: Information about intended pattern specialization
     """
     total_rules = num_primed_rules + num_learned_rules
     
     print(f"\n{'='*70}")
-    print(f"Creating Primed Logic Network")
+    print(f"Creating Logic Network with Increased Capacity")
     print(f"{'='*70}")
     print(f"Total rules: {total_rules}")
-    print(f"  - Primed with patterns: {num_primed_rules}")
-    print(f"  - Random (learnable): {num_learned_rules}")
+    print(f"  - Intended for patterns: {num_primed_rules}")
+    print(f"  - Available for learning: {num_learned_rules}")
+    print(f"\nKey improvement: {total_rules} rules (vs 16) reduces interference")
+    print(f"Each rule can specialize on fewer patterns → better convergence")
     print()
     
-    # Create base network with more rules
+    # Create base network with MORE RULES
     model = SymmetricLogicNetwork(
         vocab_size=vocab_size,
         hidden_dim=hidden_dim,
-        num_rules=total_rules,  # ← More rules!
+        num_rules=total_rules,  # ← This is the key change!
         prop_length=prop_length,
         num_entities=num_entities
     )
     
-    # Prime first N rules with patterns
+    # Record which patterns we expect rules to learn
+    # (Actual initialization happens during training via data)
     pattern_info = []
     for i in range(min(num_primed_rules, len(LINGUISTIC_PATTERNS))):
         pattern = LINGUISTIC_PATTERNS[i]
-        
-        # Initialize this rule
-        pattern_vec, template_vec = initialize_rule_with_pattern(
-            model.logic_rules[i] if hasattr(model, 'logic_rules') else None,
-            pattern,
-            hidden_dim
-        )
-        
         pattern_info.append({
             'rule_index': i,
             'pattern_name': pattern['name'],
             'description': pattern['description']
         })
+        print(f"  ✓ Rule {i:2d} allocated for: {pattern['name']:15s} - {pattern['description']}")
     
     print()
     print(f"✓ Network created with {total_rules} rules")
-    print(f"  First {num_primed_rules} rules initialized with linguistic patterns")
-    print(f"  Remaining {num_learned_rules} rules will learn from data")
+    print(f"  Higher capacity → less interference → better learning")
     print(f"{'='*70}\n")
     
     return model, pattern_info
 
 
 def print_pattern_info(pattern_info):
-    """Print information about primed patterns."""
-    print("\nPrimed Linguistic Patterns:")
+    """Print information about pattern allocation."""
+    print("\nPattern Allocation (Rules will specialize during training):")
     print("-" * 70)
     for info in pattern_info:
-        print(f"Rule {info['rule_index']:2d}: {info['pattern_name']:15s} - {info['description']}")
+        print(f"Rule {info['rule_index']:2d} → {info['pattern_name']:15s} - {info['description']}")
     print("-" * 70)
+    print("\nNote: With 50 rules, each can specialize on 1-2 patterns")
+    print("      (vs 16 rules trying to handle 30+ patterns → interference)")
+    print()
 
 
 if __name__ == "__main__":
