@@ -226,13 +226,16 @@ def train_semantic_ar(epochs=10, batch_size=32, lr=0.001):
         print(f"Epoch {epoch+1}: Average Loss = {avg_loss:.4f}")
         
         # Show example predictions every 2 epochs
-        if (epoch + 1) % 2 == 0:
+        # if (epoch + 1) % 2 == 0:
+        if True:
             print("\n" + "-"*70)
             print("Example Predictions:")
             model.eval()
             with torch.no_grad():
-                example_current = "The girl found a toy."
-                example_next = "She played with it happily."
+                # Pick a random example from the dataset
+                import random
+                random_idx = random.randint(0, len(dataset) - 1)
+                example_current, example_next = dataset[random_idx]
                 
                 print(f"  Current: {example_current}")
                 print(f"  Actual next: {example_next}")
