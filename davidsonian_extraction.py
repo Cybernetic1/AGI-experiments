@@ -53,13 +53,19 @@ class DavidsonianExtractor:
         
         # Meta-Rule 1: For each verb, create an event
         for token in doc:
-            if token.pos_ == "VERB":
+            if token.pos_ == "VERB" or (token.pos_ == "AUX" and token.dep_ == "ROOT"):
                 event_id = self.create_event_id()
                 
                 # Event type (the verb itself)
                 propositions.append((event_id, "type", token.lemma_))
                 
-                # Meta-Rule 2: Subject → Agent
+                # Meta-Rule 1b: Copular verbs (be/is/was) - handle adjective complements
+                if token.lemma_ == "be":
+                    for child in token.children:
+                        if child.dep_ == "acomp":  # Adjectival complement
+                            propositions.append((event_id, "state", child.lemma_))
+                
+                # Meta-Rule 2: Subject → Agent (or experiencer for states)
                 for child in token.children:
                     if child.dep_ in ["nsubj", "nsubjpass"]:
                         entity_id = self.create_entity_id(child.text)
@@ -143,6 +149,8 @@ def test_extractor():
         "John quickly gave Mary the book",
         "The cat sat on the mat",
         "Mary was guillotined yesterday",
+        "She was sad",
+        "The girl is happy",
     ]
     
     print("=" * 70)

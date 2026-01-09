@@ -1,0 +1,428 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="210mm"
+   height="297mm"
+   viewBox="0 0 210 297"
+   version="1.1"
+   id="svg1"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="AGI-architecture.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#cccccc"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="1"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="1.2359821"
+     inkscape:cx="397.25494"
+     inkscape:cy="366.9147"
+     inkscape:window-width="1080"
+     inkscape:window-height="1897"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1"
+     showgrid="false" />
+  <defs
+     id="defs1">
+    <marker
+       style="overflow:visible"
+       id="Arrow1"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow1"
+       markerWidth="4.0606604"
+       markerHeight="6.7071066"
+       viewBox="0 0 4.0606602 6.7071068"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         id="path5057"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc" />
+    </marker>
+    <marker
+       style="overflow:visible"
+       id="Arrow1-3"
+       refX="0"
+       refY="0"
+       orient="auto-start-reverse"
+       inkscape:stockid="Arrow1"
+       markerWidth="4.0606604"
+       markerHeight="6.7071066"
+       viewBox="0 0 4.0606602 6.7071068"
+       inkscape:isstock="true"
+       inkscape:collect="always"
+       preserveAspectRatio="xMidYMid">
+      <path
+         style="fill:none;stroke:context-stroke;stroke-width:1;stroke-linecap:butt"
+         d="M 3,-3 0,0 3,3"
+         id="path5057-7"
+         transform="rotate(180,0.125,0)"
+         sodipodi:nodetypes="ccc" />
+    </marker>
+  </defs>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g2"
+       transform="translate(-15.198777,21.808869)">
+      <rect
+         style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-linejoin:round"
+         id="rect1"
+         width="16.055042"
+         height="11.773698"
+         x="87.125381"
+         y="48.379208"
+         rx="1.3229166" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;line-height:1;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;stroke-width:1.05833;stroke-linejoin:round"
+         x="90.336395"
+         y="56.299694"
+         id="text1"><tspan
+           sodipodi:role="line"
+           id="tspan1"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';fill:#000000;stroke-width:1.05833"
+           x="90.336395"
+           y="56.299694">DLN</tspan></text>
+    </g>
+    <g
+       id="g2198">
+      <rect
+         style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-linejoin:round"
+         id="rect1-2"
+         width="27.828749"
+         height="13.272167"
+         x="118.94196"
+         y="69.162804"
+         rx="1.3229166" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;line-height:1;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;stroke-width:1.05833;stroke-linejoin:round"
+         x="132.67017"
+         y="74.966621"
+         id="text1-0"><tspan
+           sodipodi:role="line"
+           id="tspan1-2"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#000000;stroke-width:1.05833"
+           x="132.67017"
+           y="74.966621">symbolic</tspan><tspan
+           sodipodi:role="line"
+           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#000000;stroke-width:1.05833"
+           x="132.67017"
+           y="79.90551"
+           id="tspan2">engine</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.9389px;line-height:1;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;stroke:#ff0000;stroke-width:1.05833;stroke-linejoin:round"
+       x="20.764524"
+       y="81.345566"
+       id="text3"><tspan
+         sodipodi:role="line"
+         id="tspan3"
+         style="stroke-width:1.05833"
+         x="20.764524"
+         y="81.345566" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;stroke:#ff0000;stroke-width:1.05833;stroke-linejoin:round"
+       x="40.244648"
+       y="96.330269"
+       id="text4"><tspan
+         sodipodi:role="line"
+         id="tspan4"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi';stroke-width:1.05833"
+         x="40.244648"
+         y="96.330269" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:4.9389px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;stroke:#ff0000;stroke-width:1.05833;stroke-linejoin:round"
+       x="70.642197"
+       y="121.16208"
+       id="text5"><tspan
+         sodipodi:role="line"
+         id="tspan5"
+         style="stroke-width:1.05833"
+         x="70.642197"
+         y="121.16208" /></text>
+    <text
+       xml:space="preserve"
+       style="font-size:4.9389px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi';text-align:center;text-anchor:middle;white-space:pre;inline-size:114.775;display:inline;fill:#000000;stroke:none;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       x="33.920918"
+       y="109.31452"
+       id="text131"
+       transform="translate(70.706105,16.264241)"><tspan
+         x="33.920918"
+         y="109.31452"
+         id="tspan4098"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4096">最想达到的效果：
+</tspan></tspan><tspan
+         x="33.920918"
+         y="114.25342"
+         id="tspan4106"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4100">1）告诉它 </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4102">Davidson </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4104">语法，它会自动使用此种语法
+</tspan></tspan><tspan
+         x="33.920918"
+         y="119.19233"
+         id="tspan4114"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4108">2）但其实它已经在用 </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4110">Davidson </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4112">啊，但不够完善
+</tspan></tspan><tspan
+         x="33.920918"
+         y="124.13123"
+         id="tspan4120"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4116">3）所以呢？ 例如指示它在什么时候放弃 </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4118">Davidson
+</tspan></tspan><tspan
+         x="33.920918"
+         y="129.07014"
+         id="tspan4126"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4122">4）</tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4124">而这一功能在语法分析之外有用吗？
+</tspan></tspan><tspan
+         x="33.920918"
+         y="134.00904"
+         id="tspan4134"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4128">5）那就是我们教它，例如解决 </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4130">IQ </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4132">题
+</tspan></tspan><tspan
+         x="33.920918"
+         y="138.94794"
+         id="tspan4138"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4136">6）它显然是有用的，因为它的即时反应能力
+</tspan></tspan><tspan
+         x="33.920918"
+         y="143.88685"
+         id="tspan4146"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4140">7）但这又和 </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4142">prompt </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4144">有什么不同？
+</tspan></tspan><tspan
+         x="33.920918"
+         y="148.82575"
+         id="tspan4154"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4148">8）</tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4150">prompt </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4152">提供了即时反应的能力，它大约等同于</tspan><tspan
+           y="148.82575"
+           id="tspan4156"> </tspan></tspan><tspan
+         x="33.920918"
+         y="153.76465"
+         id="tspan4166"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4158">rule injection, </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4160">虽然 </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4162">reflection </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4164">可能做得不够好
+</tspan></tspan><tspan
+         x="33.920918"
+         y="158.70356"
+         id="tspan4174"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4168">9）</tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4170">neural logic rules </tspan><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4172">甚至是可以离散分解的，这一点</tspan></tspan><tspan
+         x="33.920918"
+         y="163.64246"
+         id="tspan4178"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4176">我以前未有想过
+</tspan></tspan><tspan
+         x="33.920918"
+         y="168.58137"
+         id="tspan4182"><tspan
+           style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
+           id="tspan4180">10）</tspan></tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:4.9389px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start;fill:#000000;stroke:none;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
+       x="85.420319"
+       y="110.58332"
+       id="text1170"><tspan
+         sodipodi:role="line"
+         id="tspan1168"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';stroke-width:0.264583"
+         x="85.420319"
+         y="110.58332">new conclusions</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1)"
+       d="M 80.63828,84.512397 98.79021,102.33303"
+       id="path1226" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1)"
+       d="M 79.439356,68.098664 V 53.979851"
+       id="path1226-9"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1)"
+       d="M 98.505511,46.048472 H 123.20765"
+       id="path1226-9-2"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1)"
+       d="M 129.75948,84.725488 111.60755,102.54612"
+       id="path1226-7" />
+    <g
+       id="g2204"
+       transform="translate(-54.26752,-9.8000718)">
+      <rect
+         style="fill:none;stroke:#2ad4ff;stroke-width:1.05833;stroke-linejoin:round"
+         id="rect1-2-5"
+         width="27.828749"
+         height="13.272167"
+         x="120.22516"
+         y="46.773102"
+         rx="1.3229166" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:4.9389px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';text-align:start;text-anchor:start;fill:#000000;stroke:none;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none"
+         x="133.97815"
+         y="51.857025"
+         id="text2116"><tspan
+           sodipodi:role="line"
+           id="tspan2114"
+           style="text-align:center;text-anchor:middle;fill:#000000;stroke:none;stroke-width:0.529167"
+           x="133.97815"
+           y="51.857025">memory</tspan><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#000000;stroke:none;stroke-width:0.529167"
+           x="133.97815"
+           y="56.795925"
+           id="tspan2118">(weights)</tspan></text>
+    </g>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1)"
+       d="M 134.20672,67.104504 V 51.398191"
+       id="path1226-9-7"
+       sodipodi:nodetypes="cc" />
+    <g
+       id="g2204-0"
+       transform="translate(0.49980683,-12.381732)">
+      <rect
+         style="fill:none;stroke:#2ad4ff;stroke-width:1.05833;stroke-linejoin:round"
+         id="rect1-2-5-9"
+         width="12.557924"
+         height="8.4221048"
+         x="127.38247"
+         y="52.290443"
+         rx="1.3229166" />
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:4.9389px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';text-align:start;text-anchor:start;fill:#000000;stroke:none;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none"
+         x="133.97815"
+         y="58.207031"
+         id="text2116-3"><tspan
+           sodipodi:role="line"
+           style="text-align:center;text-anchor:middle;fill:#000000;stroke:none;stroke-width:0.529167"
+           x="133.97815"
+           y="58.207031"
+           id="tspan2118-0">KB</tspan></text>
+    </g>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       x="155.48282"
+       y="223.31409"
+       id="text2287"
+       transform="matrix(0.26458333,0,0,0.26458333,5.3605275,3.226601)"><tspan
+         sodipodi:role="line"
+         id="tspan2285"
+         x="155.48282"
+         y="223.31409"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light'">consolidation</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       x="217.18559"
+       y="223.31409"
+       id="text2287-6"
+       transform="matrix(0.26458333,0,0,0.26458333,22.458622,-31.85561)"><tspan
+         sodipodi:role="line"
+         id="tspan2285-2"
+         x="217.18559"
+         y="223.31409"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:center;text-anchor:middle">in the form of</tspan><tspan
+         sodipodi:role="line"
+         x="217.18559"
+         y="241.98079"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:center;text-anchor:middle"
+         id="tspan2520">predictive rules</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       x="155.48282"
+       y="223.31409"
+       id="text2287-61"
+       transform="matrix(0.26458333,0,0,0.26458333,85.914327,-23.226342)"><tspan
+         sodipodi:role="line"
+         id="tspan2285-8"
+         x="155.48282"
+         y="223.31409"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light'">can be facts or rules</tspan></text>
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1-3)"
+       d="M 123.45713,41.544661 H 98.754992"
+       id="path1226-9-2-5"
+       sodipodi:nodetypes="cc" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       x="155.48282"
+       y="223.31409"
+       id="text2287-61-0-9"
+       transform="matrix(0.26458333,0,0,0.26458333,62.747637,-21.798582)"><tspan
+         sodipodi:role="line"
+         id="tspan2285-8-2-2"
+         x="155.48282"
+         y="223.31409"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light'" /></text>
+  </g>
+</svg>
