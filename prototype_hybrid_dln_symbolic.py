@@ -7,6 +7,7 @@ Prototype hybrid: symbolic fuzzy inference + simple DLN stub.
 
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Tuple
+import random
 import math
 
 try:
@@ -162,11 +163,71 @@ else:
             return self.mlp(features)
 
 
+class RuleStore:
+    """Index of rules with similarity-based dedup and retrieval."""
+
+    def __init__(self, model: "SimpleDLN", sim_threshold: float = 0.98):
+        _require_torch()
+        self.model = model
+        self.sim_threshold = sim_threshold
+        self.rules: List[Rule] = []
+        self.embs: List[torch.Tensor] = []
+        self.by_concl: Dict[str, List[int]] = {}
+
+    def _embed_rule(self, rule: Rule) -> torch.Tensor:
+        with torch.no_grad():
+            prem_vecs = torch.cat([self.model.encode_prop(p) for p in rule.premises], dim=0)
+            prem_repr = prem_vecs.mean(dim=0, keepdim=True)
+            concl_repr = self.model.encode_prop(rule.conclusion)
+            return torch.cat([prem_repr, concl_repr], dim=-1)
+
+    def add(self, rule: Rule) -> Tuple[bool, float]:
+        emb = self._embed_rule(rule)
+        max_sim = 0.0
+        if self.embs:
+            stacked = torch.cat(self.embs, dim=0)
+            sims = F.cosine_similarity(emb, stacked, dim=-1)
+            max_sim = sims.max().item()
+            if max_sim >= self.sim_threshold:
+                return False, max_sim
+        idx = len(self.rules)
+        self.rules.append(rule)
+        self.embs.append(emb)
+        self.by_concl.setdefault(rule.conclusion.predicate, []).append(idx)
+        return True, max_sim
+
+    def nearest(self, rule: Rule, topk: int = 3) -> List[Tuple[Rule, float]]:
+        if not self.embs:
+            return []
+        emb = self._embed_rule(rule)
+        stacked = torch.cat(self.embs, dim=0)
+        sims = F.cosine_similarity(emb, stacked, dim=-1)
+        k = min(topk, sims.numel())
+        vals, idxs = torch.topk(sims, k)
+        return [(self.rules[i], vals[j].item()) for j, i in enumerate(idxs)]
+
+    def candidates_for_conclusion(self, predicate: str) -> List[Rule]:
+        idxs = self.by_concl.get(predicate, [])
+        return [self.rules[i] for i in idxs]
+
+
 def _toy_data() -> Tuple[List[Proposition], List[Rule]]:
     # Simple rule: A(x) -> B(x)
     facts = [Proposition("A", ("alice",), 1.0), Proposition("A", ("bob",), 0.7)]
     rule = Rule([Proposition("A", ("?x",))], Proposition("B", ("?x",)), 1.0)
     return facts, [rule]
+
+
+def ga_seed_rules(predicates: List[str], pop_size: int = 6) -> List[Rule]:
+    """Very small GA-style seeding: sample predicate pairs as candidate rules."""
+    rng = random.Random(0)
+    rules: List[Rule] = []
+    var = "?x"
+    for _ in range(pop_size):
+        prem_pred = rng.choice(predicates)
+        concl_pred = rng.choice(predicates)
+        rules.append(Rule([Proposition(prem_pred, (var,))], Proposition(concl_pred, (var,)), 1.0))
+    return rules
 
 
 def symbolic_smoke_test():
@@ -177,6 +238,31 @@ def symbolic_smoke_test():
     assert math.isclose(table.get(("B", ("alice",)), 0.0), 1.0, rel_tol=1e-3)
     assert math.isclose(table.get(("B", ("bob",)), 0.0), 0.7, rel_tol=1e-3)
     return table
+
+
+def rule_store_smoke_test():
+    _require_torch()
+    facts, rules = _toy_data()
+    predicates = ["A", "B", "C"]
+    args = ["<pad>", "alice", "bob", "?x"]
+    model = SimpleDLN(predicates, args)
+    store = RuleStore(model, sim_threshold=0.98)
+
+    base_rule = rules[0]
+    added, _ = store.add(base_rule)
+    assert added, "Base rule should be accepted"
+
+    dup_added, sim = store.add(base_rule)
+    assert dup_added is False and sim >= 0.98
+
+    other_rule = Rule([Proposition("B", ("?x",))], Proposition("A", ("?x",)), 1.0)
+    added_other, _ = store.add(other_rule)
+    assert added_other, "Different rule should be accepted"
+
+    neigh = store.nearest(other_rule, topk=2)
+    assert neigh and neigh[0][0] == other_rule
+
+    return store
 
 
 def dln_smoke_test(steps: int = 60):
@@ -213,6 +299,7 @@ def run_all_smoke_tests():
         print("PyTorch not installed; skipping DLN smoke test. Symbolic test passed.")
         return
     model, labels = dln_smoke_test()
+    _ = rule_store_smoke_test()
     with torch.no_grad():
         for (pred, args_tuple), truth in labels.items():
             premises = [Proposition("A", args_tuple, sym_table[("A", args_tuple)])]

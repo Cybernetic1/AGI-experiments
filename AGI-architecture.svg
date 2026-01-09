@@ -25,7 +25,7 @@
      inkscape:document-units="mm"
      inkscape:zoom="1.2359821"
      inkscape:cx="397.25494"
-     inkscape:cy="366.9147"
+     inkscape:cy="421.93168"
      inkscape:window-width="1080"
      inkscape:window-height="1897"
      inkscape:window-x="0"
@@ -82,7 +82,7 @@
      id="layer1">
     <g
        id="g2"
-       transform="translate(-15.198777,21.808869)">
+       transform="translate(-14.39413,92.07089)">
       <rect
          style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-linejoin:round"
          id="rect1"
@@ -103,33 +103,38 @@
            x="90.336395"
            y="56.299694">DLN</tspan></text>
     </g>
-    <g
-       id="g2198">
-      <rect
-         style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-linejoin:round"
-         id="rect1-2"
-         width="27.828749"
-         height="13.272167"
-         x="118.94196"
-         y="69.162804"
-         rx="1.3229166" />
-      <text
-         xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;line-height:1;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;stroke-width:1.05833;stroke-linejoin:round"
-         x="132.67017"
-         y="74.966621"
-         id="text1-0"><tspan
-           sodipodi:role="line"
-           id="tspan1-2"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#000000;stroke-width:1.05833"
-           x="132.67017"
-           y="74.966621">symbolic</tspan><tspan
-           sodipodi:role="line"
-           style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#000000;stroke-width:1.05833"
-           x="132.67017"
-           y="79.90551"
-           id="tspan2">engine</tspan></text>
-    </g>
+    <rect
+       style="fill:none;stroke:#ff0000;stroke-width:1.05833;stroke-linejoin:round"
+       id="rect1-2"
+       width="27.828749"
+       height="13.272167"
+       x="119.74661"
+       y="139.42482"
+       rx="1.3229166" />
+    <rect
+       style="fill:none;stroke:#ff7f2a;stroke-width:1.05833;stroke-linejoin:round"
+       id="rect1-2-2"
+       width="43.648773"
+       height="7.3221354"
+       x="84.172165"
+       y="175.72548"
+       rx="1.3229166" />
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;line-height:1;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:start;writing-mode:lr-tb;direction:ltr;text-anchor:start;fill:#000000;stroke-width:1.05833;stroke-linejoin:round"
+       x="133.47481"
+       y="145.22864"
+       id="text1-0"><tspan
+         sodipodi:role="line"
+         id="tspan1-2"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#000000;stroke-width:1.05833"
+         x="133.47481"
+         y="145.22864">symbolic</tspan><tspan
+         sodipodi:role="line"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.93889px;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;text-anchor:middle;fill:#000000;stroke-width:1.05833"
+         x="133.47481"
+         y="150.16753"
+         id="tspan2">engine</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:4.9389px;line-height:1;font-family:'DejaVu Sans Mono';-inkscape-font-specification:'DejaVu Sans Mono Bold';text-align:center;writing-mode:lr-tb;direction:ltr;text-anchor:middle;fill:#000000;stroke:#ff0000;stroke-width:1.05833;stroke-linejoin:round"
@@ -169,150 +174,150 @@
        x="33.920918"
        y="109.31452"
        id="text131"
-       transform="translate(70.706105,16.264241)"><tspan
+       transform="translate(69.104135,94.15821)"><tspan
          x="33.920918"
          y="109.31452"
-         id="tspan4098"><tspan
+         id="tspan5017"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4096">最想达到的效果：
+           id="tspan5015">最想达到的效果：
 </tspan></tspan><tspan
          x="33.920918"
          y="114.25342"
-         id="tspan4106"><tspan
+         id="tspan5025"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4100">1）告诉它 </tspan><tspan
+           id="tspan5019">1）告诉它 </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4102">Davidson </tspan><tspan
+           id="tspan5021">Davidson </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4104">语法，它会自动使用此种语法
+           id="tspan5023">语法，它会自动使用此种语法
 </tspan></tspan><tspan
          x="33.920918"
          y="119.19233"
-         id="tspan4114"><tspan
+         id="tspan5033"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4108">2）但其实它已经在用 </tspan><tspan
+           id="tspan5027">2）但其实它已经在用 </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4110">Davidson </tspan><tspan
+           id="tspan5029">Davidson </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4112">啊，但不够完善
+           id="tspan5031">啊，但不够完善
 </tspan></tspan><tspan
          x="33.920918"
          y="124.13123"
-         id="tspan4120"><tspan
+         id="tspan5039"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4116">3）所以呢？ 例如指示它在什么时候放弃 </tspan><tspan
+           id="tspan5035">3）所以呢？ 例如指示它在什么时候放弃 </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4118">Davidson
+           id="tspan5037">Davidson
 </tspan></tspan><tspan
          x="33.920918"
          y="129.07014"
-         id="tspan4126"><tspan
+         id="tspan5045"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4122">4）</tspan><tspan
+           id="tspan5041">4）</tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4124">而这一功能在语法分析之外有用吗？
+           id="tspan5043">而这一功能在语法分析之外有用吗？
 </tspan></tspan><tspan
          x="33.920918"
          y="134.00904"
-         id="tspan4134"><tspan
+         id="tspan5053"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4128">5）那就是我们教它，例如解决 </tspan><tspan
+           id="tspan5047">5）那就是我们教它，例如解决 </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4130">IQ </tspan><tspan
+           id="tspan5049">IQ </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4132">题
+           id="tspan5051">题
 </tspan></tspan><tspan
          x="33.920918"
          y="138.94794"
-         id="tspan4138"><tspan
+         id="tspan5057"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4136">6）它显然是有用的，因为它的即时反应能力
+           id="tspan5055">6）它显然是有用的，因为它的即时反应能力
 </tspan></tspan><tspan
          x="33.920918"
          y="143.88685"
-         id="tspan4146"><tspan
+         id="tspan5065"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4140">7）但这又和 </tspan><tspan
+           id="tspan5059">7）但这又和 </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4142">prompt </tspan><tspan
+           id="tspan5061">prompt </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4144">有什么不同？
+           id="tspan5063">有什么不同？
 </tspan></tspan><tspan
          x="33.920918"
          y="148.82575"
-         id="tspan4154"><tspan
+         id="tspan5073"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4148">8）</tspan><tspan
+           id="tspan5067">8）</tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4150">prompt </tspan><tspan
+           id="tspan5069">prompt </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4152">提供了即时反应的能力，它大约等同于</tspan><tspan
+           id="tspan5071">提供了即时反应的能力，它大约等同于</tspan><tspan
            y="148.82575"
-           id="tspan4156"> </tspan></tspan><tspan
+           id="tspan5075"> </tspan></tspan><tspan
          x="33.920918"
          y="153.76465"
-         id="tspan4166"><tspan
+         id="tspan5085"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4158">rule injection, </tspan><tspan
+           id="tspan5077">rule injection, </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4160">虽然 </tspan><tspan
+           id="tspan5079">虽然 </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4162">reflection </tspan><tspan
+           id="tspan5081">reflection </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4164">可能做得不够好
+           id="tspan5083">可能做得不够好
 </tspan></tspan><tspan
          x="33.920918"
          y="158.70356"
-         id="tspan4174"><tspan
+         id="tspan5093"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4168">9）</tspan><tspan
+           id="tspan5087">9）</tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4170">neural logic rules </tspan><tspan
+           id="tspan5089">neural logic rules </tspan><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4172">甚至是可以离散分解的，这一点</tspan></tspan><tspan
+           id="tspan5091">甚至是可以离散分解的，这一点</tspan></tspan><tspan
          x="33.920918"
          y="163.64246"
-         id="tspan4178"><tspan
+         id="tspan5097"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4176">我以前未有想过
+           id="tspan5095">我以前未有想过
 </tspan></tspan><tspan
          x="33.920918"
          y="168.58137"
-         id="tspan4182"><tspan
+         id="tspan5101"><tspan
            style="font-weight:300;-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start"
-           id="tspan4180">10）</tspan></tspan></text>
+           id="tspan5099">10）</tspan></tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:4.9389px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:start;text-anchor:start;fill:#000000;stroke:none;stroke-width:0.264583;stroke-linejoin:round;stroke-dasharray:none"
-       x="85.420319"
-       y="110.58332"
+       x="86.224968"
+       y="180.84534"
        id="text1170"><tspan
          sodipodi:role="line"
          id="tspan1168"
          style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';stroke-width:0.264583"
-         x="85.420319"
-         y="110.58332">new conclusions</tspan></text>
+         x="86.224968"
+         y="180.84534">new conclusions</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1)"
-       d="M 80.63828,84.512397 98.79021,102.33303"
+       d="m 81.442927,154.77442 18.15193,17.82063"
        id="path1226" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1)"
-       d="M 79.439356,68.098664 V 53.979851"
+       d="M 80.244003,138.36068 V 123.7127"
        id="path1226-9"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1)"
-       d="M 98.505511,46.048472 H 123.20765"
+       d="M 99.310158,116.31049 H 124.0123"
        id="path1226-9-2"
        sodipodi:nodetypes="cc" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1)"
-       d="M 129.75948,84.725488 111.60755,102.54612"
+       d="M 130.56413,154.98751 112.4122,172.80814"
        id="path1226-7" />
     <g
        id="g2204"
-       transform="translate(-54.26752,-9.8000718)">
+       transform="translate(-53.462873,60.461949)">
       <rect
          style="fill:none;stroke:#2ad4ff;stroke-width:1.05833;stroke-linejoin:round"
          id="rect1-2-5"
@@ -340,12 +345,12 @@
     </g>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1)"
-       d="M 134.20672,67.104504 V 51.398191"
+       d="M 135.01137,137.36652 V 121.66021"
        id="path1226-9-7"
        sodipodi:nodetypes="cc" />
     <g
        id="g2204-0"
-       transform="translate(0.49980683,-12.381732)">
+       transform="translate(1.3044537,57.880289)">
       <rect
          style="fill:none;stroke:#2ad4ff;stroke-width:1.05833;stroke-linejoin:round"
          id="rect1-2-5-9"
@@ -372,7 +377,7 @@
        x="155.48282"
        y="223.31409"
        id="text2287"
-       transform="matrix(0.26458333,0,0,0.26458333,5.3605275,3.226601)"><tspan
+       transform="matrix(0.26458333,0,0,0.26458333,6.1651743,73.488622)"><tspan
          sodipodi:role="line"
          id="tspan2285"
          x="155.48282"
@@ -381,10 +386,34 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       x="155.48282"
+       y="223.31409"
+       id="text2287-7"
+       transform="matrix(0.26458333,0,0,0.26458333,60.618054,63.726921)"><tspan
+         sodipodi:role="line"
+         id="tspan2285-3"
+         x="155.48282"
+         y="223.31409"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light'">extraction</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       x="155.48282"
+       y="223.31409"
+       id="text2287-612"
+       transform="matrix(0.26458333,0,0,0.26458333,62.128527,48.944276)"><tspan
+         sodipodi:role="line"
+         id="tspan2285-9"
+         x="155.48282"
+         y="223.31409"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light'">injection</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
        x="217.18559"
        y="223.31409"
        id="text2287-6"
-       transform="matrix(0.26458333,0,0,0.26458333,22.458622,-31.85561)"><tspan
+       transform="matrix(0.26458333,0,0,0.26458333,23.263269,38.406411)"><tspan
          sodipodi:role="line"
          id="tspan2285-2"
          x="217.18559"
@@ -398,18 +427,35 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
-       x="155.48282"
+       x="204.63223"
        y="223.31409"
        id="text2287-61"
-       transform="matrix(0.26458333,0,0,0.26458333,85.914327,-23.226342)"><tspan
+       transform="matrix(0.26458333,0,0,0.26458333,81.427304,41.214842)"><tspan
          sodipodi:role="line"
          id="tspan2285-8"
+         x="204.63223"
+         y="223.31409"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:center;text-anchor:middle">can be facts</tspan><tspan
+         sodipodi:role="line"
+         x="204.63223"
+         y="241.98079"
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light';text-align:center;text-anchor:middle"
+         id="tspan4711">or rules</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Medium';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;font-variation-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000"
+       x="155.48282"
+       y="223.31409"
+       id="text2287-61-8"
+       transform="matrix(0.26458333,0,0,0.26458333,46.031583,129.77409)"><tspan
+         sodipodi:role="line"
+         id="tspan2285-8-9"
          x="155.48282"
          y="223.31409"
-         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light'">can be facts or rules</tspan></text>
+         style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light'">working memory</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.529167;stroke-linejoin:round;stroke-dasharray:none;marker-end:url(#Arrow1-3)"
-       d="M 123.45713,41.544661 H 98.754992"
+       d="M 124.26178,111.80668 H 99.559639"
        id="path1226-9-2-5"
        sodipodi:nodetypes="cc" />
     <text
@@ -424,5 +470,61 @@
          x="155.48282"
          y="223.31409"
          style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light'" /></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       x="235.92226"
+       y="198.40392"
+       id="text4186"
+       transform="matrix(0.26458333,0,0,0.26458333,-14.597341,-23.142236)"><tspan
+         sodipodi:role="line"
+         id="tspan4184"
+         x="235.92226"
+         y="198.40392">如果分开 consolidation 则可能导致紊乱。</tspan><tspan
+         sodipodi:role="line"
+         x="235.92226"
+         y="217.07062"
+         id="tspan4188">AR 是由 DLN 处理的，但似乎也可以用 逻辑引擎处理。</tspan><tspan
+         sodipodi:role="line"
+         x="235.92226"
+         y="235.73732"
+         id="tspan4190">但 <tspan
+   style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi'"
+   id="tspan4374">分开处理 </tspan>则有问题，因为两者的工作是重复的。</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:300;font-stretch:normal;font-size:18.6667px;line-height:1;font-family:'Alibaba PuHuiTi';-inkscape-font-specification:'Alibaba PuHuiTi Light';font-variant-ligatures:normal;font-variant-position:normal;font-variant-caps:normal;font-variant-numeric:normal;font-variant-alternates:normal;font-variant-east-asian:normal;font-feature-settings:normal;text-indent:0;text-align:start;text-decoration-line:none;text-decoration-style:solid;text-decoration-color:#000000;letter-spacing:normal;word-spacing:normal;text-transform:none;writing-mode:lr-tb;direction:ltr;text-orientation:mixed;dominant-baseline:auto;baseline-shift:baseline;text-anchor:start;white-space:normal;shape-padding:0;shape-margin:0;inline-size:0;opacity:1;vector-effect:none;fill:#000000;fill-opacity:1;stroke:none;stroke-width:2;stroke-linecap:butt;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1;-inkscape-stroke:none;stop-color:#000000;stop-opacity:1"
+       x="279.20755"
+       y="201.17603"
+       id="text4918"
+       transform="scale(0.26458333)"><tspan
+         sodipodi:role="line"
+         id="tspan4916"
+         x="279.20755"
+         y="201.17603">能做到的优势：</tspan><tspan
+         sodipodi:role="line"
+         x="279.20755"
+         y="219.84273"
+         id="tspan4928">① LTM 的组织</tspan><tspan
+         sodipodi:role="line"
+         x="279.20755"
+         y="238.50943"
+         id="tspan4934">    （Transformer 做不到）</tspan><tspan
+         sodipodi:role="line"
+         x="279.20755"
+         y="257.17612"
+         id="tspan4922">② NL injection into DLN</tspan><tspan
+         sodipodi:role="line"
+         x="279.20755"
+         y="275.84283"
+         id="tspan4932">    （有用，但 prompt 也可以做到）</tspan><tspan
+         sodipodi:role="line"
+         x="279.20755"
+         y="294.50952"
+         id="tspan4924">③ </tspan><tspan
+         sodipodi:role="line"
+         x="279.20755"
+         y="313.17624"
+         id="tspan4926">④</tspan></text>
   </g>
 </svg>
