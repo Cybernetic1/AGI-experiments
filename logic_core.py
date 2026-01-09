@@ -92,6 +92,51 @@ class SymbolicEngine:
 
         return [Proposition(pred, args, truth) for (pred, args), truth in kb.items()]
 
+    def backward_chain(
+        self,
+        goal: Proposition,
+        facts: List[Proposition],
+        rules: List[Rule],
+        max_depth: int = 3,
+    ) -> List[List[Proposition]]:
+        """Goal-directed backward chaining for proof sketches.
+
+        Returns a list of proof paths (each a list of propositions). Stops at
+        max_depth to avoid exponential blowup. Uses unification on rule
+        conclusions to generate subgoals.
+        """
+
+        kb: Dict[Tuple[str, Tuple[str, ...]], float] = {
+            (f.predicate, f.args): f.truth for f in facts
+        }
+        proofs: List[List[Proposition]] = []
+
+        def _prove_all(subgoals: List[Proposition], depth: int, trail: List[Proposition]):
+            if not subgoals:
+                proofs.append(trail)
+                return
+            if depth < 0:
+                return
+            first, rest = subgoals[0], subgoals[1:]
+            _prove_goal(first, rest, depth, trail)
+
+        def _prove_goal(target: Proposition, remaining: List[Proposition], depth: int, trail: List[Proposition]):
+            key = (target.predicate, target.args)
+            if key in kb:
+                found = Proposition(target.predicate, target.args, kb[key])
+                _prove_all(remaining, depth, trail + [found])
+            if depth == 0:
+                return
+            for rule in rules:
+                subst = _unify(rule.conclusion, target)
+                if subst is None:
+                    continue
+                new_goals = [_apply_subst(p, subst, 1.0) for p in rule.premises]
+                _prove_all(new_goals + remaining, depth - 1, trail + [target])
+
+        _prove_all([goal], max_depth, [])
+        return proofs
+
 
 __all__ = [
     "Proposition",

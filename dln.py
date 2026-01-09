@@ -31,14 +31,15 @@ class SimpleDLN(nn.Module):
         )
 
     def encode_prop(self, prop: Proposition) -> torch.Tensor:
-        pred = torch.tensor([self.pred_vocab[prop.predicate]])
+        device = self.pred_embed.weight.device
+        pred = torch.tensor([self.pred_vocab[prop.predicate]], device=device)
         emb = [self.pred_embed(pred)]
         for i in range(2):
             arg = prop.args[i] if i < len(prop.args) else "<pad>"
             arg_idx = self.arg_vocab.get(arg, 0)
-            emb.append(self.arg_embed(torch.tensor([arg_idx])))
+            emb.append(self.arg_embed(torch.tensor([arg_idx], device=device)))
         if len(emb) == 2:
-            emb.append(self.arg_embed(torch.tensor([0])))
+            emb.append(self.arg_embed(torch.tensor([0], device=device)))
         return torch.cat(emb, dim=-1)
 
     def forward(self, premises: List[Proposition], conclusion: Proposition) -> torch.Tensor:

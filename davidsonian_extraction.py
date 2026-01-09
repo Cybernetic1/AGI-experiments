@@ -27,9 +27,11 @@ class DavidsonianExtractor:
     - time (temporal expressions)
     """
     
-    def __init__(self):
+    def __init__(self, enable_quantifiers: bool = True, enable_pronouns: bool = True):
         self.event_counter = 0
         self.entity_counter = 0
+        self.enable_quantifiers = enable_quantifiers
+        self.enable_pronouns = enable_pronouns
         
     def create_event_id(self):
         """Generate unique event ID."""
@@ -38,9 +40,20 @@ class DavidsonianExtractor:
     
     def create_entity_id(self, text):
         """Generate entity ID (or reuse for known entities)."""
-        # For now, use text as entity ID (simple)
-        # Later: implement entity registry
+        pronouns = {"he", "she", "it", "they", "him", "her", "them", "we", "us"}
+        if self.enable_pronouns and text.lower() in pronouns:
+            return f"pron_{text.lower()}"
         return text.lower()
+
+    def _quantifier_from_det(self, det_token):
+        if not self.enable_quantifiers:
+            return None
+        det = det_token.lower_
+        if det in {"every", "each", "all"}:
+            return "forall"
+        if det in {"a", "an", "some", "another"}:
+            return "exists"
+        return None
     
     def extract(self, sentence: str) -> List[Tuple[str, str, str]]:
         """
@@ -71,18 +84,33 @@ class DavidsonianExtractor:
                         entity_id = self.create_entity_id(child.text)
                         propositions.append((event_id, "agent", entity_id))
                         propositions.append((entity_id, "type", "entity"))
+                        for det in child.children:
+                            if det.dep_ == "det":
+                                quant = self._quantifier_from_det(det)
+                                if quant:
+                                    propositions.append((entity_id, "quantifier", quant))
                     
                     # Meta-Rule 3: Direct object → Patient
                     elif child.dep_ == "dobj":
                         entity_id = self.create_entity_id(child.text)
                         propositions.append((event_id, "patient", entity_id))
                         propositions.append((entity_id, "type", "entity"))
+                        for det in child.children:
+                            if det.dep_ == "det":
+                                quant = self._quantifier_from_det(det)
+                                if quant:
+                                    propositions.append((entity_id, "quantifier", quant))
                     
                     # Meta-Rule 4: Indirect object → Recipient
                     elif child.dep_ == "dative":
                         entity_id = self.create_entity_id(child.text)
                         propositions.append((event_id, "recipient", entity_id))
                         propositions.append((entity_id, "type", "entity"))
+                        for det in child.children:
+                            if det.dep_ == "det":
+                                quant = self._quantifier_from_det(det)
+                                if quant:
+                                    propositions.append((entity_id, "quantifier", quant))
                     
                     # Meta-Rule 5: Adverb → Manner
                     elif child.dep_ == "advmod":
@@ -97,6 +125,11 @@ class DavidsonianExtractor:
                             if prep_child.dep_ == "pobj":
                                 entity_id = self.create_entity_id(prep_child.text)
                                 propositions.append((entity_id, "type", "entity"))
+                                for det in prep_child.children:
+                                    if det.dep_ == "det":
+                                        quant = self._quantifier_from_det(det)
+                                        if quant:
+                                            propositions.append((entity_id, "quantifier", quant))
                                 
                                 # Location markers
                                 if prep_type in ["in", "at", "on"]:
