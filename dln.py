@@ -29,6 +29,8 @@ class SimpleDLN(nn.Module):
             nn.Linear(embed_dim, 1),
             nn.Sigmoid(),
         )
+        # Auxiliary AR-style head: predict predicate class from premises encoding
+        self.ar_head = nn.Linear(self.prop_dim, len(predicates))
 
     def encode_prop(self, prop: Proposition) -> torch.Tensor:
         device = self.pred_embed.weight.device
@@ -42,11 +44,14 @@ class SimpleDLN(nn.Module):
             emb.append(self.arg_embed(torch.tensor([0], device=device)))
         return torch.cat(emb, dim=-1)
 
-    def forward(self, premises: List[Proposition], conclusion: Proposition) -> torch.Tensor:
+    def encode_premises(self, premises: List[Proposition]) -> torch.Tensor:
         if not premises:
             raise ValueError("Need at least one premise")
         prem_vecs = torch.cat([self.encode_prop(p) for p in premises], dim=0)
-        prem_repr = prem_vecs.mean(dim=0, keepdim=True)
+        return prem_vecs.mean(dim=0, keepdim=True)
+
+    def forward(self, premises: List[Proposition], conclusion: Proposition) -> torch.Tensor:
+        prem_repr = self.encode_premises(premises)
         concl_repr = self.encode_prop(conclusion)
         features = torch.cat([prem_repr, concl_repr], dim=-1)
         return self.mlp(features)
