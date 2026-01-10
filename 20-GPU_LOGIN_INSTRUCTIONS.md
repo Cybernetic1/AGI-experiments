@@ -4,7 +4,7 @@
 
 ```bash
 ssh -p 23163 root@connect.cqa1.seetacloud.com
-# Password: k9NR78xekWy8
+# Password: XXXXXXXXX
 ```
 
 ## Step 2: Navigate to Repository
