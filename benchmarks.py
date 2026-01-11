@@ -353,6 +353,7 @@ def _collect_labels(
 
     disk_hit = False
     labels: Dict[Tuple[str, Tuple[str, ...]], float] = {}
+    cache_file = None
     if use_disk_cache:
         LABEL_CACHE_DIR.mkdir(parents=True, exist_ok=True)
         key_hash = hashlib.sha1(repr(key).encode("utf-8")).hexdigest()
@@ -362,17 +363,22 @@ def _collect_labels(
                 with open(cache_file, "rb") as f:
                     labels = pickle.load(f)
                     disk_hit = True
+                print(f"[labels] loaded {len(labels)} labels from disk cache", flush=True)
             except Exception:
                 labels = {}
 
     if not labels:
+        t0 = time.perf_counter()
+        print(f"[labels] collecting on {len(facts)} facts with {len(rules)} rules...", flush=True)
         eng = SymbolicEngine()
         targets = eng.infer(facts, rules)
         for p in targets:
             if predicate_filter and p.predicate != predicate_filter:
                 continue
             labels[(p.predicate, p.args)] = p.truth
-        if use_disk_cache and not disk_hit:
+        dt = time.perf_counter() - t0
+        print(f"[labels] generated {len(labels)} labels in {dt:.2f}s", flush=True)
+        if use_disk_cache and not disk_hit and cache_file is not None:
             try:
                 with open(cache_file, "wb") as f:
                     pickle.dump(labels, f)
