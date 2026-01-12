@@ -13,6 +13,7 @@ import torch
 from logic_core import Proposition, Rule, SymbolicEngine
 from dln import SimpleDLN, _require_torch, F
 from rule_store import RuleStore
+from rule_injection import RuleInjector
 from entity_registry import PersistentEntityRegistry
 from davidsonian_extraction import DavidsonianExtractor
 
@@ -488,6 +489,23 @@ def rule_store_smoke_test():
     return store
 
 
+def rule_injection_smoke_test():
+    _require_torch()
+    facts, _ = _toy_data()
+    predicates = ["A", "B", "C"]
+    args = ["<pad>", "alice", "bob", "?x"]
+    model = SimpleDLN(predicates, args)
+    store = RuleStore(model, sim_threshold=0.95)
+    injector = RuleInjector(model, store, transfer_threshold=0.4, lr=5e-3)
+    new_rule = Rule([Proposition("A", ("?x",))], Proposition("C", ("?x",)), 1.0)
+    accepted = injector.transfer_rule_to_dln(new_rule, facts, confidence=0.9, train_steps=6)
+    assert accepted
+    with torch.no_grad():
+        alice = Proposition("A", ("alice",), 1.0)
+        out = model([alice], Proposition("C", ("alice",), 1.0)).item()
+    return out
+
+
 def dln_smoke_test(steps: int = 60):
     _require_torch()
     facts, rules = _toy_data()
@@ -581,6 +599,7 @@ def run_all_smoke_tests(run_tiny: bool = True, run_ga: bool = True, run_para: bo
         return
     model, labels = dln_smoke_test()
     _ = rule_store_smoke_test()
+    _ = rule_injection_smoke_test()
     if run_para:
         paraconsistency_smoke_test()
         paraconsistency_chain_test()
