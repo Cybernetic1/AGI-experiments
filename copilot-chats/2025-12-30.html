@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Natural language, spaCy, Chomsky, forest of trees...</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Natural language, spaCy, Chomsky, forest of trees...</h1>
+<div class="entries">
+<div class="entry">
+<div class="timestamp">2025-12-30 16:16:32 UTC</div>
+<div class="text">There has been new progress.  Phase 1 tests passed with great results.  VQ seems to be implemented.  We were stuck at the question of whether to let our logic network parse natural language.  I think affirmative.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 16:46:54 UTC</div>
+<div class="text">1) seems that spaCy is already installed</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 16:56:22 UTC</div>
+<div class="text">oh I remember, torch is not install because I was doing experiments on my laptop （this is the desktop）.  Please install the CPU version as this machine has no GPU.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 17:09:05 UTC</div>
+<div class="text">good, how about training with some NL data to see if it can learn NL parsing?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 17:10:27 UTC</div>
+<div class="text">wait... I mean using spaCy as assist... do you think that shall be our next target or you have other suggestions?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 17:20:53 UTC</div>
+<div class="text">I just tried in the background, successfully installed torch and spacy.  You can check.  We should certainly proceed with option 1.  I have a question though:  in the future, shall we use spaCy to assist NL parsing or is it just temporary for training?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 17:22:53 UTC</div>
+<div class="text">OK, I have done the download for you.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 17:33:03 UTC</div>
+<div class="text">yes, lets test on some real dataset and then possibly correct our earlier deficiency in that some corpus data samples are insufficiently covered (they were simply gaps during training)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 19:28:53 UTC</div>
+<div class="text">I have some questions: so, the 100% success rate is only w.r.t. the current tiny corpus, in the future, more training may be needed?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 19:30:19 UTC</div>
+<div class="text">second question: can logic net learn similar rules without spaCy assist?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 19:35:48 UTC</div>
+<div class="text">nice explanation.  So, we&#x27;re imposing a way to parse NL by introducing spaCy.  Has it been proven that using spaCy is actually advantageous towards prediction? ie, building a model of language / the world?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 19:54:55 UTC</div>
+<div class="text">really interesting question indeed.  I&#x27;m more interested if spaCy can create a &quot;parse tree&quot; of the NL sentence and whether this structure is useful to the logic net.  Such a tree is akin to &quot;logical form&quot;.  It would be based on the single notion of which subtree &quot;modifies&quot; which node.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 20:11:44 UTC</div>
+<div class="text">yes, I want to proceed, but want to know more about what you mean WM is a forest of trees, does that still retain the notion of propositions?  Can you give some examples of such tree representations?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 20:17:36 UTC</div>
+<div class="text">But the tree structure may create difficulties for the design of differntiable logic rules? or how could we solve that problem?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 20:38:12 UTC</div>
+<div class="text">another question is: the parse trees are found by spaCy, but when logic net produces new propositions, they either modify existing sub-trees or create lone propositions, but they cannot form new trees.  Is that a serious limitation?  What kind of differentiable mechanism allows to modify trees?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 21:19:47 UTC</div>
+<div class="text">Nice!  I wonder: the generated tree is discrete -- it differs from other trees discretely.  So how could this process be differentiable?  Can you explain why this can happen?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-30 21:27:20 UTC</div>
+<div class="text">yes, but that seems to create an exponential number of parameters as number of nodes grows... does the cost outweigh the benefits?  or is that impression not correct?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-31 22:43:34 UTC</div>
+<div class="text">/usso, do we have a comprehensive list of NL templates? They seem to come from Chomskyan linguistics.  What happens if our model encounters informal grammatical patterns not fitting the templates?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 07:02:58 UTC</div>
+<div class="text">After some more research, it seems that we want WM to have more &quot;links&quot; in the form of trees or graphs, but such links can be realized by the use of indexed entities.  Our first-order logic rules or rewrite rules still can do the job, but it must do &quot;soft&quot; matching over the entire WM.  The computation scales as O(N²) with N being WM size in nodes, though the # parameters can be much smaller.  Secondly, the parsing of NL to and from our internal representation are symmetric in the &quot;inverse function&quot; sense, is it possible to exploit this by using reversible logic ru</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 07:06:18 UTC</div>
+<div class="text">After some more research, it seems that we want WM to have more &quot;links&quot; in the form of trees or graphs, but such links can be realized by the use of indexed entities.  Our first-order logic rules or rewrite rules still can do the job, but it must do &quot;soft&quot; matching over the entire WM.  The computation scales as O(N²) with N being WM size in nodes, though the # parameters can be much smaller. I don&#x27;t have a conclusion yet but that takes us closer.  Secondly, the parsing of NL to and from our internal representation are symmetric in the &quot;inverse function&quot; sense, is it possible to exploit this, eg. by using reversible logic rules, or just doing the training symmetrically?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 07:43:56 UTC</div>
+<div class="text">Thanks a lot. Please write a summary of our current insights in a .md file and prepare to implement a prototype.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 08:14:12 UTC</div>
+<div class="text">my partner has rented a server with GPU, so we can run lengthy tests there.  Testing on TinyStories looks good.  Please prepare while I log into the server and set things up.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 08:26:18 UTC</div>
+<div class="text">I agreed with the friend to use GPU server at late night after 1am.  We still have ~10 hours.  We can run some small tests using this machine (venv), without GPU.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 08:58:28 UTC</div>
+<div class="text">my friend is interested in the ARC prize which in my impression are like traditional IQ tests.  Do you think our model can solve it, and what kind of specialized mods or training might be good for that target?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 10:05:55 UTC</div>
+<div class="text">What larger text corpuses can we try after TinyStories?  Is the LTM module already integrated in our system and working well?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 10:39:40 UTC</div>
+<div class="text">the friend is not logged in now.  We can try the GPU server.  &quot;ssh -p 23163 root@connect.cqa1.seetacloud.com&quot; password = ********* . I have just git cloned our repo there...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 11:59:01 UTC</div>
+<div class="text">successfully installed deps. Quick test gets error: &quot;cannot send a request, as the client has been closed.&quot;  It seems to be from load_dataset(&#x27;roneneldan/TinyStories,...&#x27;).  &quot;Cannot assign requested address&quot; thrown while requesting HEAD https://huggingface.co/datasets/roneneldan/TinyStories/resolve/main/README.md</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 13:56:03 UTC</div>
+<div class="text">indexSelectLargeIndex: block: [0,0,0], thread: [30,0,0] Assertion `srcIndex &lt; srcSelectDimSize` failed.
+RuntimeError: CUDA error: device-side assert triggered
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 15:51:19 UTC</div>
+<div class="text">/usage</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 16:09:48 UTC</div>
+<div class="text">`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset &#x27;roneneldan/TinyStories&#x27; isn&#x27;t based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 16:20:23 UTC</div>
+<div class="text">Attempt 1/3 to load dataset...
+&#x27;[Errno 99] Cannot assign requested address&#x27; thrown while requesting HEAD https://huggingface.co/datasets/roneneldan/TinyStories/resolve/main/README.md</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 16:26:38 UTC</div>
+<div class="text">wait... I suspect it is because the server is in China and is behind a firewall.   Running it locally succeeds, but with an error near the end.  
+Summary:
+  ✓ Vocabulary size: 367
+  ✓ Entity count: 82
+  ✓ Max text ID seen: 65
+  ✓ Max entity ID seen: 6
+Fatal Python error: PyGILState_Release: thread state 0x7670d81c4db0 must be current when releasing
+Python runtime state: finalizing (tstate=0x0000000000ba5748)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 16:29:35 UTC</div>
+<div class="text">wait, I downloaded the file locally and I can scp it to the China server. If you tell me where are the files to be transferred?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 16:39:02 UTC</div>
+<div class="text">Epoch 1/10
+----------------------------------------------------------------------
+Training: 100%|██████████| 32/32 [00:02&lt;00:00, 13.63it/s, loss=471480.8750, parse=327727.9062, gen=5.9484]
+Train - Loss: 462135.3486, Parse: 308874.5928, Gen: 6.5730, Cycle: 306508.3700
+Evaluating: 100%|███████████████████████████████████████████████████████████| 4/4 [00:00&lt;00:00, 28.30it/s]
+Val - Parse Accuracy: 0.0000
+
+Epoch 10/10
+----------------------------------------------------------------------
+Training: 100%|██████████| 32/32 [00:02&lt;00:00, 13.83it/s, loss=397127.0938, parse=260151.2031, gen=4.6258]
+Train - Loss: 421136.6143, Parse: 280433.6084, Gen: 4.7466, Cycle: 281396.5164
+Evaluating: 100%|███████████████████████████████████████████████████████████| 4/4 [00:00&lt;00:00, 30.43it/s]
+Val - Parse Accuracy: 0.0000</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 17:15:16 UTC</div>
+<div class="text">It&#x27;s running the full test now, at 7/50 the parse accuracy is still 0.0000. What do you mean by &quot;exact match&quot; metric is too strict?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 17:21:20 UTC</div>
+<div class="text">Have not updated. At 11/50 the loss increased to 11145265.9369 from 7446247.7926 at 2/50.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 17:35:54 UTC</div>
+<div class="text">Loss begins at 298.4, fluctuates up and down but remains around that proximity, ends at 307.9. The accuracy is always 0.0000.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 18:01:26 UTC</div>
+<div class="text">checkpoints/ dir does not have a &quot;best_model.pt&quot; file nor any .pt files even in subdirs.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 18:12:09 UTC</div>
+<div class="text">1) Finished training, but with error: print(f&quot;Training complete! Best validation accuracy: {best_val_acc:.4f}&quot;)
+NameError: name &#x27;best_val_acc&#x27; is not defined. Did you mean: &#x27;best_val_loss&#x27;?
+2) indexSelectLargeIndex: block: [500,0,0], thread: [32,0,0] Assertion `srcIndex &lt; srcSelectDimSize` failed.
+File &quot;/root/AGI-experiments/symmetric_logic_network.py&quot;, line 78, in encode_text
+    encoded, _ = self.text_encoder(embedded)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 18:38:42 UTC</div>
+<div class="text">Total samples: 1027
+Component-wise Accuracy:
+  Entity (1st component):   2.04%
+  Relation (2nd component): 0.00%
+  Value (3rd component):    0.00%
+
+Overall Accuracy:
+  Exact match (all 3):      0.00%
+  2 out of 3 correct:       0.00%
+  At least 1 correct:       2.04%
+
+Interpretation:
+  ✗ Poor. Model needs much more training or larger capacity.
+  → Model finds entities easier than relations (expected)
+  → Values are hardest to predict (most variation)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 19:00:06 UTC</div>
+<div class="text">Good analysis. Particularly intriguing is the symmetric NL parsing assumption.  What do you mean by &quot;cycle&quot;?  That assumption must be wrong because there are often many ways to express a meaning.  But we can use the logic net to parse our generated results to see if it is identical to what we started with.  That is an interesting kind of symmetry.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 19:08:32 UTC</div>
+<div class="text">I&#x27;m still thinking... if we are doing AR training, we are forcing the generated text to be identical to the input text, right?  But could we modify the objective of AR to accomodate for the one-to-many nature of NL generation?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 20:20:34 UTC</div>
+<div class="text">We talked about Chomsky&#x27;s 50-100 linguistic primitive patterns. I wonder if we could &quot;prime&quot; the network with rules for these patterns, &quot;hand-crafted&quot; if you will, to accelerate convergence?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 21:00:21 UTC</div>
+<div class="text">Yes, please do the test. But I have another observation that if we tested with too few rules, then the rules are busy fitting to very diverse linguistic phenomena, perhaps leading to poor convergence?  How might we mitigate that?  Does our models allow to expand the # of rules without ab initio re-training?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 21:20:54 UTC</div>
+<div class="text">File &quot;/root/AGI-experiments/pattern_priming.py&quot;, line 218, in create_primed_network
+    model.logic_rules[i] if hasattr(model, &#x27;logic_rules&#x27;) else None,
+TypeError: &#x27;ReversibleLogicNetwork&#x27; object is not subscriptable</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 21:26:06 UTC</div>
+<div class="text">(The test is running now.)  Sorry to interrupt the plan, but there is another idea very much worth exploring: using genetic algorithms to learn logic / symbolic rules.  Is it possible to let GA and neural networks work together?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 21:40:57 UTC</div>
+<div class="text">So the GA will also work within the framework of AR, right?  But how about our earlier idea of semantic-AR?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 21:53:45 UTC</div>
+<div class="text">Bad news: both the capacity test and priming test end up with 0.0000 accuracy, and both increased the loss by about 10-20%.  Yes, we should run an initial test on GA to see if it learns.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 22:11:27 UTC</div>
+<div class="text">The GA is initializing the random population for a long time... looks like frozen.  Could it be that the GPU does not really add efficiency to GA algorithms?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 22:15:39 UTC</div>
+<div class="text">By offline, do you mean it uses the existing cached data in ./data/?  Or does not use real text data at all?  I can download whatever is needed and scp to the China server.  But if GPU does not give an edge then perhaps just running on this machine is good enough...?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 22:19:34 UTC</div>
+<div class="text">Yes please. But how come we seemed to have some success in GA just earlier?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 22:22:27 UTC</div>
+<div class="text">ImportError: cannot import name &#x27;GeneticRuleLearner&#x27; from &#x27;genetic_logic_rules&#x27; (/home/yky/misc-programs/AGI-experiments/genetic_logic_rules.py)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 22:35:11 UTC</div>
+<div class="text">Let me confirm a few things about the GA algorithm:  so each &quot;individual&quot; is a rule and they cross-over with each other, right?  I was thinking of rules like first-order logic, but it is not clear how one might represent them genetically.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 22:39:41 UTC</div>
+<div class="text">I see that POS tag sequences are easier to match.  But how exactly do such rules generate the results needed?  The task is AR, right?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 22:58:09 UTC</div>
+<div class="text">I don&#x27;t fully understand option 1 yet.  So GA has rules that are POS sequence fragments, they match parts of input sentences.  How can that help logic?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 23:00:29 UTC</div>
+<div class="text">I don&#x27;t fully understand option 1 yet.  So GA has rules that are POS sequence fragments, they match parts of input sentences.  How can that help logic?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 23:03:22 UTC</div>
+<div class="text">Yes, and the idea is very good.  But how can you train the GA by itself?  Doesn&#x27;t it require the neural part to get error signals?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 23:07:42 UTC</div>
+<div class="text">Sounds good. Meanwhile, test_ga.py is doing pathetically:
+Initializing random population...
+Gen   1 | Best: 0.000 | Avg: 0.000 | Matches: 0 | Pattern: [&#x27;AUX&#x27;, &#x27;ADP&#x27;, &#x27;DET&#x27;]
+Gen   2 | Best: 0.000 | Avg: 0.000 | Matches: 0 | Pattern: [&#x27;AUX&#x27;, &#x27;ADP&#x27;, &#x27;DET&#x27;]
+Gen   3 | Best: 0.000 | Avg: 0.000 | Matches: 0 | Pattern: [&#x27;AUX&#x27;, &#x27;ADP&#x27;, &#x27;DET&#x27;]
+Gen   4 | Best: 0.000 | Avg: 0.000 | Matches: 0 | Pattern: [&#x27;AUX&#x27;, &#x27;ADP&#x27;, &#x27;DET&#x27;]
+Gen   5 | Best: 0.000 | Avg: 0.000 | Matches: 0 | Pattern: [&#x27;AUX&#x27;, &#x27;ADP&#x27;, &#x27;DET&#x27;]</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-01 23:16:57 UTC</div>
+<div class="text">Perhaps this session is running too long and Copilot is behaving erratic.  Let&#x27;s wrap this discussion up in some .md file, and start a new session?</div>
+</div>
+</div>
+</body>
+</html>

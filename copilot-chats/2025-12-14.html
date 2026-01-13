@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Switch from using RL to auto-regression, for playing TicTacToe</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Switch from using RL to auto-regression, for playing TicTacToe</h1>
+<div class="entries">
+<div class="entry">
+<div class="timestamp">2025-12-14 16:59:56 UTC</div>
+<div class="text">Long time no see.  Last time we were exploring a kind of logic network with reinforcement learning.  After some thinking, I think we should abandone the RL approach and use logic in an auto-encoder setting, learning the dynamics of the tic-tac-toe game.  This seems to be much more efficient.  I am considering to start a different repo but retaining some of my old code such as the TTT Gym code.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 19:38:05 UTC</div>
+<div class="text">Our new strategy is to use the game of TicTacToe as a simulation of AGI. We try to predict the game play of TTT as it is played by random computer moves.  The &quot;latent representation&quot; of the autoencoder is in the form of logic propositions, and the logic rules are neural networks acting on them (there can be multiple layers).  The entire set of logic propositions in all layers constitute the &quot;state&quot; of the Autoencoder and which will also be the &quot;state&quot; for reinforcement learning experiments later.  The form of logic propositions are fixed by us, but AE can learn (invent) new predicates and constants.  I started a new project in a new folder with Copilot CLI.  It is up one level in ../logic-autoencoder-ttt/.  Shall we switch the working directory?</div>
+</div>
+</div>
+</body>
+</html>

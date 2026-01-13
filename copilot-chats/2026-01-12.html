@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A (quite) general mechanism for meta-learning in logic</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>A (quite) general mechanism for meta-learning in logic</h1>
+<div class="entries">
+<div class="entry">
+<div class="timestamp">2026-01-12 14:30:57 UTC</div>
+<div class="text">The last session was too long so a new one is started. We were discussing &quot;direct rule injection&quot; in our AGI system. We plan to build an <b>NL→logic→DLN mapper</b> and you outlined some steps and issues. You wrote: &quot;predicates and modifiers don’t neatly align to a fixed embedding/key space—sense disambiguation, OOVs, and consistent mapping of paraphrases/synonyms all require either a robust semantic linker or a learned adapter, otherwise rules fragment and fail to compose.&quot;
+That was insightful. It seems that the mapper requires highly intelligent rules for itself. Can such rules be learned? This is a <b>meta-learning</b> problem and may give us more useful ideas.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 15:44:34 UTC</div>
+<div class="text">If theres is a bias towards shorter and more general rules, those rules can become established in the DLN (ie, with high confidence) and become canonical without supervision or explicit bias. Injection requires a special step of transferring a logical form to DLN, which is not normally there. I want to 1) identify the loss/reward pathway that enables learning the additional rules for injection, and 2) seed with some key rules along this path to accelerate learning.  That seems to be very cost-effective, right?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 15:51:13 UTC</div>
+<div class="text">I mean, if we have the special mechanism that transfers a logical form to DLN, can the rest be achieved using symbolic rules <b>within the symbolic engine</b> and nothing else?  And this idea may extend to similar mechanisms of <b>meta-learning</b>?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 16:02:58 UTC</div>
+<div class="text">I see. <b>Bayesian / bandit-style updates</b> are sufficient because we&#x27;re not modifying the rules themselves. In the meta-learning idea, we seem to lack a mechanism to invent rules although this could follow ILP traditional practices.  Then we seem to have a <b>general meta-learning mechanism</b>?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 18:04:31 UTC</div>
+<div class="text">So the addition of a rule to DLN is the key step towards meta-reasoning. The same route is also achievable by adding rules to the symbolic-engine side. In categorical logic this is the &ndash; ^ A  ⊢  (&ndash; × A) <b>adjuction</b> and also called &quot;<b>Cartesian closure</b>&quot;. Perhaps it is the <b>most general form</b> of meta-reasoning as far as logic is concerned?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 18:15:04 UTC</div>
+<div class="text">So we need to &quot;score&quot; the symbolic rule-base, either &quot;Bayesian&quot; or bandit-style as you suggested. Would the Bayesian approach be too costly to scale?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 21:06:20 UTC</div>
+<div class="text">Good. Can you share the gist as an .md file about the scheme of meta-reasoning? We would focus on the rules injection part for now, but do mention <b>there are other aspects</b> of meta-reasoning.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 21:15:19 UTC</div>
+<div class="text">Please resume our developments, taking our discussions into account.  What should be our next steps?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 21:50:24 UTC</div>
+<div class="text">Yes, please proceed to implement a simple form of rule-injection.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 21:54:49 UTC</div>
+<div class="text">you can use the venv environment!</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 23:26:46 UTC</div>
+<div class="text">Prior to this, we were trying to make training &quot;labels&quot;, and I suggested to directly transfer hand-crafted rules from the symbolic side to DLN.  Are we closer to that target now?  Can this make the label generation process faster?  So that we can tackle large-scale datasets....</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-13 00:09:59 UTC</div>
+<div class="text">Yes, please implement the above (simplifying if it gets too complicated) and prepare to test it on TinyStories.</div>
+</div>
+</div>
+</body>
+</html>

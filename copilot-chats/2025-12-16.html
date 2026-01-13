@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Trying to use auto-regression to solve TicTacToe; still struggling 😋</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Trying to use auto-regression to solve TicTacToe; still struggling 😋</h1>
+<div class="entries">
+<div class="entry">
+<div class="timestamp">2025-12-16 19:40:11 UTC</div>
+<div class="text">Nice to see you again in CLI mode.  Last time we were exploring a kind of logic network with reinforcement learning.  After some thinking, I think we should abandone the RL approach and use logic in an auto-encoder setting, learning the dynamics of the tic-tac-toe game.  This seems to be much more efficient.  I am considering to start a different repo but retaining some of my old code such as the TTT Gym code.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-16 19:42:19 UTC</div>
+<div class="text">Yes, please start a new repo, one level up the current dir and make a new dir there.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-16 19:54:04 UTC</div>
+<div class="text">Our new strategy is to use the game of TicTacToe as a simulation of AGI. We try to predict the game play of TTT as it is played by random computer moves.  The &quot;latent representation&quot; of the autoencoder is in the form of logic propositions, and the logic rules are neural networks acting on them (there can be multiple layers).  The entire set of logic propositions in all layers constitute the &quot;state&quot; of the Autoencoder and which will also be the &quot;state&quot; for reinforcement learning experiments later.  The form of logic propositions are fixed by us, but AE can learn (invent) new predicates and constants.  Do all these make sense?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-16 20:12:03 UTC</div>
+<div class="text">Yes.  The logic proposition for TTT could use (x,y) coordinates with each ranging in {1,2,3}.  Here the numbers are just logic symbols without arithmetic properties.  I have a worry:  The optimal TTT strategies are probabilistic / stochastic. Can our logic rules model that?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 15:28:13 UTC</div>
+<div class="text">I&#x27;m still thinking about the 4 options you suggested... they are deep questions.  In the meantime, would you think doing an experiment with Transformers will give us a reference for future comparison?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 15:30:13 UTC</div>
+<div class="text">yes please.  Then I will clone the repo and run the test on another computer while we work out the remaining theory.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 16:13:04 UTC</div>
+<div class="text">I don&#x27;t have graphics cards, can the requirements.txt be made more specific to save space?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 16:42:00 UTC</div>
+<div class="text">which version of python should I use?  I have python3.12.3 but am running into conflicts with pip install.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 16:48:39 UTC</div>
+<div class="text">can you do the setup of the virtual environment using venv?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 16:54:48 UTC</div>
+<div class="text">there are some bugs when running the code</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 16:57:27 UTC</div>
+<div class="text">I think we should use one of the &quot;logic&quot; representations, I forgot which one</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 16:59:07 UTC</div>
+<div class="text">yes, thanks.  I&#x27;m not 100% sure about the details but let&#x27;s have a try.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 17:06:58 UTC</div>
+<div class="text">There are more bugs.  Can you access the terminal&#x27;s outputs from here?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2025-12-17 17:15:23 UTC</div>
+<div class="text">File &quot;/home/yky/misc-programs/logic-autoencoder-ttt/transformer_baseline.py&quot;, line 31, in generate_data
+    env = gym.make(&#x27;TicTacToe-logic-v0&#x27;, symbols=[-1, 1])
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: The environment must specify an observation space. https://www.gymlibrary.dev/content/environment_creation/
+(I think we fixed this error before, in one of the logic representation versions)</div>
+</div>
+</div>
+</body>
+</html>

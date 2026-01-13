@@ -1,0 +1,12 @@
+{"timestamp": "2025-12-17T21:32:44.710Z", "text": "can you set up a venv virtual environment here?"}
+{"timestamp": "2025-12-17T21:34:38.727Z", "text": "low"}
+{"timestamp": "2025-12-17T21:36:16.946Z", "text": "wait... I forgot to mention I have no GPU, please install the CPU version of Torch in the requirements."}
+{"timestamp": "2025-12-17T21:49:19.478Z", "text": "please check again now"}
+{"timestamp": "2025-12-17T21:50:26.671Z", "text": "there is no activate script in venv/bin/ ?"}
+{"timestamp": "2025-12-17T21:54:00.103Z", "text": "done."}
+{"timestamp": "2025-12-17T21:57:06.284Z", "text": "got this error:\nERROR: Ignored the following versions that require a different python version: 1.21.2 Requires-Python >=3.7,<3.11; 1.21.3 Requires-Python >=3.7,<3.11; 1.21.4 Requires-Python >=3.7,<3.11; 1.21.5 Requires-Python >=3.7,<3.11; 1.21.6 Requires-Python >=3.7,<3.11                   \nERROR: Could not find a version that satisfies the requirement gym (from versions: none)                                                  \nERROR: No matching distribution found for gym"}
+{"timestamp": "2025-12-17T21:58:24.683Z", "text": "ERROR: Ignored the following versions that require a different python version: 1.21.2 Requires-Python >=3.7,<3.11; 1.21.3 Requires-Python >=3.7,<3.11; 1.21.4 Requires-Python >=3.7,<3.11; 1.21.5 Requires-Python >=3.7,<3.11; 1.21.6 Requires-Python >=3.7,<3.11                   \nERROR: Could not find a version that satisfies the requirement gymnasium (from versions: none)                                            \nERROR: No matching distribution found for gymnasium"}
+{"timestamp": "2025-12-17T22:00:16.008Z", "text": "ERROR: Could not find a version that satisfies the requirement websockets (from versions: none)\nERROR: No matching distribution found for websockets"}
+{"timestamp": "2025-12-17T22:09:11.485Z", "text": "still no matching version for websockets.  Actually, this is used in gym for visualizing on a web page, but is not essential.  Can we get rid of the dependence by commenting out some code?"}
+{"timestamp": "2025-12-17T22:19:44.977Z", "text": "wait... I have another computer with the same python and pip version, but it can run the pip install without errors.  I don't understand why"}
+{"timestamp": "2025-12-17T22:22:05.460Z", "text": "ModuleNotFoundError: No module named 'tqdm'\nbut how come the other machine is running without issues?"}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Labels generation (for faster training)</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Labels generation (for faster training)</h1>
+<div class="entries">
+<div class="entry">
+<div class="timestamp">2026-01-10 01:34:51 UTC</div>
+<div class="text">@benchmarks.py  I don&#x27;t understand what &quot;<b>pruning</b>&quot; does and how come it is even slower than &quot;full&quot; (cached).</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 01:43:27 UTC</div>
+<div class="text">What does the hashing do?  How many rules are there?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 02:39:26 UTC</div>
+<div class="text">Run results:
+Benchmark MSE → baseline: 0.0001, GA-seeded: 0.0001
+TinyStories load: 8 stories, 8 via Davidsonian, total facts=1000
+TinyStories mini benchmark (inferred + combo + neg): train MSE=0.0000 on 39508 labels, eval MSE=0.0009 MAE=0.0043 on 4408 labels (77 rules, collect 334.391s vs full 721.882s, pruned_only=0, full_only=28360)
+Predict B(&#x27;alice&#x27;,): 0.993 (target 1.000)
+Predict B(&#x27;bob&#x27;,): 0.693 (target 0.700)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 03:47:19 UTC</div>
+<div class="text">So this hashing or pruning is for faster inference?  Do they play a role similar to <b>rete algorithm</b>?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 03:49:24 UTC</div>
+<div class="text">I see.  Can you briefly explain the <b>label generation process</b>?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 03:53:47 UTC</div>
+<div class="text">if we train the DLN on these labels, isn&#x27;t it kind of <b>chicken-and-egg situation</b>? The labels are generated from the <b>symbolic engine</b>, but what are those latter rules initialized from?</div>
+</div>
+</div>
+</body>
+</html>

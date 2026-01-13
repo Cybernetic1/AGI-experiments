@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>A session of very deep questions asked...</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>A session of very deep questions asked...</h1>
+<div class="entries">
+<div class="entry">
+<div class="timestamp">2026-01-02 08:17:18 UTC</div>
+<div class="text">@NL_PARSING_SESSION_SUMMARY.md  Our &quot;Differentiable Logic Transformer&quot; successfully solved TicTacToe, but our next attempt at natural language tasks failed completely. I guess NL can be &quot;naturally&quot; described by a least number of rules, call it R_K for <b>Kolmogorov</b>, but if our test R &lt;&lt; R_K, perhaps it will show non-convergence?  We could go back to TTT to verify that our GA algorithm works, although it may be quite trivial.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 08:22:23 UTC</div>
+<div class="text">Do you think it might take long to train GA to be optimal in TTT?  I am curious how large a population of rules is required for that.  What are the current values?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 08:34:32 UTC</div>
+<div class="text">If there are so many rules in the population, how did the algorithm decide which rule to apply for game play?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 08:42:49 UTC</div>
+<div class="text">What explains the failure to parse NL? Given that it is basically the crux of the AGI problem, it is expected to be non-trivial.  What could we do to improve the current algorithms?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 08:52:47 UTC</div>
+<div class="text">I am very concerned about the rules format and representational issues.  Are we using triples-only logic propositions?  So there is no way to represent eg: &quot;<b>John loves Mary obsessively</b>&quot;?  We need to allow our logic the maximal expressivity.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 09:04:45 UTC</div>
+<div class="text">wait... I imagine in what linguists call &quot;logical form&quot;, &quot;obsessive&quot; would be a node that modifies &quot;love&quot; in &quot;John loves Mary obsessively&quot;.  This creates a <b>tree-like structure</b>.  If we have a principled way to represent such trees with atomic propositions, then our reperesentation would be &quot;univeral&quot; for NL.  Does that make sense?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 09:15:57 UTC</div>
+<div class="text">Thanks for introducing <b>Davidson</b>&#x27;s ideas to me. We should definitely use it. However, you also gave some examples where ∀ and ∃ quantifiers are used, but they are not PART of our representation scheme.  I like the idea in older logic-based AI systems where variables in rules are automatically univerally quantified, and there&#x27;s no existential quantifier.  But this pertains to rules, not propositions.  For propositions, we may need additional ways to express ∀ and ∃ within our formalism, right?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 09:29:30 UTC</div>
+<div class="text">That looks excellent to me, though I need to examine it carefully. In my mind there has always been a problem of duality between rules and propositions. A rule is of the form &quot;propositions -&gt; new proposition&quot;, while propositions do not have the implication arrow.  However, it may be advantageous or even necessary to be able to <b>reify</b> implications as propositions in its own right. In category theory this is known as <b>Cartesian closure</b>, if my impression is correct. This is very tricky as it also relates to <b>Curry-Howard correspondence</b>. So, our logic network performs the implication arrow or &quot;consequence operator&quot;. But if the arrow is reified as a proposition, it loses that functional or morphism character. They cannot be easily inter-converted back and forth, within our system.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 09:43:27 UTC</div>
+<div class="text">1) in some of your examples, you used nested propositions such as [a,b,[c,d,..]] but this is not allowed in our current setup, right?
+2) we can build some sort of <b>reify-reflection</b> &quot;bridge&quot; but can the resulting system still be <b>differentiable</b>?
+3) the <b>∀ and ∃</b> quantifiers seem to be related to the reification issue</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 10:31:31 UTC</div>
+<div class="text">Recall that in classical logic-based AI, it is customery to distinguish between &quot;facts&quot; and &quot;rules&quot; where facts don&#x27;t have variables or the implication arrow. This was very efficient and practical. Our discussion about reification may seem remote, but it is not just idle speculation. If we can &quot;prime&quot; the system with high-level abstract rules, it may accelerate convergence greatly, somewhat akin to &quot;<b>operator learning</b>&quot; that is in vogue these days. Perhaps we should spend more time on this topic...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 11:08:05 UTC</div>
+<div class="text">Can you explain a bit more about recent progress in <b>operator learning</b>? I only have a vague understanding of it. I imagine it is using operators like <b>spectral operators</b>, so that would be quite different from our logic rules.  But perhaps we could still draw inspiration from them.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 11:54:37 UTC</div>
+<div class="text">In my understanding, a meta-rule is a rule over rules (in logic). That seems to correspond to <b>operators vs functions</b>. Are we utilizing meta-rules? How?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 12:13:57 UTC</div>
+<div class="text">In our logic network, we can have <b>higher-order logic</b> in the sense that the predicate position can also allow variable substitution. It&#x27;s more like an <b>abstract rewriting system</b> implementing logic. Is higher-order logic equivalent or similar to meta-rules?  Actually I think an effective idea might be to encode the <b>neo-Davidsonian philosophy of NL parsing</b> into meta-rules, using whatever formalism we find convenient -- eg. HOL.  There may be similar ideas in domains outside NL.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 12:36:49 UTC</div>
+<div class="text">Seems that we&#x27;re in a very tricky territory. 1) The every existence of Davidsonian meta-rules enables accelerated convergence -- this is <b>regardless</b> of such rules being differentiable or not. Perhaps we can allow hybrid existence of symbolic rules and differentiable rules? at least at this stage. 2) Secondly, the system may transfer such meta-rules to other domains, either through differentiability or GA, but interestingly the most effective way to do so may be to apply OTHER meta-rules to act on these meta-rules, to achieve transfer.  The question is how to integrate all these ideas into a coherent and practical system...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 12:59:48 UTC</div>
+<div class="text">If we accept symbolic rules + soft rules to <b>co-exist</b>, would gradient descent become problematic?  Is it possible such that symbolic rules are made &quot;<b>transparent</b>&quot; to gradient propagation? (though the rule&#x27;s &quot;strength&quot; may be learnable as it is applied).  If so, GA and neural network can be learning similtaneously.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 14:34:28 UTC</div>
+<div class="text">Our current major problem is convergence. So let&#x27;s identify the tricks most conducive to achieving convergence. First, I think Davidsonian meta-rules are good. These don&#x27;t have to be differentiable; we can make them transparent to gradient flow. Second, surprisingly, I think reification is crucial. For example, &quot;Mary Queen of Scot was sent to guillotine&quot; imples that she was dead because a person cannot survive having their head chopped off. The latter is a piece of common sense knowledge that we assume is kept as neural weights (eg in LLM/Transformers). But if we can have symbolic rules and if reflection is done right, that means we can simply parse the NL description of common-sense knowledge into logical form, and then the latter would be reflected as logical rule (symbolic) and stored in a knowledge base. What&#x27;s special about the logic rule is its functional character (pun intended), in the sense of <b>Curry-Howard</b>. This saves us a lot of trouble to learn the same rule from (slow) gradient descent. Thirdly, I am not sure about the advantages of introducing GA along with neural logic -- that may be postponed -- or if you can argue for its inclusion.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 14:49:51 UTC</div>
+<div class="text">Both ideas 1 &amp; 2 require a <b>traditional symbolic logic engine</b>, which I had some experience building. What do you recommend to use? As the KB size grows, we may need the &quot;<b>rete algorithm</b>&quot; if you&#x27;ve heard of it. What do you think?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 14:59:13 UTC</div>
+<div class="text">Thanks a lot; let&#x27;s start implementation.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 15:00:48 UTC</div>
+<div class="text">Haven&#x27;t we downloaded spaCy already? Is the terminal under venv now?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 15:33:00 UTC</div>
+<div class="text">Shall we add the differentiable logic and then test it with TinyStories using AR?  Is that the right approach or you suggest an alternative strategy?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 15:41:58 UTC</div>
+<div class="text">Without AR, we lack a general framework under which to train an AGI.  Or at least the semantic-AR version we figured out.  Or you have some alternative suggestions?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 16:22:57 UTC</div>
+<div class="text">Wait a minute... no need to mention GA from now on, as it is relatively low-priority. I am curious if Davidsonian rules + differentiable logic is able to show some amount of convergence in the semantic-AR setting -- or is it still too hard? We can work out some examples to see what kind of rules are most effective towards the AR goal.
+Next I want to try the reflection idea which I think would be very significant -- we can discuss that more in detail.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 16:36:03 UTC</div>
+<div class="text">1) about the Davidsonian idea: we can actually go down to detailed NL parsing using POS information, as described by some <b>Chomskyan patterns</b> you have given in previous docs. This very procedure, utilizing POS, would be described by higher-level rules. So that our system would carry out these rules as if following a detailed program. If this works, we&#x27;d have a NL -&gt; logical form functionality that may be a huge step towards semantic-AR.
+2) for semantic-AR, we can let our system predict the next word or sentence, and at the same time look ahead the input, convert the input to logical form, and compute similarity loss. The second step seems to pose a <b>chicken-and-egg problem</b>, as we don&#x27;t have the NL -&gt; logic conversion ready. I wonder if spaCy can do that?
+3) let&#x27;s discuss the reflection idea later.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 17:03:04 UTC</div>
+<div class="text">Wait... let&#x27;s see... the AR problem requires massive broad-coverage common sense knowledge to solve, which current LLMs solved, but at great cost. With our small scale resources, we&#x27;re unlikely to see any convergence at all, unless our innovations target the right places. 
+1) I hope the Davidsonian rules can solve a high percentage of NL-&gt;logic, and we need some &quot;soft rules&quot; for the exceptions to fall back on, instead of getting gaps of information.
+2) The reflection trick may be needed much earlier. It works like this: we get NL-&gt;logic form, and then we convert the logic form to a logic rule (ie, something with an RHS conclusion). We could also create generalizations with variables. There are many ways to turn a logical form into a rule.  This goes back to the problem of <b>ILP (inductive logic programming)</b> which I also spent some time on. And this is where the combinatorial explosion becomes intractable. So we need deep learning / differentiable rules.  It looks like we&#x27;re on to something here...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 17:57:27 UTC</div>
+<div class="text">ILP now has the breakthrough of differentiable rules... I feel I&#x27;m transported back to those days, but that was an old context and we have a new situation now, ie, the training of AGI by AR with LLMs being the current king.  In that new context do we have an advantage? <b>We better do, and I think we do.</b>  That advantage is that we can convert NL sentences into logic rules that instantly changes the system&#x27;s behavior. This seems not feasible with current LLMs as they don&#x27;t have our logic structure. So our immediate goal is to let the model read texts on NL parsing, and then be able to do NL parsing immediately.  Can we succeed in that?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 18:07:57 UTC</div>
+<div class="text">hmmmm... is this such a huge advantage? Do we have reason to believe we can achieve convergence much faster under (semantic-) AR?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 18:41:42 UTC</div>
+<div class="text">Well, you said we have to learn &quot;what rules to extract and when to apply them&quot;, but reflection can save us that trouble. For example, we directly inject &quot;Davidsonian NL rules&quot; into the system, that saves a lot of training time (to be verified).  We can further exploit such &quot;rule injection&quot; to accelerate other aspects of training. Can we do the same with LLMs?  It&#x27;s not so obvious as they don&#x27;t allow reflection so easily -- the Transformer weights are <b>blackboxes</b>.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 18:49:17 UTC</div>
+<div class="text">Yes please, I hope we can see the first results!</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 18:55:09 UTC</div>
+<div class="text">yes, do it step by step in your suggested order, please! (by the way, your terminal is in venv already, you may try skipping venv activation)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 19:27:24 UTC</div>
+<div class="text">Thanks so much...! Can you update the recent .md files to reflect our current chosen approach and write a summary of the above success. Then I&#x27;ll commit this to Github.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 19:38:34 UTC</div>
+<div class="text">We still have some time. Shall we explore rules engines? I read on the web that Experta installs okay with Python 3.8 but not above. Would downgrading to Python 8.3 be too troublesome to be worth it? How about other rule engines?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 19:42:18 UTC</div>
+<div class="text">Good. What may be our next steps?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 19:53:24 UTC</div>
+<div class="text">Haven&#x27;t we already succeeded on the points in #2? Or what&#x27;s the difference?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 19:57:56 UTC</div>
+<div class="text">But the file you ran was called &quot;train_semantic_ar.py&quot; so I thought we succeeded in semantic-AR? Your #2 above says:
+2. Build Semantic-AR Training Loop (2-3 hours)
+     - Integrate with existing neural_logic_core.py and symmetric_logic_network.py
+     - Implement the dual-path architecture: symbolic rules (transparent to gradients) + soft 
+   differentiable rules
+     - Train on TinyStories with semantic similarity loss
+     - Monitor if Davidsonian rules accelerate convergence</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 20:03:42 UTC</div>
+<div class="text">I think we just ran train_semantic_ar.py and succeeded...?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-02 20:16:06 UTC</div>
+<div class="text">I think we already ran training_semantic_ar.py for 10 epochs and gotten spectacular results. And then you wrote a summary .md for it.  Then I asked about rule engines.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 03:25:17 UTC</div>
+<div class="text">I examined the code in @train_semantic_ar.py , you&#x27;re just using a simple MLP for prediction, instead of our DLT (Differentiable Logic Transformer).  The Davidsonian extractor is using hard-coded python instead of logic rules. The &quot;example&quot; is also fixed instead of showing a new random example. These are fine for testing purposes, but we still have some ways to go. What do you suggest to do next?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 03:29:05 UTC</div>
+<div class="text">In @train_semantic_ar.py you are using data from TinyStories, I was saying the &quot;show example&quot; part was using a fixed &quot;girl found a toy&quot; example instead of drawing a random example from the data. Can you change that part so the example shown would be more intereseting?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 03:43:06 UTC</div>
+<div class="text">Yes, I&#x27;m glad to be able to see the examples. It seems that your simple test showed the validity of semantic-AR, in the sense that the MLP is able to generate predictions that are a close distance from the actual next&#x27;s. But in the Davidsonian approach, an NL sentence would be broken down into multiple atomic propositions. You embedded the entire sequence into one vector -- good idea. But that is assuming the decomposition always proceeds sequentially. All in all, I am glad to see the main idea validated.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 03:49:59 UTC</div>
+<div class="text">How are we going to measure the loss for graphs? It seems more difficult and computationally heavy.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 03:55:22 UTC</div>
+<div class="text">In the future, can Davidsonian parsing resolve entities as well? For example, &quot;The girl saw a boy. She gave the apple to HIM. HE was happy.&quot; Now the prediction is not just about a sentence but involves entity resolution.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 04:01:37 UTC</div>
+<div class="text">Right, if entity binding is also included, that loss metric seems to be sound and complete. Now we have a nice AR framework. Can you make a list of modules that are needed in our AGI architecture, so we can refer to it easily?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 10:59:45 UTC</div>
+<div class="text">please do option A above (integrate with DLN). By the way, why do you call it &quot;symmetric&quot; logic network?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 16:17:12 UTC</div>
+<div class="text">Great! I wwonder what is the output of DLN, is it single atomic propositions? But that would not be a full sentence in the Davidsonian sense. Is our DLN handling this problem nicely?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 16:27:18 UTC</div>
+<div class="text">Good, but I also want to point out that LLMs output a probability distribution over all tokens. This aspect seems lost in our DLN. Perhaps we can &quot;emulate&quot; this in logic as well? For example, &quot;it&#x27;s been a hot day&#x27;s night&quot; may predict &quot;I&#x27;ve been working like a dog&quot; but also other activities related to hot weather. In RL (reinforcement learning) we would need stochastic actions anyway, so we have to face it.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 16:49:23 UTC</div>
+<div class="text">Wait... I think something delicate might be missing in our DLN as opposed to the LLM&#x27;s &quot;<b>distributive representation</b>&quot;, in the sense that &quot;a hot day&#x27;s night&quot; gives rise to a distribution over many scenarios and meanings. This type of dsitributive representation is very good for machine learning as they &quot;keep alive&quot; many possibilities for exploration (ie, learning).  Our crisp logic has lost that and this may be a &quot;<b>fatal</b>&quot; deficiency...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 17:07:13 UTC</div>
+<div class="text">Yes, there is hope, and thanks for your work. But one more difficulty: in the real world, distributiveness seems to be <b>distributed over propositions</b> (things that have truth values) rather than over concepts or words. I like the idea behind your option 2, but it works on the word / concept level. In LLMs, there is always the ambiguity as to whether tokens are concepts (first-order objects) or propositions. I think if we don&#x27;t give up easily, we will find a good solution.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 17:25:38 UTC</div>
+<div class="text">But we don&#x27;t readily have all propositions represented explicitly (this is unfeasible), and so the distribution over them can neither be represented. One idea: maintain a separate &quot;<b>thought distribution</b>&quot; that helps guide discrete logic inference. There may be one or more such distributions.  Maybe allow them to be referenced by our logic propositions (perhaps as entities?) Such vectors guides logic inference and is similar to the embedding vector you made in train_semantic_ar.py. I have not worked out all details, this is just a vague idea.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 18:01:49 UTC</div>
+<div class="text">Well... I&#x27;m not 100% sure about the thought distribution idea... there may be a disconnect between logic propositions that are deduced and the thought distribution.  In LLMs it is theoretically possible for a token with low probability to slowly <b>&quot;rise up&quot; to prominance</b>.  We may try to emulate that behavior.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 18:31:58 UTC</div>
+<div class="text">But then we lost the ability to &quot;attend&quot; to a broad spectrum of propositions, as we would likely have a limited number of applicable rules under a given context. Or perhaps there would be a <b>sizable</b> number of applicable rules and that can approximate the effects of LLM&#x27;s distributiveness?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-03 19:17:56 UTC</div>
+<div class="text">I don&#x27;t know how exactly are we going to utilize the thought distribution; do you have any idea? Moreover, that distribution is over an extremely high dimensional space -- not easy to represent on a computer.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 00:13:49 UTC</div>
+<div class="text">The distributiveness is a tricky issue... I will think about it more later.  Let&#x27;s keep it simple for now and proceed to other tasks, shall we?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 00:30:53 UTC</div>
+<div class="text">We have done train_semantic_ar_v2.py and also variable_length_dln.py.  Are both ideas validated now or need more training?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 00:37:27 UTC</div>
+<div class="text">There may be a fundamental flaws in our approach: if we keep adding logic facts to our KB, there is no <b>memory consolidation</b> (and thus no generalization). But LLMs seems to be doing that implicitly.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 01:16:05 UTC</div>
+<div class="text">But it seems that all the bad things about classical logic-based AI are coming back at us...  LLM&#x27;s <b>distributive representation</b> seems to have huge advantages over our approach...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 06:01:44 UTC</div>
+<div class="text">I have another vague idea but it may work: we always use our DLN to train on input data and thus achieve memory consolidation through DLN just like LLMs consolidates through Transformers. But the difference is that the results of memory consolidation by DLN is in logical form. That means we can use the <b>hybrid approach</b> and enjoy advantages of a symolic logic engine, such as reflection.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 12:19:29 UTC</div>
+<div class="text">yes please!</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 12:52:20 UTC</div>
+<div class="text">How come that in the demo, the sentence &quot;she was sad&quot; has no logical form? Was it parsed?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 12:53:43 UTC</div>
+<div class="text">Yes please!</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 12:59:20 UTC</div>
+<div class="text">The parser in hybrid_consolidation_system is still the old one. Do you think it should simply import from davidsonian_extraction.py? or the two versions are incompatible?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:05:03 UTC</div>
+<div class="text">can you show some of the reflected rules in that demo? I wonder what they look like...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:06:56 UTC</div>
+<div class="text">continue</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:10:46 UTC</div>
+<div class="text">In rule 3 above, the conclusion with &quot;be&quot; seems to be missing the adjective of &quot;happy&quot; or &quot;sad&quot;. That seems to be the problem of rules having only 1 atomic proposition as output?  No need to fix that now, as it may get complicated.  But I want to confirm that.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:11:18 UTC</div>
+<div class="text">please continue to analyze...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:14:19 UTC</div>
+<div class="text">Yes, that&#x27;s a good idea. For some reason I am stuck in the mindset of the old days when <b>Horn rules</b> are the standard in logic-based AI systems.  Perhaps that restriction is no longer necessary?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:14:55 UTC</div>
+<div class="text">please continue thinking...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:18:01 UTC</div>
+<div class="text">Great, please proceed to modify the demo...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:38:44 UTC</div>
+<div class="text">Sorry I have trouble following this. In step 3 of the demo you displayed some rules but that was before &quot;reflect and generalize&quot; was called. Where did those symbolic rules come from?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:39:22 UTC</div>
+<div class="text">please continue to trace the code flow...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:40:59 UTC</div>
+<div class="text">please continue tracing the code...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 13:45:34 UTC</div>
+<div class="text">Is the train_step() just one step of gradient descent? If so, adding symbolic rules to the logic engine seems to belong to a <b>much coarser time scale</b>?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 14:16:32 UTC</div>
+<div class="text">please continue to analyze the issue</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 14:20:44 UTC</div>
+<div class="text">Can you explain what&#x27;s happening in the current code? Does it create new rules per each gradient descent step?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 14:55:34 UTC</div>
+<div class="text">We can decide on that later. The problem is that there is no <b>success criteria</b> for this demo. We need to ask ourselves, what exactly is it that we&#x27;re trying to achieve? DLN performs AR as well as memory consolidation. If the explicit logic engine tries to do the same then it&#x27;d be redundant.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 16:24:48 UTC</div>
+<div class="text">There has been new development of a prototype, see: @benchmarks.py. We are now extracting &quot;labels&quot; as training targets for DLN, but this seems time-consuming. I want to better understand the label extraction process and think about how to optimize it.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 16:32:38 UTC</div>
+<div class="text">I wonder what kind of rules are initialized in the Symbolic Engine? Are they beneficial for training DLN? Should we use AR to train DLN instead? Why is the use of &quot;labels&quot; advantageous over AR training?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 16:39:56 UTC</div>
+<div class="text">Do you think the current label generation algorithm can scale to very large corpuses?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 18:05:00 UTC</div>
+<div class="text">It still seems redundant to me... we start with some hard-coded rules, generate their consequences against facts, use those to train DLN... then why not just inject those rules directly into DLN?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 18:31:09 UTC</div>
+<div class="text">I wonder if we could <b>inject</b> the rules from symbolic rule-store into DLN, and then perhaps DLN would also attempt generalizations or refinements of those rules?  This could save some training time for the DLN.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 19:01:50 UTC</div>
+<div class="text">Thanks. Would that be difficult to implement? How do we embed hard-coded predicates or relations as vectors for DLN? I want to see if this method will shave some time off the current label generation process.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 19:13:14 UTC</div>
+<div class="text">Good. But I still wonder how to fix the vector embeddings -- in DLN, such vectors are constantly &quot;floating&quot; due to gradient descent, right?  They would tend to aggregate among themselves by (some sort of semantic) similarity.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 20:25:06 UTC</div>
+<div class="text">Another perspective: there should be a <b>dictionary of embeddings</b>, just like in LLMs they have vector embeddings of the vocabulary. This embedding table is learnable but its &quot;key values&quot; (= words) are fixed.  Then we won&#x27;t fear losing track of them.  Does that work?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 20:52:03 UTC</div>
+<div class="text">Sounds good. Please go ahead and implement...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 21:14:20 UTC</div>
+<div class="text">Is the following results good?
+-----------------
+Benchmark MSE → baseline: 0.0001, GA-seeded: 0.0001
+TinyStories load: 8 stories, 8 via Davidsonian, total facts=1000
+TinyStories mini benchmark (inferred + combo + neg): train MSE=0.0000 on 39508 labels, eval MSE=0.0009 MAE=0.0043 on 4408 labels (77 rules, collect 456.885s vs full 0.086s, pruned_only=0, full_only=28360)
+Predict B(&#x27;alice&#x27;,): 0.997 (target 1.000)
+Predict B(&#x27;bob&#x27;,): 0.709 (target 0.700)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 21:20:40 UTC</div>
+<div class="text">Can you make the labels generation show a little bit of &quot;progress&quot; rather than completely silent?  Is the current benchmark.py using my newly suggested method?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 21:33:01 UTC</div>
+<div class="text">With our current embedding table method, what if a rule in DLN uses a relation but then generalizes to a rule not using that relation.  Would this work while still maintaining differentiability?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 21:38:41 UTC</div>
+<div class="text">Does our use of the embedding lookup table conflict with differentiability of rules and for rules to generalize or refine &quot;freely&quot;?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 22:03:04 UTC</div>
+<div class="text">But the problem is, if a rule starts with a named relation &quot;R1&quot;, it seems that the vector embedding of R1 may change, but the rule would still be stuck with R1. <b>It cannot morph into a rule with relation R2</b>.  That seems to be a rather narrow restriction.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 22:39:19 UTC</div>
+<div class="text">In my thinking, I have placed great importance to the idea that a differentiable rule be capable of <b>reaching</b> all possible rules.  How can this be saved while we add an embedding lookup table?  Unless each vector position represents a distribution over all labels.  Could the use of <b>Gumbel-softmax</b> reduce the number of parameters needed to achieve the same purpose?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 22:47:12 UTC</div>
+<div class="text">After the <b>projection</b> as you mentioned, we cannot recover the distribution over the full relation space. The inverse of the projection seems not well-defined. So how can that work?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 22:57:54 UTC</div>
+<div class="text">Do you mean multiplying the full-size logits with a lower dim matrix of size M×N where M is the full size and N is smaller?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 23:46:46 UTC</div>
+<div class="text">All in all, the use of Gumbel-softmax reduces the total number of parameters, correct?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-11 19:16:14 UTC</div>
+<div class="text">Now I have some confusion I want to clarify. I recall clearly that our DLN has the <b>cylindrification</b> factor that allows to fuzzy-match other vectors in embedding space. Seems that these vectors dont need to be <b>anchored</b> to any words (NL labels). So when is anchoring needed?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-11 19:22:52 UTC</div>
+<div class="text">This is exactly analogous to the embedding layer in LLMs, isnt it?  Seems that we dont need to worry about reachability of rules in such a set up?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-11 19:58:44 UTC</div>
+<div class="text">in our hard-coded rules you seem to have relation names such as &quot;goes_to&quot;, created by joining two or more words with underscores, which is not in the usual NL vocabulary. Is it possible to break down these words naturally, so that &quot;<b>rule injection</b>&quot; really is injecting from NL sentences?  It may be a bit more involved but I think highly worthwhile.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-11 20:10:00 UTC</div>
+<div class="text">Well, I guess we should parse an NL sentence into logical form just as usual, and then we need to create an algorithm to turn the results of parsing into (probably several) DLN rules.  Sounds complicated, but does that make sense?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-11 20:19:50 UTC</div>
+<div class="text">Seems to require quite intelligent parsing for this to work.  Usually an NL sentencecan be recognized naturally as a &quot;rule&quot; by humans.  Ideally this should be a single DLN rule, but due to Davidsonian parsing I&#x27;m not too sure.  Maybe working out an example or two could help.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 13:55:42 UTC</div>
+<div class="text">Your examples result in <b>only 1 DLN rule per NL sentence</b> parsed. This is a good thing. Let&#x27;s assume that we can always create 1 DNL rule per NL sentence until it runs into trouble. Can the rule injection be implemented now, or other problems remain?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-12 14:05:43 UTC</div>
+<div class="text">Sounds good. Please draft the <b>NL→logic→DLN mapper</b>.  Why is problem (2) difficult?</div>
+</div>
+</div>
+</body>
+</html>

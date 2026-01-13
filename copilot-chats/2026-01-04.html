@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Clarifying issues: hybrid architecture, GA (genetic algorithms), paraconsistent logic...</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<h1>Clarifying issues: hybrid architecture, GA (genetic algorithms), paraconsistent logic...</h1>
+<div class="entries">
+<div class="entry">
+<div class="timestamp">2026-01-04 15:52:09 UTC</div>
+<div class="text">Please note the new progress.  I have a new idea, that DLN (differentiable logic network) will perform AR and memory consolidation using distributive representations.  A symbolic logic engine can <b>co-exist</b> with DLN as the latter also respects logic structure.  However if the symbolic engine also performs AR or generalizations then it may seem <b>redundant</b>.  We are disucssing what exactly should be the role of the symbolic engine.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-04 16:05:43 UTC</div>
+<div class="text">I am thinking if there could be some ways that a parallel symbolic engine might <b>accelerate</b> learning and convergence?  What do you think?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-05 05:08:02 UTC</div>
+<div class="text">I am thinking of a hopefully more &quot;decisive advantage&quot;.  An example:  human tells LLM, &quot;don&#x27;t forget to activate venv before running python programs&quot;.  This can be stored in the prompt as a directive.  In current LLMs, thoughts are either in the prompt (working memory) or in the weights (= inference rules).  In our architecture, thoughts can be: 1) in WM, 2) in DLN weights, or in the symbolic engine 3) as explicit facts or 4) rules.  If we (users) tell an LLM something, it immediately changes behavior because the directive is stored in WM (the prompt).  Ideally, we expect a thought to: 1) immediately participate in logic inference, 2) go into memory consolidation in the long term.  In an LLM, once the prompt is cleared, the thoughts are forgotten, so its ability to learn from live experience is limited. How might an AGI learn from experience better? A thought in WM does not enter soft memory consolidation, but if it is reflected into a symbolic rule, the symbolic rule can be injected as a neural rule, and participate in further consolidation / generalization / learning.  Could this be a significant advantage?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-06 16:53:18 UTC</div>
+<div class="text">The situation isn&#x27;t too complicated.  We only have <b>two main objectives</b>: forward inference and learning / mem consolidation.  We have two competing sub-systems: neural and symbolic, but they are compatible with each other by having the same logical structure.  But it is the subtle interplay between the two sub-systems that will give our model distinct advantages. Is this viewpoint clear? If yes then let&#x27;s make a plan to implement the system step by step with small tests to validate each step.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-06 21:15:26 UTC</div>
+<div class="text">Nice.  We have worked out a sort of abstract rewriting scheme where the &quot;predicate&quot; position is allowed to have variables.  This may be akin to <b>second order logic</b>.  And I think that added expressiveness is suitable for AGI, although we seem to have lost the rigor of having a well-defined and typed logic.  Should we go ahead with that or you have a better suggestion?  If not, let&#x27;s go ahead.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-06 21:20:54 UTC</div>
+<div class="text">I&#x27;d like the logic to be very expressive or &quot;universal&quot; in some sense.  For example, <b>Russell&#x27;s paradox </b>can be avoided by having a fuzzy truth value at 0.5 which is neither true or false.  Then our AGI can think about such problems without going astray as in &quot;<b>EFSQ</b>&quot;.  Do you think our current logic with Davidsonian parsing still retains that ability to reason about arbitrary paradoxes?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-06 21:46:46 UTC</div>
+<div class="text">We have not talked about <b>fuzzy truth values</b>.  I have formulated a theory of fuzzy-probabilistic logic (with probabilities distributed over fuzzy values) which I think is mathematically rigorous and suitable for AGI.  It may be easier to implement on the symbolic engine, but seems more difficult to implement in DLN.  What do you think?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-06 21:48:56 UTC</div>
+<div class="text">1) I want to keep the DLN part simple as otherwise it would be hard to train.
+2) can you explain a bit about <b>paraconsist logic</b>?  is it needed in addition to fuzziness?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-08 19:25:22 UTC</div>
+<div class="text">Thanks.  My impression is that our DLN currently can output a fuzzy truth value based on the degrees of rule matching.  This seems to suffice for our purposes.  Please proceed to implement our prototype.  Shall we build a rudimentary architecture using simplified components and then gradually build up the sophistication of those components?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-08 19:30:45 UTC</div>
+<div class="text">wait... if you find that torch is not installed, remember we have venv set up...</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 17:57:23 UTC</div>
+<div class="text">In our DLN, it seems that each rule is a list of parameters that can be <b>separated</b> from other rules, making it possible to organize all rules in a data structure (eg. tree) for higher efficiency.  Is that correct?  Or does the requirement of differentiability make it unfeasible?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 18:00:21 UTC</div>
+<div class="text">Organizing the rules in DLN may discover redundant rules (by <b>similarity distance</b>).  Also, it opens up the possibility of GA to populate the rules first, for efficient initialization.  Do these make sense?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 18:07:19 UTC</div>
+<div class="text">Good.  Let&#x27;s bring all these modules together.  Proceed to the next steps of implementation.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 18:33:16 UTC</div>
+<div class="text">Good.  Proceed with the small benchmark.  (Are we using TinyStories for testing?)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 18:37:22 UTC</div>
+<div class="text">Let&#x27;s skip the optional steps.  How should we proceed from here?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 18:39:05 UTC</div>
+<div class="text">Good. Please try the TinyStories.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 18:45:21 UTC</div>
+<div class="text">Good.  How to proceed next?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 18:47:00 UTC</div>
+<div class="text">Alright.  Implement these steps including paraconsistency.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 18:52:38 UTC</div>
+<div class="text">So, the RuleStore is our initial step towards better organization of DLN&#x27;s rules, right?  What do you mean by combo-rules?  Go ahead.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 18:55:54 UTC</div>
+<div class="text">OK, continue.  (In the current tests, the rules are just hand-crafted into the symbolic side, right?)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 18:56:44 UTC</div>
+<div class="text">yes please.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:00:47 UTC</div>
+<div class="text">good, continue with paraconsistency.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:03:22 UTC</div>
+<div class="text">Have you added the load/save of rules?  If not, do that.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:05:03 UTC</div>
+<div class="text">OK for now.  What would be our next steps, and should we factorize the prototype into python modules now? or later?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:06:26 UTC</div>
+<div class="text">OK, please proceed as you planned.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:12:37 UTC</div>
+<div class="text">Good.  What should be next steps?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:15:44 UTC</div>
+<div class="text">OK, go ahead as planned.  (By the way, if rules are allowed to apply recursively, does target-predicate matching still make sense?  It seems that we are implementing some kind of backward-chaining in traditional logic-engine parlance)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:18:20 UTC</div>
+<div class="text">OK, please plan on next steps.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:19:24 UTC</div>
+<div class="text">Good, go ahead</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:21:21 UTC</div>
+<div class="text">yes, go ahead.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:23:00 UTC</div>
+<div class="text">Good.  Next steps?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:25:36 UTC</div>
+<div class="text">What&#x27;s the difference between RuleStore candidates vs full rule set?  Has our DLN added any rules yet?  Yes, go ahead as planned.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:28:28 UTC</div>
+<div class="text">Good.  What are next steps?  And can you also refer to our master plan outline in the .md before?  How well are we progressing?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:33:35 UTC</div>
+<div class="text">Interesting, seems that we&#x27;re using <b>ILP techniques</b> to aid DLN rule discovery.  Please go ahead.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:39:51 UTC</div>
+<div class="text">Good.  Carry on with the previous planned steps if they have not all completed.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:43:01 UTC</div>
+<div class="text">Good, do the optional step 3, and then proceed with further steps.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:47:34 UTC</div>
+<div class="text">Yes, I tried running that, it passed.  How far are we from phase 2 as outlined in .md #46 ?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:51:26 UTC</div>
+<div class="text">Let&#x27;s complete the phase 1 steps first.  Especially verify that DLN works well with the symbolic engine as it seems to me to be crucial.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 19:55:46 UTC</div>
+<div class="text">great, do the next 3 steps.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 20:01:37 UTC</div>
+<div class="text">Good... is the code currently ready to train on TinyStories to cover most cases?  What are still missing?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 20:07:50 UTC</div>
+<div class="text">OK.  I want to focus on achieving <b>linguistic generality</b> (ie, broad coverage of NL patterns) in  a principled way.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 20:11:21 UTC</div>
+<div class="text">Do we really need the <b>hard-coded</b> TinyStories extractor?  Can we just leave it to Davidsonian parser to do all that work?  Are we still using the AR framework for DLN to learn rules?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 20:19:10 UTC</div>
+<div class="text">Our goal would be to parse large datasets beyond TinyStories.  What datasets would you recommend for that?  And I&#x27;m a bit at a loss as to the most sensible path towards that goal, from what we have now.  In particular, I want to explore some &quot;tricks&quot; we can employ to speed up the training w.r.t. traditional LLMs.  Now <b>GA warm-up</b> is one of the tricks to keep.  Another trick, which I have not fully fleshed out, has to do with the symbolic engine and <b>NL rule injection</b>.  But I have not figured how exactly can the symbolic engine accelerate DLN training.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 20:42:58 UTC</div>
+<div class="text">Thanks for the suggestions, I am slowly digesting them.  First, in the <b>GA method</b>, are we solely relying on AR signals for the loss function?  If GA shows early convergence, why not use GA all the way?  Is GA likely to show early convergence, on large, real-life NL corpora?  What else can we exploit other than AR signals, perhaps annotated data?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 21:32:12 UTC</div>
+<div class="text">1) So GA is good for exploring the global landscape quickly, is that the correct impression?
+2) Perhaps we can organize the rule-store from concrete to abstract (specific to general), is this advantageous? can this help rules to converge faster? 
+3) As the system reads in NL data, it may encounter some sentences that are already in &quot;rule form&quot;, eg. &quot;water always flows downhill&quot; or &quot;counterfactuals are in past tense&quot;.  It seems that these can be directly integrated into either the DLN side or the symbolic side.  I think this constitutes the <b>greatest accelerating factor</b>, or I may be mistaken?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 21:54:33 UTC</div>
+<div class="text">If we add many rules to the DLN side it may slow down learning significantly (but then again maybe not, as we&#x27;re not updating all rules per iteration).  Another question is whether we can let DLN and symbolic engine operate side by side <b>with cross-interactions</b>, without any adverse effects?  It seems okay.  Finally, there should be a process of &quot;grokking&quot; or &quot;comprehension&quot; in which new knowledge is absorbed into memory while maintaining <b>logical coherence</b>.  This may be a necessary step, and humans do that too, which explains why humans learn slowly.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:10:04 UTC</div>
+<div class="text">Yes, this is very good progress and gives <b>conceptual clarity</b> to the whole project.  Can you summarize in an .md somewhere?  Then we proceed full-speed towards the end goal of training with large, real-life data.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:10:58 UTC</div>
+<div class="text">Yes, please proceed with that.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:20:18 UTC</div>
+<div class="text">Good, benchmark completed with:
+Benchmark MSE → baseline: 0.0001, GA-seeded: 0.0002
+TinyStories load: 3 stories, 3 via Davidsonian, total facts=400
+
+TinyStories mini benchmark (inferred + combo + neg): train MSE=0.0000 on 8858 labels, eval MSE=0.0009 MAE=0.0067 on 1033 labels (77 rules, collect 44.505s vs full 86.917s, pruned_only=0, full_only=6316)        
+Predict B(&#x27;alice&#x27;,): 1.000 (target 1.000)                                                                
+Predict B(&#x27;bob&#x27;,): 1.000 (target 0.700)  </div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:23:05 UTC</div>
+<div class="text">Can you give some examples of what these &quot;labels&quot; are, and how they aid learning?  Yes, proceed to add the cache.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:30:04 UTC</div>
+<div class="text">Output:
+Benchmark MSE → baseline: 0.0001, GA-seeded: 0.0002
+TinyStories load: 3 stories, 3 via Davidsonian, total facts=400
+TinyStories mini benchmark (inferred + combo + neg): train MSE=0.0000 on 8858 labels, eval MSE=0.0009 MAE=0.0067 on 1033 labels (77 rules, collect 42.111s vs full 86.033s, pruned_only=0, full_only=6316)
+Predict B(&#x27;alice&#x27;,): 0.994 (target 1.000)
+Predict B(&#x27;bob&#x27;,): 0.709 (target 0.700)</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:32:54 UTC</div>
+<div class="text">Given the symbolic engine + DLN architecture, can our code benefit from running on GPUs?  Please proceed to scale-up.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:36:29 UTC</div>
+<div class="text">We don&#x27;t have GPU on this machine.  Current benchmarks finished quite fast, so I don&#x27;t see a big need to switch to GPUs yet.  But a GPU server is available, so you can prepare for that.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:37:09 UTC</div>
+<div class="text">@agent Try Again</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:39:17 UTC</div>
+<div class="text">OK, proceed if you think those steps are worth doing.  Also, is there anything we can do on the symbolic engine side that might benefit from GPUs?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:45:00 UTC</div>
+<div class="text">OK, lets proceed to scale up if we&#x27;re ready.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 22:46:21 UTC</div>
+<div class="text">yes, go ahead!</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 23:22:55 UTC</div>
+<div class="text">When shall we switch to AR as training framework?  What are benefits of using labels?</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 23:24:15 UTC</div>
+<div class="text">OK, please proceed as you suggested.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 23:27:24 UTC</div>
+<div class="text">Traceback (most recent call last):                                                                       
+  File &quot;/home/yky/misc-programs/AGI-experiments/benchmarks.py&quot;, line 609, in &lt;module&gt;                    
+    run_all_smoke_tests(
+TypeError: run_all_smoke_tests() got an unexpected keyword argument &#x27;use_ar_aux&#x27;</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-09 23:50:00 UTC</div>
+<div class="text">What is meant by pruned and full collect?  Yes, try to reduce the collection time.</div>
+</div>
+<div class="entry">
+<div class="timestamp">2026-01-10 00:51:05 UTC</div>
+<div class="text">What exactly is the <b>pruning process</b>?  How come that full collection is much faster?</div>
+</div>
+</div>
+</body>
+</html>

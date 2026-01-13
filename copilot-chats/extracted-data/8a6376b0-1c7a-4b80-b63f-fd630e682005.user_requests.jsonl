@@ -1,0 +1,6 @@
+{"timestamp": "2026-01-10T01:34:51.079Z", "text": "@benchmarks.py  I don't understand what \"pruning\" does and how come it is even slower than \"full\" (cached)."}
+{"timestamp": "2026-01-10T01:43:27.048Z", "text": "What does the hashing do?  How many rules are there?"}
+{"timestamp": "2026-01-10T02:39:26.531Z", "text": "Run results:\nBenchmark MSE → baseline: 0.0001, GA-seeded: 0.0001\nTinyStories load: 8 stories, 8 via Davidsonian, total facts=1000\nTinyStories mini benchmark (inferred + combo + neg): train MSE=0.0000 on 39508 labels, eval MSE=0.0009 MAE=0.0043 on 4408 labels (77 rules, collect 334.391s vs full 721.882s, pruned_only=0, full_only=28360)\nPredict B('alice',): 0.993 (target 1.000)\nPredict B('bob',): 0.693 (target 0.700)"}
+{"timestamp": "2026-01-10T03:47:19.998Z", "text": "So this hashing or pruning is for faster inference?  Do they play a role similar to rete algorithm?"}
+{"timestamp": "2026-01-10T03:49:24.680Z", "text": "I see.  Can you briefly explain the label generation process?"}
+{"timestamp": "2026-01-10T03:53:47.302Z", "text": "if we train the DLN on these labels, isn't it kind of chicken-and-egg situation? The labels are generated from the symbolic engine, but what are those latter rules initialized from?"}

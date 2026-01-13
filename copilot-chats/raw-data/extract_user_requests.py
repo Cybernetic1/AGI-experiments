@@ -100,9 +100,10 @@ def main() -> None:
         write_jsonl(out_path, combined)
         print(f"Wrote {len(combined)} requests → {out_path}")
     else:
-        for path in input_paths:
+        print(input_paths)
+        for i, path in enumerate(input_paths):
             requests = extract_requests(path)
-            out_path = path / "user_requests.jsonl" if path.is_dir() else path.with_suffix(".user_requests.jsonl")
+            out_path = path / f"user_requests{i}.jsonl" if path.is_dir() else path.with_suffix(".user_requests.jsonl")
             write_jsonl(out_path, requests)
             print(f"Wrote {len(requests)} requests → {out_path}")
 
