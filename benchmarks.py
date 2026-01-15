@@ -6,7 +6,7 @@ import argparse
 import pickle
 import hashlib
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Set
 
 import torch
 
@@ -27,6 +27,10 @@ def _toy_data() -> Tuple[List[Proposition], List[Rule]]:
     facts = [Proposition("A", ("alice",), 1.0), Proposition("A", ("bob",), 0.7)]
     rule = Rule([Proposition("A", ("?x",))], Proposition("B", ("?x",)), 1.0)
     return facts, [rule]
+
+
+def _count_params(model: torch.nn.Module) -> int:
+    return sum(p.numel() for p in model.parameters() if p.requires_grad)
 
 
 def ga_seed_rules(predicates: List[str], pop_size: int = 6) -> List[Rule]:
@@ -183,6 +187,8 @@ def tinystories_mini_benchmark(
     ri_train_steps: int = 4,
     ri_threshold: float = 0.5,
     ri_lr: float = 1e-2,
+    label_batch_size: int = 128,
+    allowed_predicates: Optional[Set[str]] = None,
 ) -> Optional[Tuple[float, int]]:
     _require_torch()
     reg = PersistentEntityRegistry(embedding_dim=16) if use_entity_registry else None
@@ -250,6 +256,7 @@ def tinystories_mini_benchmark(
     all_rules = base_rules + combo_rules + neg_rules + narrative_rules + mined_rules
 
     model = SimpleDLN(predicates, args).to(device)
+    print(f"[params] DLN trainable params: {_count_params(model):,}")
     store = RuleStore(model)
     store_path = Path(store_path)
     # Try to warm-start rule store if available
@@ -295,15 +302,15 @@ def tinystories_mini_benchmark(
 
     t0 = time.perf_counter()
     if use_rule_injection:
-        labels = _collect_labels_filtered(train_facts, candidate_rules, use_disk_cache=disk_label_cache)
+        labels = _collect_labels_filtered(train_facts, candidate_rules, use_disk_cache=disk_label_cache, rule_batch_size=label_batch_size, allowed_predicates=allowed_predicates)
         labels_full = labels
         t_collect = time.perf_counter() - t0
         t_collect_full = t_collect
     else:
-        labels = _collect_labels(train_facts, candidate_rules, predicate_filter=None, use_disk_cache=disk_label_cache)
+        labels = _collect_labels(train_facts, candidate_rules, predicate_filter=None, use_disk_cache=disk_label_cache, rule_batch_size=label_batch_size, allowed_predicates=allowed_predicates)
         t_collect = time.perf_counter() - t0
         t0_full = time.perf_counter()
-        labels_full = _collect_labels(train_facts, deduped_rules, predicate_filter=None, use_disk_cache=disk_label_cache)
+        labels_full = _collect_labels(train_facts, deduped_rules, predicate_filter=None, use_disk_cache=disk_label_cache, rule_batch_size=label_batch_size, allowed_predicates=allowed_predicates)
         t_collect_full = time.perf_counter() - t0_full
 
     labels = {k: v for k, v in labels.items() if k[0].endswith("_inferred") or k[0].endswith("_combo") or k[0].startswith("not_") or k[0].endswith("_mined")}
@@ -322,9 +329,9 @@ def tinystories_mini_benchmark(
 
     # Evaluate on held-out split using the same labels generated from rules over eval facts
     if use_rule_injection:
-        eval_labels = _collect_labels_filtered(eval_facts, candidate_rules, use_disk_cache=disk_label_cache)
+        eval_labels = _collect_labels_filtered(eval_facts, candidate_rules, use_disk_cache=disk_label_cache, rule_batch_size=label_batch_size, allowed_predicates=allowed_predicates)
     else:
-        eval_labels = _collect_labels(eval_facts, candidate_rules, predicate_filter=None, use_disk_cache=disk_label_cache)
+        eval_labels = _collect_labels(eval_facts, candidate_rules, predicate_filter=None, use_disk_cache=disk_label_cache, rule_batch_size=label_batch_size, allowed_predicates=allowed_predicates)
     eval_labels = {k: v for k, v in eval_labels.items() if k[0].endswith("_inferred") or k[0].endswith("_combo") or k[0].startswith("not_") or k[0].endswith("_mined")}
     eval_mse = _eval_on_labels(model, eval_facts, eval_labels, device=device) if eval_labels else float("nan")
     eval_mae = _mae_on_labels(model, eval_facts, eval_labels, device=device) if eval_labels else float("nan")
@@ -349,7 +356,7 @@ def tinystories_mini_benchmark(
     return final_mse, len(labels)
 
 
-def _make_label_cache_key(facts: List[Proposition], rules: List[Rule], predicate_filter: Optional[str]):
+def _make_label_cache_key(facts: List[Proposition], rules: List[Rule], predicate_filter: Optional[str], rule_batch_size: Optional[int], allowed_predicates: Optional[Set[str]]):
     facts_key = tuple((f.predicate, f.args, f.truth) for f in facts)
     rules_key = tuple(
         (
@@ -359,7 +366,8 @@ def _make_label_cache_key(facts: List[Proposition], rules: List[Rule], predicate
         )
         for r in rules
     )
-    return (facts_key, rules_key, predicate_filter)
+    allowed_key = tuple(sorted(allowed_predicates)) if allowed_predicates else None
+    return (facts_key, rules_key, predicate_filter, rule_batch_size, allowed_key)
 
 
 def _collect_labels(
@@ -367,8 +375,10 @@ def _collect_labels(
     rules: List[Rule],
     predicate_filter: Optional[str] = None,
     use_disk_cache: bool = True,
+    rule_batch_size: Optional[int] = None,
+    allowed_predicates: Optional[Set[str]] = None,
 ) -> Dict[Tuple[str, Tuple[str, ...]], float]:
-    key = _make_label_cache_key(facts, rules, predicate_filter)
+    key = _make_label_cache_key(facts, rules, predicate_filter, rule_batch_size, allowed_predicates)
     if key in LABEL_CACHE:
         return LABEL_CACHE[key]
 
@@ -390,13 +400,17 @@ def _collect_labels(
 
     if not labels:
         t0 = time.perf_counter()
-        print(f"[labels] collecting on {len(facts)} facts with {len(rules)} rules...", flush=True)
+        print(f"[labels] collecting on {len(facts)} facts with {len(rules)} rules (batch={rule_batch_size})...", flush=True)
         eng = SymbolicEngine()
-        targets = eng.infer(facts, rules)
-        for p in targets:
-            if predicate_filter and p.predicate != predicate_filter:
-                continue
-            labels[(p.predicate, p.args)] = p.truth
+        batches = [rules] if not rule_batch_size else [rules[i : i + rule_batch_size] for i in range(0, len(rules), rule_batch_size)]
+        for batch in batches:
+            targets = eng.infer(facts, batch)
+            for p in targets:
+                if predicate_filter and p.predicate != predicate_filter:
+                    continue
+                if allowed_predicates and p.predicate not in allowed_predicates:
+                    continue
+                labels[(p.predicate, p.args)] = p.truth
         dt = time.perf_counter() - t0
         print(f"[labels] generated {len(labels)} labels in {dt:.2f}s", flush=True)
         if use_disk_cache and not disk_hit and cache_file is not None:
@@ -414,6 +428,8 @@ def _collect_labels_filtered(
     facts: List[Proposition],
     rules: List[Rule],
     use_disk_cache: bool = True,
+    rule_batch_size: Optional[int] = None,
+    allowed_predicates: Optional[Set[str]] = None,
 ) -> Dict[Tuple[str, Tuple[str, ...]], float]:
     merged: Dict[Tuple[str, Tuple[str, ...]], float] = {}
     for r in rules:
@@ -422,6 +438,8 @@ def _collect_labels_filtered(
             [r],
             predicate_filter=r.conclusion.predicate,
             use_disk_cache=use_disk_cache,
+            rule_batch_size=rule_batch_size,
+            allowed_predicates=allowed_predicates,
         )
         merged.update(lbls)
     return merged
@@ -629,7 +647,7 @@ def paraconsistency_chain_test():
     return table
 
 
-def run_all_smoke_tests(run_tiny: bool = True, run_ga: bool = True, run_para: bool = True, save_store: bool = False, load_store: bool = True, store_path: str = "data/processed/rule_store_tiny.json", use_mined: bool = True, contra_strength: float = 0.8, save_mined: bool = False, use_entity_registry: bool = True, prefer_davidsonian: bool = True, device: str = "cpu", disk_label_cache: bool = True, max_stories: int = 50, max_facts: int = 1000, use_ar_aux: bool = True, ar_weight: float = 0.1, max_candidate_rules: int = 200, use_rule_injection: bool = True, ri_train_steps: int = 4, ri_threshold: float = 0.5, ri_lr: float = 1e-2):
+def run_all_smoke_tests(run_tiny: bool = True, run_ga: bool = True, run_para: bool = True, save_store: bool = False, load_store: bool = True, store_path: str = "data/processed/rule_store_tiny.json", use_mined: bool = True, contra_strength: float = 0.8, save_mined: bool = False, use_entity_registry: bool = True, prefer_davidsonian: bool = True, device: str = "cpu", disk_label_cache: bool = True, max_stories: int = 50, max_facts: int = 1000, use_ar_aux: bool = True, ar_weight: float = 0.1, max_candidate_rules: int = 200, use_rule_injection: bool = True, ri_train_steps: int = 4, ri_threshold: float = 0.5, ri_lr: float = 1e-2, label_batch_size: int = 128, allowed_predicates: Optional[Set[str]] = None):
     sym_table = symbolic_smoke_test()
     if SimpleDLN is None:
         print("PyTorch not installed; skipping DLN smoke test. Symbolic test passed.")
@@ -643,7 +661,7 @@ def run_all_smoke_tests(run_tiny: bool = True, run_ga: bool = True, run_para: bo
     if run_ga:
         benchmark_ga_vs_random()
     if run_tiny:
-        tinystories_mini_benchmark(save_store=save_store, load_store=load_store, store_path=store_path, use_mined=use_mined, contra_strength=contra_strength, save_mined=save_mined, use_entity_registry=use_entity_registry, prefer_davidsonian=prefer_davidsonian, device=device, disk_label_cache=disk_label_cache, max_stories=max_stories, max_facts=max_facts, use_ar_aux=use_ar_aux, ar_weight=ar_weight, max_candidate_rules=max_candidate_rules, use_rule_injection=use_rule_injection, ri_train_steps=ri_train_steps, ri_threshold=ri_threshold, ri_lr=ri_lr)
+        tinystories_mini_benchmark(save_store=save_store, load_store=load_store, store_path=store_path, use_mined=use_mined, contra_strength=contra_strength, save_mined=save_mined, use_entity_registry=use_entity_registry, prefer_davidsonian=prefer_davidsonian, device=device, disk_label_cache=disk_label_cache, max_stories=max_stories, max_facts=max_facts, use_ar_aux=use_ar_aux, ar_weight=ar_weight, max_candidate_rules=max_candidate_rules, use_rule_injection=use_rule_injection, ri_train_steps=ri_train_steps, ri_threshold=ri_threshold, ri_lr=ri_lr, label_batch_size=label_batch_size, allowed_predicates=allowed_predicates)
     with torch.no_grad():
         for (pred, args_tuple), truth in labels.items():
             premises = [Proposition("A", args_tuple, sym_table[("A", args_tuple)])]
@@ -675,7 +693,13 @@ if __name__ == "__main__":
     parser.add_argument("--ri-steps", type=int, default=4, help="Gradient steps per injected rule")
     parser.add_argument("--ri-threshold", type=float, default=0.5, help="Confidence threshold for rule injection")
     parser.add_argument("--ri-lr", type=float, default=1e-2, help="Learning rate for rule injection fine-tuning")
+    parser.add_argument("--label-batch-size", type=int, default=128, help="Rule batch size for label collection")
+    parser.add_argument("--allowed-preds", type=str, default="", help="Comma-separated predicates to keep during label collection (optional)")
     args = parser.parse_args()
+
+    allowed_preds = None
+    if args.allowed_preds:
+        allowed_preds = {p.strip() for p in args.allowed_preds.split(",") if p.strip()}
 
     run_all_smoke_tests(
         run_tiny=not args.no_tiny,
@@ -700,4 +724,6 @@ if __name__ == "__main__":
         ri_train_steps=args.ri_steps,
         ri_threshold=args.ri_threshold,
         ri_lr=args.ri_lr,
+        label_batch_size=args.label_batch_size,
+        allowed_predicates=allowed_preds,
     )
