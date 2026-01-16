@@ -179,7 +179,7 @@ def paraconsistency_chain_test():
     return table
 
 
-def run_all_smoke_tests(run_tiny: bool = True, run_ga: bool = True, run_para: bool = True, save_store: bool = False, load_store: bool = True, store_path: str = "data/processed/rule_store_tiny.json", use_mined: bool = True, contra_strength: float = 0.8, save_mined: bool = False, use_entity_registry: bool = True, prefer_davidsonian: bool = True, device: str = "cpu", disk_label_cache: bool = True, max_stories: int = 50, max_facts: int = 1000, use_ar_aux: bool = True, ar_weight: float = 0.1, max_candidate_rules: int = 200, use_rule_injection: bool = True, ri_train_steps: int = 4, ri_threshold: float = 0.5, ri_lr: float = 1e-2, label_batch_size: int = 128, allowed_predicates: Optional[Set[str]] = None):
+def run_all_smoke_tests(run_tiny: bool = True, run_ga: bool = True, run_para: bool = True, save_store: bool = False, load_store: bool = True, store_path: str = "data/processed/rule_store_tiny.json", use_mined: bool = True, contra_strength: float = 0.8, save_mined: bool = False, use_entity_registry: bool = True, prefer_davidsonian: bool = True, device: str = "cpu", disk_label_cache: bool = True, max_stories: int = 50, max_facts: int = 1000, use_ar_aux: bool = True, ar_weight: float = 0.1, max_candidate_rules: int = 200, use_rule_injection: bool = True, ri_train_steps: int = 4, ri_threshold: float = 0.5, ri_lr: float = 1e-2, label_batch_size: int = 128, allowed_predicates: Optional[Set[str]] = None, train_batch_size: int = None):
     print("=" * 60, flush=True)
     print("STARTING BENCHMARK SUITE", flush=True)
     print("=" * 60, flush=True)
@@ -211,7 +211,7 @@ def run_all_smoke_tests(run_tiny: bool = True, run_ga: bool = True, run_para: bo
         print("=" * 60, flush=True)
         print("STARTING TINYSTORIES BENCHMARK", flush=True)
         print("=" * 60, flush=True)
-        tinystories_mini_benchmark(save_store=save_store, load_store=load_store, store_path=store_path, use_mined=use_mined, contra_strength=contra_strength, save_mined=save_mined, use_entity_registry=use_entity_registry, prefer_davidsonian=prefer_davidsonian, device=device, disk_label_cache=disk_label_cache, max_stories=max_stories, max_facts=max_facts, use_ar_aux=use_ar_aux, ar_weight=ar_weight, max_candidate_rules=max_candidate_rules, use_rule_injection=use_rule_injection, ri_train_steps=ri_train_steps, ri_threshold=ri_threshold, ri_lr=ri_lr, label_batch_size=label_batch_size, allowed_predicates=allowed_predicates)
+        tinystories_mini_benchmark(save_store=save_store, load_store=load_store, store_path=store_path, use_mined=use_mined, contra_strength=contra_strength, save_mined=save_mined, use_entity_registry=use_entity_registry, prefer_davidsonian=prefer_davidsonian, device=device, disk_label_cache=disk_label_cache, max_stories=max_stories, max_facts=max_facts, use_ar_aux=use_ar_aux, ar_weight=ar_weight, max_candidate_rules=max_candidate_rules, use_rule_injection=use_rule_injection, ri_train_steps=ri_train_steps, ri_threshold=ri_threshold, ri_lr=ri_lr, label_batch_size=label_batch_size, allowed_predicates=allowed_predicates, train_batch_size=train_batch_size)
         print("=" * 60, flush=True)
         print("TINYSTORIES BENCHMARK COMPLETE", flush=True)
         print("=" * 60, flush=True)

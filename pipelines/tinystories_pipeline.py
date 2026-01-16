@@ -149,6 +149,7 @@ def tinystories_mini_benchmark(
     ri_lr: float = 1e-2,
     label_batch_size: int = 128,
     allowed_predicates: Optional[Set[str]] = None,
+    train_batch_size: int = None,
 ):
     _require_torch()
     print(f"[setup] Initializing entity registry (enabled={use_entity_registry})...", flush=True)
@@ -324,10 +325,15 @@ def tinystories_mini_benchmark(
         print("No labels produced for TinyStories mini benchmark; skipping.")
         return None
 
+    # Auto-enable batching for large label sets
+    if train_batch_size is None and len(labels) > 100000:
+        train_batch_size = 10000
+        print(f"[training] Auto-enabling mini-batch training: batch_size={train_batch_size}", flush=True)
+    
     print(f"[training] starting DLN training for {steps} steps on {len(labels)} labels...", flush=True)
     opt = torch.optim.Adam(model.parameters(), lr=1e-2)
     t1 = time.perf_counter()
-    final_mse = _train_on_labels(model, opt, train_facts, labels, steps, device=device, use_ar_aux=use_ar_aux, ar_weight=ar_weight)
+    final_mse = _train_on_labels(model, opt, train_facts, labels, steps, device=device, use_ar_aux=use_ar_aux, ar_weight=ar_weight, batch_size=train_batch_size)
     t_train = time.perf_counter() - t1
     print(f"[training] completed in {t_train:.2f}s, final MSE={final_mse:.4f}", flush=True)
 

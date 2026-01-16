@@ -1,4 +1,5 @@
 from typing import Dict, List, Tuple
+import random
 
 import torch
 from torch.nn import functional as F
@@ -16,11 +17,25 @@ def _train_on_labels(
     device: str = "cpu",
     use_ar_aux: bool = False,
     ar_weight: float = 0.1,
+    batch_size: int = None,
 ) -> float:
+    # Enable mini-batch training for large label sets
+    use_batching = batch_size is not None and len(labels) > batch_size
+    if use_batching:
+        label_list = list(labels.items())
+        print(f"[train] Using mini-batch training: {len(labels)} labels, batch_size={batch_size}", flush=True)
+    
     for i in range(steps):
         opt.zero_grad()
         loss = 0.0
-        for (pred, args_tuple), truth in labels.items():
+        
+        # Select batch of labels
+        if use_batching:
+            batch_items = random.sample(label_list, min(batch_size, len(label_list)))
+        else:
+            batch_items = labels.items()
+        
+        for (pred, args_tuple), truth in batch_items:
             premises = [p for p in facts if p.args == args_tuple]
             if not premises:
                 continue

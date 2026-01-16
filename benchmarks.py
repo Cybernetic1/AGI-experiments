@@ -30,6 +30,7 @@ if __name__ == "__main__":
     parser.add_argument("--ri-lr", type=float, default=1e-2, help="Learning rate for rule injection fine-tuning")
     parser.add_argument("--label-batch-size", type=int, default=128, help="Rule batch size for label collection")
     parser.add_argument("--allowed-preds", type=str, default="", help="Comma-separated predicates to keep during label collection (optional)")
+    parser.add_argument("--train-batch-size", type=int, default=None, help="Mini-batch size for training (None=use all labels, auto-enabled for >100K labels)")
     args = parser.parse_args()
 
     allowed_preds = None
@@ -61,4 +62,5 @@ if __name__ == "__main__":
         ri_lr=args.ri_lr,
         label_batch_size=args.label_batch_size,
         allowed_predicates=allowed_preds,
+        train_batch_size=args.train_batch_size,
     )
