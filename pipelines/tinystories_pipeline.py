@@ -168,10 +168,10 @@ def tinystories_mini_benchmark(
         print(f"[setup] Injecting contradiction (strength={contra_strength})...", flush=True)
         facts = inject_contradiction(facts, strength=contra_strength)
 
-    print(f"[setup] Splitting facts: train={split_idx}, eval={len(facts) - split_idx}", flush=True)
     split_idx = max(1, int(len(facts) * (1 - eval_split)))
     train_facts = facts[:split_idx]
     eval_facts = facts[split_idx:] if split_idx < len(facts) else facts[-1:]
+    print(f"[setup] Split facts: train={len(train_facts)}, eval={len(eval_facts)}", flush=True)
 
     print(f"[setup] Building vocabulary...", flush=True)
     relations = sorted({p.predicate for p in facts})
