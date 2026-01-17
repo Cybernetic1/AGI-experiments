@@ -49,15 +49,19 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
         print(f"  ... and {len(rules) - 5} more")
     
     # Setup DLN
-    print(f"\n[setup] Creating DLN with {len(pred_names)} predicates...")
-    # Collect all entities from facts
+    # Collect all predicates (base + mined) and entities
+    all_predicates = set(pred_names)  # Mined predicates
     all_args = set()
     for fact in facts[:5000]:
+        all_predicates.add(fact.predicate)  # Base predicates from facts
         all_args.update(fact.args)
+    
+    pred_list = sorted(list(all_predicates))
     arg_list = sorted(list(all_args))
     
+    print(f"\n[setup] Creating DLN with {len(pred_list)} predicates ({len(pred_names)} mined + base)...")
     model = SimpleDLN(
-        predicates=pred_names,
+        predicates=pred_list,
         args=arg_list,
         embed_dim=32,
     )
@@ -89,8 +93,8 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
     # Evaluate
     print(f"[evaluation] Evaluating on {len(eval_labels)} labels...")
     eval_labels_dict = {pred_args: truth for pred_args, truth in eval_labels}
-    eval_mse, eval_mae = _eval_on_labels(model, facts[:5000], eval_labels_dict)
-    print(f"  Eval MSE: {eval_mse:.6f}, MAE: {eval_mae:.6f}")
+    eval_mse = _eval_on_labels(model, facts[:5000], eval_labels_dict)
+    print(f"  Eval MSE: {eval_mse:.6f}")
     
     return {
         'algorithm': algorithm_name,
@@ -98,7 +102,6 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
         'num_labels': len(labels),
         'train_mse': train_mse,
         'eval_mse': eval_mse,
-        'eval_mae': eval_mae,
     }
 
 
@@ -145,16 +148,16 @@ def main():
         print("\n" + "="*70)
         print("SUMMARY COMPARISON")
         print("="*70)
-        print(f"\n{'Algorithm':<15} {'Rules':<8} {'Labels':<10} {'Train MSE':<12} {'Eval MSE':<12} {'Eval MAE':<12}")
+        print(f"\n{'Algorithm':<15} {'Rules':<8} {'Labels':<10} {'Train MSE':<12} {'Eval MSE':<12}")
         print("-" * 70)
         for r in all_results:
             print(f"{r['algorithm']:<15} {r['num_rules']:<8} {r['num_labels']:<10} "
-                  f"{r['train_mse']:<12.6f} {r['eval_mse']:<12.6f} {r['eval_mae']:<12.6f}")
+                  f"{r['train_mse']:<12.6f} {r['eval_mse']:<12.6f}")
         
         # Determine winner
         best_eval = min(all_results, key=lambda x: x['eval_mse'])
         print(f"\n🏆 Best performing algorithm: {best_eval['algorithm'].upper()}")
-        print(f"   Eval MSE: {best_eval['eval_mse']:.6f}, MAE: {best_eval['eval_mae']:.6f}")
+        print(f"   Eval MSE: {best_eval['eval_mse']:.6f}")
         
     else:
         # Test single algorithm
@@ -164,7 +167,7 @@ def main():
             print(f"   Rules: {result['num_rules']}")
             print(f"   Labels: {result['num_labels']}")
             print(f"   Train MSE: {result['train_mse']:.6f}")
-            print(f"   Eval MSE: {result['eval_mse']:.6f}, MAE: {result['eval_mae']:.6f}")
+            print(f"   Eval MSE: {result['eval_mse']:.6f}")
 
 
 if __name__ == '__main__':
