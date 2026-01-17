@@ -28,6 +28,7 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
     print(f"\n{'='*70}")
     print(f"TESTING: {algorithm_name.upper()}")
     print(f"{'='*70}")
+    print(f"Using {len(facts)} facts for rule mining and training")
     
     # Mine rules
     if algorithm_name == 'frequency':
@@ -49,10 +50,10 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
         print(f"  ... and {len(rules) - 5} more")
     
     # Setup DLN
-    # Collect all predicates (base + mined) and entities
+    # Collect all predicates (base + mined) and entities from ALL facts
     all_predicates = set(pred_names)  # Mined predicates
     all_args = set()
-    for fact in facts[:5000]:
+    for fact in facts:  # Use ALL facts, not [:5000]
         all_predicates.add(fact.predicate)  # Base predicates from facts
         all_args.update(fact.args)
     
@@ -66,9 +67,9 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
         embed_dim=32,
     )
     
-    # Generate labels
-    print(f"[label generation] Generating training labels...")
-    labels_dict = _collect_labels(facts[:5000], rules, log_progress=False)
+    # Generate labels from ALL facts
+    print(f"[label generation] Generating training labels from {len(facts)} facts...")
+    labels_dict = _collect_labels(facts, rules, log_progress=False)
     # Convert dict to list of tuples
     labels = [(pred_args, truth) for pred_args, truth in labels_dict.items()]
     print(f"  Generated {len(labels)} labels")
@@ -82,18 +83,18 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
     train_labels = labels[:split_idx]
     eval_labels = labels[split_idx:]
     
-    # Train
+    # Train using ALL facts
     print(f"[training] Training DLN for 20 steps on {len(train_labels)} labels...")
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     # Convert labels back to dict format
     train_labels_dict = {pred_args: truth for pred_args, truth in train_labels}
-    train_mse = _train_on_labels(model, optimizer, facts[:5000], train_labels_dict, steps=20, batch_size=None)
+    train_mse = _train_on_labels(model, optimizer, facts, train_labels_dict, steps=20, batch_size=None)
     print(f"  Final train MSE: {train_mse:.6f}")
     
-    # Evaluate
+    # Evaluate using ALL facts
     print(f"[evaluation] Evaluating on {len(eval_labels)} labels...")
     eval_labels_dict = {pred_args: truth for pred_args, truth in eval_labels}
-    eval_mse = _eval_on_labels(model, facts[:5000], eval_labels_dict)
+    eval_mse = _eval_on_labels(model, facts, eval_labels_dict)
     print(f"  Eval MSE: {eval_mse:.6f}")
     
     return {
@@ -119,6 +120,8 @@ def main():
                        help='Number of runs per algorithm (default: 1)')
     parser.add_argument('--random-seed', type=int, default=None,
                        help='Random seed for reproducibility (default: None)')
+    parser.add_argument('--max-facts', type=int, default=None,
+                       help='Max facts to load (default: None = no limit)')
     args = parser.parse_args()
     
     # Set random seed if provided
@@ -130,10 +133,11 @@ def main():
     print("="*70)
     print("ILP ALGORITHM COMPARISON TEST")
     print("="*70)
-    print(f"Loading {args.max_stories} stories...")
+    print(f"Config: max_stories={args.max_stories}, max_rules={args.max_rules}, max_facts={args.max_facts}")
+    print(f"Loading stories...")
     
-    # Load facts
-    facts = load_tinystories_facts(max_stories=args.max_stories)
+    # Load facts with configurable max_facts
+    facts = load_tinystories_facts(max_stories=args.max_stories, max_facts=args.max_facts if args.max_facts else 999999)
     print(f"Loaded {len(facts)} facts from stories")
     
     # Compare algorithms first
