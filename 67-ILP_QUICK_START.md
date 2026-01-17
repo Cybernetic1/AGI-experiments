@@ -1,5 +1,25 @@
 # ILP Rule Tracking - Quick Start Guide
 
+## ✅ IT WORKS! Test Results Available
+
+The test script is now fully functional. See **`68-ILP_TEST_RESULTS.md`** for detailed results.
+
+**TL;DR:** Confidence-based algorithm wins with 45-61% better eval MSE!
+
+## Quick Test
+
+```bash
+# Small test (10 stories, 5 rules each)
+source venv/bin/activate
+python test_ilp_comparison.py --max-stories 10 --max-rules 5
+
+# Medium test (50 stories, 20 rules each)
+python test_ilp_comparison.py --max-stories 50 --max-rules 20
+
+# Large test (200 stories, 50 rules each)
+python test_ilp_comparison.py --max-stories 200 --max-rules 50
+```
+
 ## What Was Created
 
 Three new components to track and compare ILP algorithms:
