@@ -23,12 +23,18 @@ from dln import SimpleDLN
 import torch
 
 
-def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_support: int = 2):
-    """Test a single ILP algorithm and report results."""
+def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_support: int = 2, 
+                          skip_training: bool = False, sample_facts_for_labels: int = None):
+    """Test a single ILP algorithm and report results.
+    
+    Args:
+        skip_training: If True, only mine rules without training DLN (much faster)
+        sample_facts_for_labels: If set, only use first N facts for label generation
+    """
     print(f"\n{'='*70}")
     print(f"TESTING: {algorithm_name.upper()}")
     print(f"{'='*70}")
-    print(f"Using {len(facts)} facts for rule mining and training")
+    print(f"Mining rules from {len(facts)} facts")
     
     # Mine rules
     if algorithm_name == 'frequency':
@@ -40,7 +46,7 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
     else:
         raise ValueError(f"Unknown algorithm: {algorithm_name}")
     
-    print(f"\nMined {len(rules)} rules")
+    print(f"\n✅ Mined {len(rules)} rules")
     
     # Show some example rules
     print(f"\nSample rules:")
@@ -49,11 +55,24 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
     if len(rules) > 5:
         print(f"  ... and {len(rules) - 5} more")
     
+    # If skip_training, return rule info only
+    if skip_training:
+        return {
+            'algorithm': algorithm_name,
+            'num_rules': len(rules),
+            'num_labels': 0,
+            'train_mse': None,
+            'eval_mse': None,
+        }
     # Setup DLN
-    # Collect all predicates (base + mined) and entities from ALL facts
+    # Use subset of facts for label generation if requested
+    facts_for_labels = facts[:sample_facts_for_labels] if sample_facts_for_labels else facts
+    print(f"\n[setup] Using {len(facts_for_labels)} facts for label generation/training")
+    
+    # Collect all predicates (base + mined) and entities from label facts
     all_predicates = set(pred_names)  # Mined predicates
     all_args = set()
-    for fact in facts:  # Use ALL facts, not [:5000]
+    for fact in facts_for_labels:
         all_predicates.add(fact.predicate)  # Base predicates from facts
         all_args.update(fact.args)
     
@@ -67,9 +86,9 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
         embed_dim=32,
     )
     
-    # Generate labels from ALL facts
-    print(f"[label generation] Generating training labels from {len(facts)} facts...")
-    labels_dict = _collect_labels(facts, rules, log_progress=False)
+    # Generate labels from sampled facts
+    print(f"[label generation] Generating training labels from {len(facts_for_labels)} facts...")
+    labels_dict = _collect_labels(facts_for_labels, rules, log_progress=True)
     # Convert dict to list of tuples
     labels = [(pred_args, truth) for pred_args, truth in labels_dict.items()]
     print(f"  Generated {len(labels)} labels")
@@ -83,18 +102,18 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
     train_labels = labels[:split_idx]
     eval_labels = labels[split_idx:]
     
-    # Train using ALL facts
+    # Train using sampled facts
     print(f"[training] Training DLN for 20 steps on {len(train_labels)} labels...")
     optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
     # Convert labels back to dict format
     train_labels_dict = {pred_args: truth for pred_args, truth in train_labels}
-    train_mse = _train_on_labels(model, optimizer, facts, train_labels_dict, steps=20, batch_size=None)
+    train_mse = _train_on_labels(model, optimizer, facts_for_labels, train_labels_dict, steps=20, batch_size=None)
     print(f"  Final train MSE: {train_mse:.6f}")
     
-    # Evaluate using ALL facts
+    # Evaluate using sampled facts
     print(f"[evaluation] Evaluating on {len(eval_labels)} labels...")
     eval_labels_dict = {pred_args: truth for pred_args, truth in eval_labels}
-    eval_mse = _eval_on_labels(model, facts, eval_labels_dict)
+    eval_mse = _eval_on_labels(model, facts_for_labels, eval_labels_dict)
     print(f"  Eval MSE: {eval_mse:.6f}")
     
     return {
@@ -122,6 +141,10 @@ def main():
                        help='Random seed for reproducibility (default: None)')
     parser.add_argument('--max-facts', type=int, default=None,
                        help='Max facts to load (default: None = no limit)')
+    parser.add_argument('--skip-training', action='store_true',
+                       help='Skip training phase, only compare mined rules (much faster)')
+    parser.add_argument('--sample-facts', type=int, default=5000,
+                       help='Use only first N facts for label generation (default: 5000)')
     args = parser.parse_args()
     
     # Set random seed if provided
@@ -133,7 +156,9 @@ def main():
     print("="*70)
     print("ILP ALGORITHM COMPARISON TEST")
     print("="*70)
-    print(f"Config: max_stories={args.max_stories}, max_rules={args.max_rules}, max_facts={args.max_facts}")
+    print(f"Config: max_stories={args.max_stories}, max_rules={args.max_rules}")
+    print(f"        max_facts={args.max_facts}, sample_facts={args.sample_facts if not args.skip_training else 'N/A'}")
+    print(f"        skip_training={args.skip_training}")
     print(f"Loading stories...")
     
     # Load facts with configurable max_facts
@@ -164,20 +189,26 @@ def main():
                         run_results.append(result)
                 
                 if run_results:
-                    # Compute statistics across runs
-                    avg_result = {
-                        'algorithm': alg_name,
-                        'num_rules': run_results[0]['num_rules'],
-                        'num_labels': run_results[0]['num_labels'],
-                        'train_mse': sum(r['train_mse'] for r in run_results) / len(run_results),
-                        'eval_mse': sum(r['eval_mse'] for r in run_results) / len(run_results),
-                        'train_mse_std': (sum((r['train_mse'] - sum(r['train_mse'] for r in run_results) / len(run_results))**2 for r in run_results) / len(run_results))**0.5,
-                        'eval_mse_std': (sum((r['eval_mse'] - sum(r['eval_mse'] for r in run_results) / len(run_results))**2 for r in run_results) / len(run_results))**0.5,
-                        'num_runs': len(run_results),
-                    }
+                    # Compute statistics across runs (only if we have train/eval MSE)
+                    if not args.skip_training and run_results[0]['train_mse'] is not None:
+                        avg_result = {
+                            'algorithm': alg_name,
+                            'num_rules': run_results[0]['num_rules'],
+                            'num_labels': run_results[0]['num_labels'],
+                            'train_mse': sum(r['train_mse'] for r in run_results) / len(run_results),
+                            'eval_mse': sum(r['eval_mse'] for r in run_results) / len(run_results),
+                            'train_mse_std': (sum((r['train_mse'] - sum(r['train_mse'] for r in run_results) / len(run_results))**2 for r in run_results) / len(run_results))**0.5,
+                            'eval_mse_std': (sum((r['eval_mse'] - sum(r['eval_mse'] for r in run_results) / len(run_results))**2 for r in run_results) / len(run_results))**0.5,
+                            'num_runs': len(run_results),
+                        }
+                    else:
+                        avg_result = run_results[0]  # Just use first run for rule info
                     all_results.append(avg_result)
             else:
-                result = test_single_algorithm(alg_name, facts, max_rules=args.max_rules, min_support=args.min_support)
+                result = test_single_algorithm(alg_name, facts, max_rules=args.max_rules, 
+                                               min_support=args.min_support,
+                                               skip_training=args.skip_training,
+                                               sample_facts_for_labels=args.sample_facts if not args.skip_training else None)
                 if result:
                     all_results.append(result)
         
@@ -186,7 +217,14 @@ def main():
         print("SUMMARY COMPARISON")
         print("="*70)
         
-        if args.num_runs > 1:
+        if args.skip_training:
+            # Just show rule counts
+            print(f"\n{'Algorithm':<15} {'Rules Mined':<15}")
+            print("-" * 40)
+            for r in all_results:
+                print(f"{r['algorithm']:<15} {r['num_rules']:<15}")
+            print("\n✅ Rule mining complete. Use --skip-training=false to test DLN training.")
+        elif args.num_runs > 1:
             print(f"\n{'Algorithm':<15} {'Rules':<8} {'Labels':<10} {'Train MSE':<20} {'Eval MSE':<20}")
             print("-" * 85)
             for r in all_results:
@@ -206,23 +244,28 @@ def main():
                 print(f"{r['algorithm']:<15} {r['num_rules']:<8} {r['num_labels']:<10} "
                       f"{r['train_mse']:<12.6f} {r['eval_mse']:<12.6f}")
         
-        # Determine winner
-        best_eval = min(all_results, key=lambda x: x['eval_mse'])
-        print(f"\n🏆 Best average eval MSE: {best_eval['algorithm'].upper()}")
-        if 'eval_mse_std' in best_eval:
-            print(f"   Eval MSE: {best_eval['eval_mse']:.4f} ± {best_eval['eval_mse_std']:.4f} ({best_eval['num_runs']} runs)")
-        else:
-            print(f"   Eval MSE: {best_eval['eval_mse']:.6f}")
+        # Determine winner (only if we have eval MSE)
+        if not args.skip_training:
+            best_eval = min(all_results, key=lambda x: x['eval_mse'])
+            print(f"\n🏆 Best average eval MSE: {best_eval['algorithm'].upper()}")
+            if 'eval_mse_std' in best_eval:
+                print(f"   Eval MSE: {best_eval['eval_mse']:.4f} ± {best_eval['eval_mse_std']:.4f} ({best_eval['num_runs']} runs)")
+            else:
+                print(f"   Eval MSE: {best_eval['eval_mse']:.6f}")
         
     else:
         # Test single algorithm
-        result = test_single_algorithm(args.algorithm, facts, max_rules=args.max_rules, min_support=args.min_support)
+        result = test_single_algorithm(args.algorithm, facts, max_rules=args.max_rules, 
+                                       min_support=args.min_support,
+                                       skip_training=args.skip_training,
+                                       sample_facts_for_labels=args.sample_facts if not args.skip_training else None)
         if result:
             print(f"\n✅ {args.algorithm.upper()} results:")
             print(f"   Rules: {result['num_rules']}")
-            print(f"   Labels: {result['num_labels']}")
-            print(f"   Train MSE: {result['train_mse']:.6f}")
-            print(f"   Eval MSE: {result['eval_mse']:.6f}")
+            if not args.skip_training:
+                print(f"   Labels: {result['num_labels']}")
+                print(f"   Train MSE: {result['train_mse']:.6f}")
+                print(f"   Eval MSE: {result['eval_mse']:.6f}")
 
 
 if __name__ == '__main__':
