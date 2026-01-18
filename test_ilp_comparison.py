@@ -66,8 +66,8 @@ def test_single_algorithm(algorithm_name: str, facts, max_rules: int = 20, min_s
         }
     # Setup DLN
     # Use subset of facts for label generation if requested
-    facts_for_labels = facts[:sample_facts_for_labels] if sample_facts_for_labels else facts
-    print(f"\n[setup] Using {len(facts_for_labels)} facts for label generation/training")
+    facts_for_labels = facts if sample_facts_for_labels == 0 or sample_facts_for_labels is None else facts[:sample_facts_for_labels]
+    print(f"\n[setup] Mining used {len(facts)} facts, using {len(facts_for_labels)} facts for labels/training")
     
     # Collect all predicates (base + mined) and entities from label facts
     all_predicates = set(pred_names)  # Mined predicates
@@ -144,7 +144,7 @@ def main():
     parser.add_argument('--skip-training', action='store_true',
                        help='Skip training phase, only compare mined rules (much faster)')
     parser.add_argument('--sample-facts', type=int, default=5000,
-                       help='Use only first N facts for label generation (default: 5000)')
+                       help='Use only first N facts for label generation (default: 5000, 0=all facts)')
     args = parser.parse_args()
     
     # Set random seed if provided

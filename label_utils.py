@@ -69,8 +69,8 @@ def _collect_labels(
         total_batches = len(batches)
         for idx, batch in enumerate(batches, start=1):
             if log_progress:
-                print(f"[labels] batch {idx}/{total_batches} start...", flush=True)
-            targets = eng.infer(facts, batch)
+                print(f"[labels] === Batch {idx}/{total_batches} ===", flush=True)
+            targets = eng.infer(facts, batch, show_progress=log_progress)
             for p in targets:
                 if predicate_filter and p.predicate != predicate_filter:
                     continue
@@ -79,7 +79,7 @@ def _collect_labels(
                 labels[(p.predicate, p.args)] = p.truth
             if log_progress and total_batches > 1 and (idx % max(1, total_batches // 10) == 0 or idx == total_batches):
                 pct = 100.0 * idx / total_batches
-                print(f"[labels] batch {idx}/{total_batches} ({pct:.1f}%) → labels so far: {len(labels)}", flush=True)
+                print(f"[labels] Batch {idx}/{total_batches} ({pct:.1f}%) → labels so far: {len(labels)}", flush=True)
         dt = time.perf_counter() - t0
         if log_progress:
             print(f"[labels] generated {len(labels)} labels in {dt:.2f}s", flush=True)

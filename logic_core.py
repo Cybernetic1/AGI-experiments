@@ -54,15 +54,26 @@ class SymbolicEngine:
     def _combine_truth(truths: List[float], rule_weight: float) -> float:
         return max(0.0, min(1.0, min(truths) * rule_weight))
 
-    def infer(self, facts: List[Proposition], rules: List[Rule]) -> List[Proposition]:
+    def infer(self, facts: List[Proposition], rules: List[Rule], show_progress: bool = False) -> List[Proposition]:
         kb: Dict[Tuple[str, Tuple[str, ...]], float] = {}
         for f in facts:
             key = (f.predicate, f.args)
             kb[key] = max(kb.get(key, 0.0), f.truth)
 
-        for _ in range(self.max_iters):
+        initial_kb_size = len(kb)
+        if show_progress:
+            print(f"[inference] Starting with {initial_kb_size} facts, {len(rules)} rules, max {self.max_iters} iterations", flush=True)
+
+        for iter_num in range(self.max_iters):
+            if show_progress:
+                print(f"[inference] Iteration {iter_num + 1}/{self.max_iters} - KB size: {len(kb)}", flush=True)
+            
             added = False
-            for rule in rules:
+            for rule_idx, rule in enumerate(rules):
+                if show_progress and len(rules) > 10 and rule_idx % max(1, len(rules) // 10) == 0:
+                    pct = 100.0 * rule_idx / len(rules)
+                    print(f"[inference]   Rule {rule_idx + 1}/{len(rules)} ({pct:.0f}%) - KB: {len(kb)} facts", flush=True)
+                
                 matches: List[Tuple[Dict[str, str], List[float]]] = []
 
                 def backtrack(idx: int, subst: Dict[str, str], tvals: List[float]):
@@ -87,9 +98,18 @@ class SymbolicEngine:
                     if new_truth > prev + 1e-6:
                         kb[key] = new_truth
                         added = True
+            
+            if show_progress:
+                print(f"[inference] Iteration {iter_num + 1} complete - KB: {len(kb)} facts (added: {added})", flush=True)
+            
             if not added:
+                if show_progress:
+                    print(f"[inference] Converged at iteration {iter_num + 1}", flush=True)
                 break
 
+        if show_progress:
+            print(f"[inference] Complete - Generated {len(kb) - initial_kb_size} new facts (total: {len(kb)})", flush=True)
+        
         return [Proposition(pred, args, truth) for (pred, args), truth in kb.items()]
 
     def backward_chain(
