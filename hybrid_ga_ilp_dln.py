@@ -301,27 +301,50 @@ class HybridRuleDiscovery:
     
     def _mutate(self, parent: RuleWithFitness) -> RuleWithFitness:
         """Mutate a rule to create variation."""
-        mutated = deepcopy(parent.rule)
-        
         # Mutation strategies
         mutation_type = random.choice(['weight', 'swap_premises', 'modify_conclusion'])
         
         if mutation_type == 'weight':
-            # Adjust rule weight
-            mutated.weight = max(0.1, min(1.0, mutated.weight + random.gauss(0, 0.1)))
+            # Adjust rule weight (create new Rule)
+            new_weight = max(0.1, min(1.0, parent.rule.weight + random.gauss(0, 0.1)))
+            mutated = Rule(
+                premises=parent.rule.premises[:],
+                conclusion=parent.rule.conclusion,
+                weight=new_weight
+            )
         
-        elif mutation_type == 'swap_premises' and len(mutated.premises) >= 2:
-            # Swap premise order
-            i, j = random.sample(range(len(mutated.premises)), 2)
-            mutated.premises[i], mutated.premises[j] = mutated.premises[j], mutated.premises[i]
+        elif mutation_type == 'swap_premises' and len(parent.rule.premises) >= 2:
+            # Swap premise order (create new Rule)
+            new_premises = parent.rule.premises[:]
+            i, j = random.sample(range(len(new_premises)), 2)
+            new_premises[i], new_premises[j] = new_premises[j], new_premises[i]
+            mutated = Rule(
+                premises=new_premises,
+                conclusion=parent.rule.conclusion,
+                weight=parent.rule.weight
+            )
         
         elif mutation_type == 'modify_conclusion':
-            # Slightly modify conclusion (keep structure, change suffix)
-            pred = mutated.conclusion.predicate
+            # Modify conclusion predicate (create new Proposition and Rule)
+            pred = parent.rule.conclusion.predicate
             if '_' in pred:
                 parts = pred.split('_')
                 parts[-1] = random.choice(['evolved', 'refined', 'derived', 'inferred'])
-                mutated.conclusion = Proposition('_'.join(parts), mutated.conclusion.args, mutated.conclusion.truth)
+                new_conclusion = Proposition('_'.join(parts), parent.rule.conclusion.args, parent.rule.conclusion.truth)
+            else:
+                new_conclusion = parent.rule.conclusion
+            mutated = Rule(
+                premises=parent.rule.premises[:],
+                conclusion=new_conclusion,
+                weight=parent.rule.weight
+            )
+        else:
+            # No mutation applied (shouldn't happen but safe fallback)
+            mutated = Rule(
+                premises=parent.rule.premises[:],
+                conclusion=parent.rule.conclusion,
+                weight=parent.rule.weight
+            )
         
         return RuleWithFitness(
             rule=mutated,
