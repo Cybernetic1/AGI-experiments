@@ -47,8 +47,9 @@ def _apply_subst(prop: Proposition, subst: Dict[str, str], truth: float) -> Prop
 class SymbolicEngine:
     """Fuzzy, paraconsistent forward chaining."""
 
-    def __init__(self, max_iters: int = 4):
+    def __init__(self, max_iters: int = 4, max_kb_size: int = 50000):
         self.max_iters = max_iters
+        self.max_kb_size = max_kb_size
 
     @staticmethod
     def _combine_truth(truths: List[float], rule_weight: float) -> float:
@@ -62,11 +63,16 @@ class SymbolicEngine:
 
         initial_kb_size = len(kb)
         if show_progress:
-            print(f"[inference] Starting with {initial_kb_size} facts, {len(rules)} rules, max {self.max_iters} iterations", flush=True)
+            print(f"[inference] Starting with {initial_kb_size} facts, {len(rules)} rules, max {self.max_iters} iterations, KB limit {self.max_kb_size}", flush=True)
 
         for iter_num in range(self.max_iters):
             if show_progress:
                 print(f"[inference] Iteration {iter_num + 1}/{self.max_iters} - KB size: {len(kb)}", flush=True)
+            
+            if len(kb) > self.max_kb_size:
+                if show_progress:
+                    print(f"[inference] ⚠️  KB size {len(kb)} exceeds limit {self.max_kb_size}, stopping early", flush=True)
+                break
             
             added = False
             for rule_idx, rule in enumerate(rules):
@@ -98,6 +104,15 @@ class SymbolicEngine:
                     if new_truth > prev + 1e-6:
                         kb[key] = new_truth
                         added = True
+                        
+                        # Safety check during fact generation
+                        if len(kb) > self.max_kb_size:
+                            if show_progress:
+                                print(f"[inference] ⚠️  KB exploded to {len(kb)} during rule application, stopping", flush=True)
+                            break
+                
+                if len(kb) > self.max_kb_size:
+                    break
             
             if show_progress:
                 print(f"[inference] Iteration {iter_num + 1} complete - KB: {len(kb)} facts (added: {added})", flush=True)

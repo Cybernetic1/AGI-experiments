@@ -64,12 +64,13 @@ def _collect_labels(
         t0 = time.perf_counter()
         if log_progress:
             print(f"[labels] collecting on {len(facts)} facts with {len(rules)} rules (batch={rule_batch_size})...", flush=True)
-        eng = SymbolicEngine()
+        # Use max_iters=1 to prevent combinatorial explosion
+        eng = SymbolicEngine(max_iters=1)
         batches = [rules] if not rule_batch_size else [rules[i : i + rule_batch_size] for i in range(0, len(rules), rule_batch_size)]
         total_batches = len(batches)
         for idx, batch in enumerate(batches, start=1):
             if log_progress:
-                print(f"[labels] === Batch {idx}/{total_batches} ===", flush=True)
+                print(f"[labels] === Batch {idx}/{total_batches} === (max_iters=1 to prevent explosion)", flush=True)
             targets = eng.infer(facts, batch, show_progress=log_progress)
             for p in targets:
                 if predicate_filter and p.predicate != predicate_filter:
