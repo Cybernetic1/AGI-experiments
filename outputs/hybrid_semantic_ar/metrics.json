@@ -1,0 +1,78 @@
+{
+  "rule_discovery": {
+    "num_rules": 30,
+    "best_fitness": 0.19789798749018414,
+    "evolution_history": [
+      {
+        "generation": 0,
+        "best_fitness": 0.11879868265756152,
+        "avg_fitness": 0.002660439907704256,
+        "best_mse": 0.02590131734243848
+      },
+      {
+        "generation": 1,
+        "best_fitness": 0.15180140355868,
+        "avg_fitness": 0.055758561837193826,
+        "best_mse": 0.04819859644132001
+      },
+      {
+        "generation": 2,
+        "best_fitness": 0.15180140355868,
+        "avg_fitness": 0.07396955685475833,
+        "best_mse": 0.04819859644132001
+      },
+      {
+        "generation": 3,
+        "best_fitness": 0.15239901580498555,
+        "avg_fitness": 0.09034998133620803,
+        "best_mse": 0.04760098419501446
+      },
+      {
+        "generation": 4,
+        "best_fitness": 0.1859123528822238,
+        "avg_fitness": 0.08742235885352509,
+        "best_mse": 0.014087647117776214
+      },
+      {
+        "generation": 5,
+        "best_fitness": 0.1914741124812805,
+        "avg_fitness": 0.11738084943786614,
+        "best_mse": 0.008525887518719522
+      },
+      {
+        "generation": 6,
+        "best_fitness": 0.195875970944212,
+        "avg_fitness": 0.1375854151719617,
+        "best_mse": 0.004124029055788014
+      },
+      {
+        "generation": 7,
+        "best_fitness": 0.195875970944212,
+        "avg_fitness": 0.157872338490045,
+        "best_mse": 0.004124029055788014
+      },
+      {
+        "generation": 8,
+        "best_fitness": 0.19725506712264612,
+        "avg_fitness": 0.1689700669316595,
+        "best_mse": 0.0027449328773538895
+      },
+      {
+        "generation": 9,
+        "best_fitness": 0.19789798749018414,
+        "avg_fitness": 0.18357259792920855,
+        "best_mse": 0.002102012509815857
+      }
+    ]
+  },
+  "label_generation": {
+    "num_facts": 50000,
+    "num_labels": 50001,
+    "expansion_ratio": 1.00002
+  },
+  "training": {
+    "train_mse": 0.0005868075896414518,
+    "eval_mse": 0.03789253932024751,
+    "num_parameters": 843028
+  }
+}
