@@ -1,0 +1,872 @@
+[
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_derived",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.7447037035859773
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_derived",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_evolved",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "patient_type_refined",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "type_quantifier_mined",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "patient_type_refined",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_refined",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_evolved",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.6738012298141708
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.760906812012967
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "type_quantifier_mined",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "type_quantifier_mined",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_evolved",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_derived",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_evolved",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "type_quantifier_evolved",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.8448092512231661
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "patient_type_mined",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_evolved",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "patient_type_refined",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_evolved",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  },
+  {
+    "premises": [
+      {
+        "pred": "type",
+        "args": [
+          "?y",
+          "?z"
+        ],
+        "truth": 1.0
+      },
+      {
+        "pred": "type",
+        "args": [
+          "?x",
+          "?y"
+        ],
+        "truth": 1.0
+      }
+    ],
+    "conclusion": {
+      "pred": "location_type_inferred",
+      "args": [
+        "?x",
+        "?z"
+      ],
+      "truth": 1.0
+    },
+    "weight": 0.695734138943234
+  }
+]
