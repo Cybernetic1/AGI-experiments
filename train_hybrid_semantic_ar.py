@@ -46,7 +46,7 @@ class SemanticARPipeline:
         rule_discovery_facts: int = 10000,
         ilp_algorithm: str = 'frequency',
         ilp_rules: int = 30,
-        ga_generations: int = 20,
+        ga_generations: int = 0,  # Disabled by default (use ILP-only)
         training_stories: int = 1000,
         training_facts: int = 50000,
         dln_embed_dim: int = 64,
@@ -90,26 +90,50 @@ class SemanticARPipeline:
         if self.verbose:
             print(f"  Loaded {len(discovery_facts)} facts for rule discovery")
         
-        # Discover rules using hybrid approach
-        discoverer = HybridRuleDiscovery(
-            ilp_algorithm=self.ilp_algorithm,
-            ilp_rules=self.ilp_rules,
-            ga_generations=self.ga_generations,
-            sample_facts_for_fitness=1000,
-            verbose=self.verbose
-        )
-        
-        self.rules = discoverer.discover(discovery_facts)
-        
-        if self.verbose:
-            print(f"\n  ✅ Discovered {len(self.rules)} rules")
-            print(f"  Best fitness: {discoverer.best_fitness:.4f}")
-        
-        self.metrics['rule_discovery'] = {
-            'num_rules': len(self.rules),
-            'best_fitness': discoverer.best_fitness,
-            'evolution_history': discoverer.history
-        }
+        # Discover rules using ILP (GA optional)
+        if self.ga_generations > 0:
+            # Use hybrid GA+ILP approach
+            discoverer = HybridRuleDiscovery(
+                ilp_algorithm=self.ilp_algorithm,
+                ilp_rules=self.ilp_rules,
+                ga_generations=self.ga_generations,
+                sample_facts_for_fitness=1000,
+                verbose=self.verbose
+            )
+            self.rules = discoverer.discover(discovery_facts)
+            
+            if self.verbose:
+                print(f"\n  ✅ Discovered {len(self.rules)} rules (GA-evolved)")
+                print(f"  Best fitness: {discoverer.best_fitness:.4f}")
+            
+            self.metrics['rule_discovery'] = {
+                'method': 'GA+ILP',
+                'num_rules': len(self.rules),
+                'best_fitness': discoverer.best_fitness,
+                'evolution_history': discoverer.history
+            }
+        else:
+            # ILP-only (faster, often better)
+            from core.ilp_algorithms import mine_frequency_based, mine_foil_style, mine_confidence_based
+            
+            if self.verbose:
+                print(f"  Using ILP-only (no GA evolution)")
+            
+            if self.ilp_algorithm == 'frequency':
+                self.rules, _ = mine_frequency_based(discovery_facts, self.ilp_rules, min_support=2)
+            elif self.ilp_algorithm == 'foil':
+                self.rules, _ = mine_foil_style(discovery_facts, self.ilp_rules, min_support=2)
+            elif self.ilp_algorithm == 'confidence':
+                self.rules, _ = mine_confidence_based(discovery_facts, self.ilp_rules, min_support=2, min_confidence=0.3)
+            
+            if self.verbose:
+                print(f"\n  ✅ Mined {len(self.rules)} rules (ILP-only)")
+            
+            self.metrics['rule_discovery'] = {
+                'method': 'ILP-only',
+                'algorithm': self.ilp_algorithm,
+                'num_rules': len(self.rules)
+            }
         
         # Stage 2: Label Generation on Larger Corpus
         if self.verbose:
@@ -289,7 +313,7 @@ def main():
     parser.add_argument('--discovery-facts', type=int, default=10000, help='Facts for rule discovery')
     parser.add_argument('--ilp-algorithm', choices=['frequency', 'foil', 'confidence'], default='frequency')
     parser.add_argument('--ilp-rules', type=int, default=30, help='Initial ILP rules')
-    parser.add_argument('--ga-generations', type=int, default=20, help='GA generations')
+    parser.add_argument('--ga-generations', type=int, default=0, help='GA generations (0 = ILP-only, recommended)')
     parser.add_argument('--training-stories', type=int, default=1000, help='Stories for training')
     parser.add_argument('--training-facts', type=int, default=50000, help='Facts for training')
     parser.add_argument('--embed-dim', type=int, default=64, help='DLN embedding dimension')
