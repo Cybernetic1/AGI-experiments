@@ -1,0 +1,839 @@
+{
+  "overall_accuracy": 0.59275,
+  "total_correct": 2371,
+  "total_predictions": 4000,
+  "per_predicate_accuracy": {
+    "type": {
+      "accuracy": 0.6966783216783217,
+      "correct": 1594,
+      "total": 2288
+    },
+    "agent": {
+      "accuracy": 0.6620879120879121,
+      "correct": 241,
+      "total": 364
+    },
+    "tense": {
+      "accuracy": 0.6744186046511628,
+      "correct": 377,
+      "total": 559
+    },
+    "patient": {
+      "accuracy": 0.45595854922279794,
+      "correct": 88,
+      "total": 193
+    },
+    "manner": {
+      "accuracy": 0.14018691588785046,
+      "correct": 15,
+      "total": 107
+    },
+    "location": {
+      "accuracy": 0.023809523809523808,
+      "correct": 1,
+      "total": 42
+    },
+    "quantifier": {
+      "accuracy": 0.0873015873015873,
+      "correct": 33,
+      "total": 378
+    },
+    "state": {
+      "accuracy": 0.6774193548387096,
+      "correct": 21,
+      "total": 31
+    },
+    "recipient": {
+      "accuracy": 0.0,
+      "correct": 0,
+      "total": 19
+    },
+    "instrument": {
+      "accuracy": 0.05263157894736842,
+      "correct": 1,
+      "total": 19
+    }
+  },
+  "confusion_matrix": {
+    "type": {
+      "type": 1594,
+      "quantifier": 694
+    },
+    "agent": {
+      "manner": 40,
+      "agent": 241,
+      "patient": 27,
+      "tense": 39,
+      "state": 10,
+      "type": 1,
+      "instrument": 2,
+      "location": 3,
+      "quantifier": 1
+    },
+    "tense": {
+      "tense": 377,
+      "agent": 65,
+      "patient": 67,
+      "manner": 38,
+      "instrument": 5,
+      "location": 6,
+      "state": 1
+    },
+    "patient": {
+      "agent": 46,
+      "patient": 88,
+      "manner": 14,
+      "tense": 41,
+      "location": 3,
+      "instrument": 1
+    },
+    "manner": {
+      "agent": 32,
+      "patient": 15,
+      "state": 12,
+      "tense": 30,
+      "manner": 15,
+      "instrument": 2,
+      "location": 1
+    },
+    "location": {
+      "tense": 22,
+      "patient": 10,
+      "manner": 2,
+      "location": 1,
+      "agent": 6,
+      "state": 1
+    },
+    "quantifier": {
+      "type": 345,
+      "quantifier": 33
+    },
+    "state": {
+      "manner": 5,
+      "state": 21,
+      "agent": 5
+    },
+    "recipient": {
+      "tense": 8,
+      "agent": 3,
+      "patient": 7,
+      "manner": 1
+    },
+    "instrument": {
+      "tense": 6,
+      "agent": 8,
+      "patient": 2,
+      "manner": 2,
+      "instrument": 1
+    }
+  },
+  "error_examples": [
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e320', 'say'), truth=1.0)"
+      ],
+      "predicted": "manner",
+      "actual": "agent",
+      "confidence": 0.4854024648666382
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e321', 'thank'), truth=1.0)"
+      ],
+      "predicted": "agent",
+      "actual": "patient",
+      "confidence": 0.8720640540122986
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e323', 'say'), truth=1.0)"
+      ],
+      "predicted": "agent",
+      "actual": "tense",
+      "confidence": 0.9087473750114441
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e324', 'go'), truth=1.0)"
+      ],
+      "predicted": "agent",
+      "actual": "manner",
+      "confidence": 0.9864294528961182
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e324', 'go'), truth=1.0)",
+        "Proposition(predicate='manner', args=('e324', 'now'), truth=1.0)"
+      ],
+      "predicted": "agent",
+      "actual": "manner",
+      "confidence": 0.9995269775390625
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e324', 'go'), truth=1.0)",
+        "Proposition(predicate='manner', args=('e324', 'now'), truth=1.0)",
+        "Proposition(predicate='manner', args=('e324', 'back'), truth=1.0)"
+      ],
+      "predicted": "agent",
+      "actual": "tense",
+      "confidence": 0.9954388737678528
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e325', 'enjoy'), truth=1.0)"
+      ],
+      "predicted": "agent",
+      "actual": "patient",
+      "confidence": 0.5993881225585938
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e328', 'have'), truth=1.0)"
+      ],
+      "predicted": "agent",
+      "actual": "manner",
+      "confidence": 0.9078041911125183
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e329', 'visit'), truth=1.0)"
+      ],
+      "predicted": "patient",
+      "actual": "agent",
+      "confidence": 0.7539398670196533
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e329', 'visit'), truth=1.0)",
+        "Proposition(predicate='agent', args=('e329', 'ghost'), truth=1.0)"
+      ],
+      "predicted": "patient",
+      "actual": "manner",
+      "confidence": 0.9578281044960022
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('night', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.6795139908790588
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('night', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('night', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.6795139908790588
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('night', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('night', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('night', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.6795141100883484
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e330', 'help'), truth=1.0)"
+      ],
+      "predicted": "patient",
+      "actual": "tense",
+      "confidence": 0.516887903213501
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e331', 'pick'), truth=1.0)"
+      ],
+      "predicted": "manner",
+      "actual": "agent",
+      "confidence": 0.9780258536338806
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e331', 'pick'), truth=1.0)",
+        "Proposition(predicate='agent', args=('e331', 'pron_her'), truth=1.0)"
+      ],
+      "predicted": "manner",
+      "actual": "patient",
+      "confidence": 0.9564216732978821
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('dreams', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.8786320686340332
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('dreams', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('dreams', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.8786320686340332
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e332', 'become'), truth=1.0)"
+      ],
+      "predicted": "tense",
+      "actual": "agent",
+      "confidence": 0.6500263214111328
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e333', 'be'), truth=1.0)"
+      ],
+      "predicted": "state",
+      "actual": "manner",
+      "confidence": 0.9404214024543762
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e333', 'be'), truth=1.0)",
+        "Proposition(predicate='manner', args=('e333', 'once'), truth=1.0)"
+      ],
+      "predicted": "tense",
+      "actual": "location",
+      "confidence": 0.9923990368843079
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "quantifier",
+      "confidence": 0.851382851600647
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)",
+        "Proposition(predicate='quantifier', args=('forest', 'exists'), truth=1.0)",
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "quantifier",
+      "confidence": 0.9785211086273193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "quantifier",
+      "confidence": 0.851382851600647
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('forest', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "quantifier",
+      "confidence": 0.851382851600647
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e334', 'be'), truth=1.0)"
+      ],
+      "predicted": "manner",
+      "actual": "state",
+      "confidence": 0.756483256816864
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e334', 'be'), truth=1.0)",
+        "Proposition(predicate='state', args=('e334', 'alone'), truth=1.0)",
+        "Proposition(predicate='agent', args=('e334', 'pron_it'), truth=1.0)"
+      ],
+      "predicted": "manner",
+      "actual": "tense",
+      "confidence": 0.9884229302406311
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7442193031311035
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7442193031311035
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7442193031311035
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7442193031311035
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7442193031311035
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('mushroom', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7442193031311035
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e338', 'find'), truth=1.0)"
+      ],
+      "predicted": "agent",
+      "actual": "patient",
+      "confidence": 0.975851833820343
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e339', 'play'), truth=1.0)"
+      ],
+      "predicted": "manner",
+      "actual": "tense",
+      "confidence": 0.9674793481826782
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e340', 'help'), truth=1.0)"
+      ],
+      "predicted": "patient",
+      "actual": "tense",
+      "confidence": 0.8113402128219604
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e341', 'hide'), truth=1.0)",
+        "Proposition(predicate='agent', args=('e341', 'pron_it'), truth=1.0)"
+      ],
+      "predicted": "patient",
+      "actual": "tense",
+      "confidence": 0.8801798820495605
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e343', 'call'), truth=1.0)"
+      ],
+      "predicted": "tense",
+      "actual": "agent",
+      "confidence": 0.6847938895225525
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e344', 'be'), truth=1.0)"
+      ],
+      "predicted": "manner",
+      "actual": "agent",
+      "confidence": 0.7424396872520447
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e345', 'look'), truth=1.0)",
+        "Proposition(predicate='agent', args=('e345', 'bunny'), truth=1.0)"
+      ],
+      "predicted": "patient",
+      "actual": "location",
+      "confidence": 0.7491642236709595
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7187039852142334
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7187039852142334
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7187039852142334
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7187039852142334
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7187040448188782
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7187040448188782
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7187040448188782
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)"
+      ],
+      "predicted": "quantifier",
+      "actual": "type",
+      "confidence": 0.7187040448188782
+    },
+    {
+      "context": [
+        "Proposition(predicate='quantifier', args=('bunny', 'exists'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('bunny', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "quantifier",
+      "confidence": 0.6729788780212402
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('e346', 'smile'), truth=1.0)"
+      ],
+      "predicted": "agent",
+      "actual": "tense",
+      "confidence": 0.8860992193222046
+    }
+  ],
+  "correct_examples": [
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    },
+    {
+      "context": [
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)",
+        "Proposition(predicate='type', args=('lots', 'entity'), truth=1.0)"
+      ],
+      "predicted": "type",
+      "actual": "type",
+      "confidence": 0.9997653365135193
+    }
+  ]
+}
