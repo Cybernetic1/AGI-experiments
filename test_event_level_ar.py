@@ -46,6 +46,7 @@ SCALE_CONFIGS = {
     'medium': {'stories': 500, 'facts': 50000},
     'large': {'stories': 1000, 'facts': 100000},
     'xlarge': {'stories': 2000, 'facts': 200000},
+    'full': {'stories': 999999, 'facts': 9999999},  # Load everything available
 }
 
 
@@ -448,7 +449,7 @@ def test_event_ar_at_scale(
 def main():
     parser = argparse.ArgumentParser(description='Event-Level Semantic-AR Test')
     parser.add_argument('--scale', default='small',
-                       choices=['tiny', 'small', 'medium', 'large', 'xlarge', 'all'],
+                       choices=['tiny', 'small', 'medium', 'large', 'xlarge', 'full', 'all'],
                        help='Dataset scale')
     parser.add_argument('--corpus', default='data/processed/tinystories_train.json',
                        help='Corpus path')
@@ -484,7 +485,7 @@ def main():
     
     # Determine scales
     if args.scale == 'all':
-        scales_to_test = ['tiny', 'small', 'medium', 'large', 'xlarge']
+        scales_to_test = ['tiny', 'small', 'medium', 'large', 'xlarge', 'full']
     else:
         scales_to_test = [args.scale]
     
