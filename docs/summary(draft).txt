@@ -1,0 +1,24 @@
+Based on the revised pitch deck provided, here is a summary of the Deterministic AGI proposal:
+
+The Core Concept: "The Anti-LLM"
+>>>> OK if you want to call it that, though my ideas partly originated with LLMs too
+
+This project proposes a Differentiable Logic Network (DLN) that replaces the probabilistic guessing of current Large Language Models (LLMs) with strict, deterministic logic. The goal is to solve the "final obstacle" of AI: hallucinations.
+>>>> It's not exactly accurate... we still use probabilistic methods very similar to LLMs... stochastic methods are indispensible to modern AI.
+
+>>>> better rewrite it this way:
+"This project proposes a Differentiable Logic Network (DLN) which improves on current Large Language Models (LLMs) by giving our new models the mathematical structure of logic. The goal is to eliminate "hallucinations" in current LLMs, the final obstacle before achieving robust genuine intelligence."
+
+Key Breakthroughs
+
+ * Efficiency: The model achieves results with 32,427 parameters (0.12 MB memory), making it ~3,800x smaller than standard Transformer baselines (1M–124M parameters).
+ * Accuracy: It demonstrates perfect logical inference (MSE 0.0000), compared to the high loss rates of conventional models.
+ * Innovation: It uses a proprietary "Cylindrification Factor" to link logic variables with constants and a hybrid AR + RL architecture (Auto-Regression + Reinforcement Learning) to enable rigorous, multi-step planning.
+ * Self-Learning: The system generated 1.7 million training labels from a seed of just 10,000 facts (171x expansion), proving extreme data efficiency.
+Vision & Values
+ * Democratization: The organization operates on weighted voting with no special privileges for founders, ensuring transparency and preventing "black box" oppression.
+ * Ethical Mandate: The project asserts that an AGI built by a biased or dictatorial team will inevitably be oppressive, and thus commits to scientific fact and open transparency.
+ * Roadmap: The plan is to start with high-precision logic tasks (Short Term), expand to complex planning agents (Mid Term), and ultimately establish a verified standard for truth in AGI (Long Term).
+
+The Ask
+The project is recruiting scientists and engineers who adhere to the scientific method to help build this transparent, logic-based future.
