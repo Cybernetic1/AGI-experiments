@@ -9,6 +9,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from dln import SimpleDLN
 
+dln_estimates = [
+    {"name": "DLN\n(10 stories)", "params": 8525, "capability": "Basic"},
+    {"name": "DLN\n(50 stories)", "params": 12666, "capability": "Coherent"},
+    {"name": "DLN\n(100 stories)", "params": 17611, "capability": "Good"},
+    {"name": "DLN\n(200 stories)", "params": 21899, "capability": "Good"},
+    {"name": "DLN\n(500 stories)", "params": 30955, "capability": "Strong"},
+]
 
 def count_params(model):
     """Count total parameters in a PyTorch model."""
@@ -77,14 +84,14 @@ def create_comparison_data():
         {"name": "GPT-2\n(124M)", "params": 124_000_000, "capability": "Strong"},
     ]
     
-    # DLN estimates at corresponding scales
-    # Based on: 50 stories ≈ 32K params (from doc)
-    dln_estimates = [
-        {"name": "DLN\n(10 stories)", "params": 15_000, "capability": "Basic"},
-        {"name": "DLN\n(50 stories)", "params": 32_000, "capability": "Coherent"},
-        {"name": "DLN\n(200 stories)", "params": 80_000, "capability": "Good"},
-        {"name": "DLN\n(500 stories)", "params": 150_000, "capability": "Strong"},
-    ]
+	# following data is generated from the script "measure_dln_sizes.py"
+	dln_estimates = [
+		{"name": "DLN\n(10 stories)", "params": 8525, "capability": "Basic"},
+		{"name": "DLN\n(50 stories)", "params": 12666, "capability": "Coherent"},
+		{"name": "DLN\n(100 stories)", "params": 17611, "capability": "Good"},
+		{"name": "DLN\n(200 stories)", "params": 21899, "capability": "Good"},
+		{"name": "DLN\n(500 stories)", "params": 30955, "capability": "Strong"},
+	]
     
     # Try to get actual size for 50 stories
     actual_50 = get_actual_dln_size(max_stories=50, embed_dim=32)
