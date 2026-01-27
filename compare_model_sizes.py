@@ -76,66 +76,93 @@ def get_actual_dln_size(max_stories=50, embed_dim=32):
 def create_comparison_data():
     """Create data comparing DLN vs Transformer at different capability levels."""
     
-    # Transformer baselines (from literature)
-    transformers = [
+    # Transformer baselines (from literature - for reference)
+    transformers_reference = [
         {"name": "GPT-2\n(1M)", "params": 1_000_000, "capability": "Basic"},
         {"name": "GPT-2\n(8M)", "params": 8_000_000, "capability": "Coherent"},
         {"name": "GPT\n(22M)", "params": 22_000_000, "capability": "Good"},
         {"name": "GPT-2\n(124M)", "params": 124_000_000, "capability": "Strong"},
     ]
     
-    # Actual measurements from measure_dln_sizes.py
-    # Uses real vocabulary counts from tinystories data
-    dln_estimates = [
-        {"name": "DLN\n(10 stories)", "params": 8_525, "capability": "Basic"},
-        {"name": "DLN\n(50 stories)", "params": 12_666, "capability": "Coherent"},
-        {"name": "DLN\n(200 stories)", "params": 21_899, "capability": "Good"},
-        {"name": "DLN\n(500 stories)", "params": 30_955, "capability": "Strong"},
+    # ACTUAL MEASURED RESULTS from compare_tinystories_simple.py
+    # Task: Logical inference on TinyStories facts
+    # Date: 2026-01-27
+    actual_results = [
+        {
+            "scale": "Small (10 stories)",
+            "transformer_params": 27_393,
+            "transformer_acc": 66.7,
+            "dln_params": 9_217,
+            "dln_acc": 66.7,
+            "compression": 3.0
+        },
+        {
+            "scale": "Medium (50 stories)",
+            "transformer_params": 29_921,
+            "transformer_acc": 67.9,
+            "dln_params": 11_745,
+            "dln_acc": 75.0,
+            "compression": 2.5
+        },
+        {
+            "scale": "Large (200 stories)",
+            "transformer_params": 37_025,
+            "transformer_acc": 71.7,
+            "dln_params": 18_849,
+            "dln_acc": 69.7,
+            "compression": 2.0
+        }
     ]
     
-    return transformers, dln_estimates
+    return transformers_reference, actual_results
 
 
 def plot_comparison(output_path="docs/compression_comparison.png"):
     """Create comparison graph for presentation."""
     
-    transformers, dlns = create_comparison_data()
+    transformers_ref, actual_results = create_comparison_data()
     
     fig, ax = plt.subplots(figsize=(12, 7))
     
-    # Extract data
-    capabilities = ["Basic", "Coherent", "Good", "Strong"]
+    # Extract data from actual results
+    scales = [r["scale"] for r in actual_results]
+    transformer_params = [r["transformer_params"] for r in actual_results]
+    dln_params = [r["dln_params"] for r in actual_results]
+    compressions = [r["compression"] for r in actual_results]
     
-    transformer_params = [t["params"] for t in transformers]
-    dln_params = [d["params"] for d in dlns]
-    
-    x = np.arange(len(capabilities))
+    x = np.arange(len(scales))
     width = 0.35
     
     # Create bars
     bars1 = ax.bar(x - width/2, transformer_params, width, 
-                   label='Transformer Models', color='#FF6B6B', alpha=0.8)
+                   label='Transformer Baseline', color='#FF6B6B', alpha=0.8)
     bars2 = ax.bar(x + width/2, dln_params, width,
                    label='Genifer DLN', color='#51CF66', alpha=0.8)
     
     # Formatting
-    ax.set_ylabel('Parameters (log scale)', fontsize=13, fontweight='bold')
-    ax.set_xlabel('Capability Level', fontsize=13, fontweight='bold')
-    ax.set_title('Model Size Comparison: Genifer DLN vs Standard Transformers', 
+    ax.set_ylabel('Parameters', fontsize=13, fontweight='bold')
+    ax.set_xlabel('Dataset Scale', fontsize=13, fontweight='bold')
+    ax.set_title('Measured Performance: Genifer DLN vs Transformer Baseline\nLogical Inference Task on TinyStories', 
                  fontsize=15, fontweight='bold', pad=20)
     ax.set_xticks(x)
-    ax.set_xticklabels(capabilities, fontsize=12)
-    ax.set_yscale('log')
+    ax.set_xticklabels(scales, fontsize=11)
     ax.legend(fontsize=12, loc='upper left')
     ax.grid(axis='y', alpha=0.3, linestyle='--')
     
-    # Annotate with compression ratios
-    for i in range(len(capabilities)):
-        ratio = transformer_params[i] / dln_params[i]
-        mid_y = np.sqrt(transformer_params[i] * dln_params[i])  # geometric mean for log scale
-        ax.text(x[i], mid_y, f'{ratio:.0f}×\nsmaller', 
-                ha='center', va='center', fontsize=11, fontweight='bold',
+    # Annotate with compression ratios and accuracies
+    for i in range(len(scales)):
+        mid_y = max(transformer_params[i], dln_params[i]) * 1.1
+        ax.text(x[i], mid_y, f'{compressions[i]:.1f}×\nsmaller', 
+                ha='center', va='bottom', fontsize=11, fontweight='bold',
                 bbox=dict(boxstyle='round,pad=0.5', facecolor='yellow', alpha=0.7))
+        
+        # Add accuracy labels
+        trans_acc = actual_results[i]["transformer_acc"]
+        dln_acc = actual_results[i]["dln_acc"]
+        ax.text(x[i] - width/2, transformer_params[i] * 0.5, f'{trans_acc:.1f}%', 
+                ha='center', va='center', fontsize=9, fontweight='bold', color='white')
+        ax.text(x[i] + width/2, dln_params[i] * 0.5, f'{dln_acc:.1f}%', 
+                ha='center', va='center', fontsize=9, fontweight='bold', color='white')
     
     # Add parameter counts on bars
     for bars in [bars1, bars2]:
@@ -144,7 +171,7 @@ def plot_comparison(output_path="docs/compression_comparison.png"):
             if height >= 1_000_000:
                 label = f'{height/1_000_000:.1f}M'
             elif height >= 1_000:
-                label = f'{height/1_000:.0f}K'
+                label = f'{height/1_000:.1f}K'
             else:
                 label = f'{height:.0f}'
             
@@ -159,13 +186,16 @@ def plot_comparison(output_path="docs/compression_comparison.png"):
     print(f"\nGraph saved to {output_path}")
     
     # Print statistics
-    print("\n" + "="*60)
-    print("COMPRESSION RATIO SUMMARY")
-    print("="*60)
-    for i, cap in enumerate(capabilities):
-        ratio = transformer_params[i] / dln_params[i]
-        print(f"{cap:10s}: {transformer_params[i]:>12,} vs {dln_params[i]:>8,} params  →  {ratio:>5.0f}× compression")
-    print("="*60)
+    print("\n" + "="*70)
+    print("ACTUAL MEASURED COMPRESSION RATIOS")
+    print("="*70)
+    for r in actual_results:
+        print(f"{r['scale']:20s}: {r['transformer_params']:>8,} vs {r['dln_params']:>8,} params  →  {r['compression']:.1f}× compression")
+        print(f"                      Transformer: {r['transformer_acc']:.1f}% acc, DLN: {r['dln_acc']:.1f}% acc")
+    print("="*70)
+    print("\nTask: Logical inference (predicting truth values of propositions)")
+    print("Method: Neural training only, no ILP/GA/rule injection")
+    print("Date: 2026-01-27")
 
 
 def print_table():

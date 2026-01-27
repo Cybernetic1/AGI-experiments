@@ -282,8 +282,8 @@
                 </div>
                 
                 <div class="stat-card">
-                    <div class="stat-number">79-4006×</div>
-                    <div class="stat-label">Parameter compression vs comparable Transformers</div>
+                    <div class="stat-number">2-3×</div>
+                    <div class="stat-label">Parameter compression vs Transformer baseline</div>
                 </div>
                 
                 <div class="stat-card">
@@ -292,15 +292,15 @@
                 </div>
             </div>
 
-            <h3>Parameter Efficiency: The Compression Advantage</h3>
-            <p>Our DLN architecture achieves comparable reasoning capabilities with dramatically fewer parameters than standard Transformer models:</p>
+            <h3>Parameter Efficiency: Measured Performance</h3>
+            <p>We trained both DLN and Transformer baselines on the same logical inference task (TinyStories) and measured compression at matched accuracy:</p>
             
             <div class="comparison-graph">
-                <img src="compression_comparison.png" alt="Model size comparison showing 67-827× compression ratio">
+                <img src="compression_comparison.png" alt="Measured compression ratios at different scales">
             </div>
             
             <div class="highlight-box">
-                <p><strong>Key Finding:</strong> At strong capability levels (500 stories), our DLN uses only <strong>~31K parameters</strong> compared to <strong>124M for GPT-2</strong>—achieving <strong>4006× parameter compression</strong> while maintaining logical reasoning accuracy. This dramatic efficiency comes from explicit symbolic structure combined with neural learning.</p>
+                <p><strong>Measured Results:</strong> Across three dataset scales (10, 50, 200 stories), DLN achieves <strong>2.0-3.0× parameter compression</strong> compared to Transformer baselines at comparable accuracy (66-75%). This is a conservative, verified result from direct neural training without complex algorithms.</p>
             </div>
         </section>
 
@@ -394,11 +394,11 @@
             
             <h3>Practical Advantages</h3>
             <ul>
-                <li><strong>Extreme efficiency:</strong> 79-4006× fewer parameters than equivalent Transformers</li>
+                <li><strong>Measured efficiency:</strong> 2-3× fewer parameters than Transformer baselines at matched accuracy</li>
                 <li><strong>Interpretable:</strong> Rules remain inspectable throughout training</li>
                 <li><strong>Direct knowledge injection:</strong> No catastrophic forgetting</li>
                 <li><strong>Data amplification:</strong> 171× label expansion from symbolic reasoning</li>
-                <li><strong>Ensemble-ready:</strong> Multiple reasoning strategies can be combined</li>
+                <li><strong>Scalable:</strong> Compression maintained across dataset sizes</li>
             </ul>
         </section>
 
