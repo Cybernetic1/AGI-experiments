@@ -84,20 +84,14 @@ def create_comparison_data():
         {"name": "GPT-2\n(124M)", "params": 124_000_000, "capability": "Strong"},
     ]
     
-    # following data is generated from the script "measure_dln_sizes.py"
+    # Actual measurements from measure_dln_sizes.py
+    # Uses real vocabulary counts from tinystories data
     dln_estimates = [
-        # {"name": "DLN\n(10 stories)", "params": 8525, "capability": "Basic"},
-        {"name": "DLN\n(50 stories)", "params": 12666, "capability": "Basic"},
-        {"name": "DLN\n(100 stories)", "params": 17611, "capability": "Coherent"},
-        {"name": "DLN\n(200 stories)", "params": 21899, "capability": "Good"},
-        {"name": "DLN\n(500 stories)", "params": 30955, "capability": "Strong"},
+        {"name": "DLN\n(10 stories)", "params": 8_525, "capability": "Basic"},
+        {"name": "DLN\n(50 stories)", "params": 12_666, "capability": "Coherent"},
+        {"name": "DLN\n(200 stories)", "params": 21_899, "capability": "Good"},
+        {"name": "DLN\n(500 stories)", "params": 30_955, "capability": "Strong"},
     ]
-    
-    # Try to get actual size for 50 stories
-    actual_50 = get_actual_dln_size(max_stories=50, embed_dim=32)
-    if actual_50:
-        print(f"Actual DLN size (50 stories): {actual_50:,} params")
-        dln_estimates[1]["params"] = actual_50
     
     return transformers, dln_estimates
 
