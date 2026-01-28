@@ -193,21 +193,28 @@ def count_parameters(model):
 def find_matching_configs(num_predicates, num_args, target_params, embed_dim=32):
     """Find DLN and Transformer configs with similar parameter counts."""
     
-    configs = []
+    configs = {}  # Use dict keyed by num_layers to keep only best match
     
     # Try different num_layers for Transformer
     for num_layers in range(1, 6):
         trans = TransformerLogic(num_predicates, num_args, embed_dim, num_layers)
         trans_params = count_parameters(trans)
         
-        # Find matching DLN with different num_rules
-        for num_rules in range(2, 32):
+        best_match = None
+        best_diff = float('inf')
+        
+        # Find best matching DLN with different num_rules
+        for num_rules in range(2, 512):
             dln = DLNLogic(num_predicates, num_args, embed_dim, num_rules)
             dln_params = count_parameters(dln)
             
-            # Check if params are within 20% of each other
-            if abs(trans_params - dln_params) / max(trans_params, dln_params) < 0.2:
-                configs.append({
+            # Check absolute difference
+            diff = abs(trans_params - dln_params)
+            
+            if diff < best_diff:
+                best_diff = diff
+                diff_pct = diff / max(trans_params, dln_params)
+                best_match = {
                     'transformer': {
                         'num_layers': num_layers,
                         'params': trans_params
@@ -216,14 +223,19 @@ def find_matching_configs(num_predicates, num_args, target_params, embed_dim=32)
                         'num_rules': num_rules,
                         'params': dln_params
                     },
-                    'avg_params': (trans_params + dln_params) / 2
-                })
-                break
+                    'avg_params': (trans_params + dln_params) / 2,
+                    'diff': diff,
+                    'diff_pct': diff_pct * 100
+                }
+        
+        # Store only the best match for this transformer config
+        if best_match and best_match['diff_pct'] < 20:  # Within 20%
+            configs[num_layers] = best_match
     
-    # Sort by parameter count
-    configs.sort(key=lambda x: x['avg_params'])
+    # Convert to sorted list by avg params
+    config_list = sorted(configs.values(), key=lambda x: x['avg_params'])
     
-    return configs
+    return config_list
 
 
 def train_and_track(model, train_data, epochs, lr, batch_size, device):
@@ -347,6 +359,7 @@ def main():
     print("\nSelected configurations:")
     for i, cfg in enumerate(selected_configs):
         print(f"  Config {i+1}: ~{cfg['avg_params']:.0f} params")
+        print(f"                ~{cfg['diff_pct']:.2f}% difference")
         print(f"    Transformer: {cfg['transformer']['num_layers']} layers, {cfg['transformer']['params']:,} params")
         print(f"    DLN:         {cfg['dln']['num_rules']} rules, {cfg['dln']['params']:,} params")
     
