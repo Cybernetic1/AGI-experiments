@@ -57,7 +57,7 @@ class DLNSemanticARDiscrete(nn.Module):
         self.dln = LogicNetwork(
             prop_length=self.prop_length,
             num_props=10,
-            output_dim=embed_dim * 4,  # Rich representation
+            output_dim=embed_dim * 2,  # Compressed representation (reduced from *4)
             num_rules=num_rules,
             num_premises=3,
             var_slots=2  # Reduced from 4 to minimize parameters
@@ -68,7 +68,7 @@ class DLNSemanticARDiscrete(nn.Module):
         self.num_output_props = 8
         
         # For each output proposition, predict relation and 2 entities
-        hidden_dim = embed_dim * 4
+        hidden_dim = embed_dim * 2  # Matches DLN output (reduced from *4)
         self.relation_head = nn.Linear(hidden_dim, len(self.relations) + 1)
         self.entity1_head = nn.Linear(hidden_dim, self.max_entities)
         self.entity2_head = nn.Linear(hidden_dim, self.max_entities)
