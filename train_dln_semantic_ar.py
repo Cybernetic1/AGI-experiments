@@ -172,7 +172,13 @@ class TinyStoriesSemanticDataset(Dataset):
         
         print(f"Extracting semantic forms from {max_stories} stories...")
         for story in tqdm(data[:max_stories]):
-            sentences = story.get('sentences', [])
+            # Get text and split into sentences
+            text = story.get('text', '')
+            if not text:
+                continue
+            
+            # Simple sentence splitting
+            sentences = [s.strip() + '.' for s in text.replace('\n', ' ').split('.') if s.strip()]
             
             # Extract logic for each sentence
             logic_forms = []
