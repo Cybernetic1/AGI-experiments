@@ -200,14 +200,23 @@ class TinyStoriesSemanticDataset(Dataset):
         return self.examples[idx]
 
 
+def collate_logic_forms(batch):
+    """Custom collate function for variable-length logic forms."""
+    # Each item in batch is (current_logic, next_logic)
+    # Just return them as lists (process one at a time)
+    current_logics = [item[0] for item in batch]
+    next_logics = [item[1] for item in batch]
+    return current_logics, next_logics
+
+
 def train_epoch(model, dataloader, optimizer, device):
     """Train one epoch."""
     model.train()
     total_loss = 0
     
-    for current_logic, next_logic in dataloader:
-        # Process batch (one example at a time for now)
-        for curr, nxt in zip(current_logic, next_logic):
+    for current_logics, next_logics in dataloader:
+        # Process each example in the batch
+        for curr, nxt in zip(current_logics, next_logics):
             optimizer.zero_grad()
             
             # Predict next
@@ -237,8 +246,8 @@ def evaluate(model, dataloader, device):
     count = 0
     
     with torch.no_grad():
-        for current_logic, next_logic in dataloader:
-            for curr, nxt in zip(current_logic, next_logic):
+        for current_logics, next_logics in dataloader:
+            for curr, nxt in zip(current_logics, next_logics):
                 # Predict
                 pred_next = model(curr)
                 
@@ -289,8 +298,10 @@ def main():
     print(f"  Test:  {len(test_dataset)} examples")
     
     # Create dataloaders
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, 
+                             collate_fn=collate_logic_forms)
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size,
+                            collate_fn=collate_logic_forms)
     
     # Create model
     print(f"\nCreating DLN-SemanticAR model...")
