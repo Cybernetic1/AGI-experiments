@@ -1,0 +1,60 @@
+======================================================================
+TRAIN REAL DLN ON TINYSTORIES (TTT METHODOLOGY)
+======================================================================
+
+Loading 100 story sequences...
+  Loaded 17 sequences
+  Avg facts per sequence: 3.3
+  Predicates: 7
+  Arguments: 67
+
+Creating DLN with 6 rules...
+  Total parameters: 29,730
+
+======================================================================
+PHASE 1: Concept Formation (AR Training)
+======================================================================
+Epoch  1: Loss = 10.3618, Accuracy = 0.0%
+Epoch  2: Loss = 10.3670, Accuracy = 0.0%
+Epoch  3: Loss = 10.3607, Accuracy = 0.0%
+Epoch  4: Loss = 10.2884, Accuracy = 0.0%
+Epoch  5: Loss = 10.3060, Accuracy = 0.0%
+Epoch  6: Loss = 10.2475, Accuracy = 0.0%
+Epoch  7: Loss = 10.1100, Accuracy = 0.0%
+Epoch  8: Loss = 10.0026, Accuracy = 0.0%
+Epoch  9: Loss = 9.6382, Accuracy = 0.0%
+Epoch 10: Loss = 8.7217, Accuracy = 0.0%
+Epoch 11: Loss = 8.2252, Accuracy = 0.0%
+Epoch 12: Loss = 7.8539, Accuracy = 0.0%
+Epoch 13: Loss = 7.7711, Accuracy = 0.0%
+Epoch 14: Loss = 7.3662, Accuracy = 0.0%
+Epoch 15: Loss = 7.5555, Accuracy = 0.0%
+Epoch 16: Loss = 7.9855, Accuracy = 0.0%
+Epoch 17: Loss = 8.5478, Accuracy = 0.0%
+Epoch 18: Loss = 7.9763, Accuracy = 0.0%
+Epoch 19: Loss = 7.5518, Accuracy = 0.0%
+Epoch 20: Loss = 7.7856, Accuracy = 0.0%
+
+======================================================================
+PHASE 2: Concept Valuation (RL Training)
+======================================================================
+Episode  20: Avg Reward = 0.325, Loss = 0.1206
+Episode  40: Avg Reward = 0.335, Loss = 0.0265
+Episode  60: Avg Reward = 0.330, Loss = 0.0249
+Episode  80: Avg Reward = 0.350, Loss = 0.0036
+Episode 100: Avg Reward = 0.305, Loss = 0.0001
+
+======================================================================
+PHASE 3: Joint Refinement (AR + RL)
+======================================================================
+Iteration 10: AR Loss = 2.6950, RL Loss = 0.0056
+Iteration 20: AR Loss = 2.7064, RL Loss = 0.0046
+Iteration 30: AR Loss = 2.6183, RL Loss = 0.0038
+Iteration 40: AR Loss = 2.5709, RL Loss = 0.0031
+Iteration 50: AR Loss = 2.5800, RL Loss = 0.0024
+
+======================================================================
+TRAINING COMPLETE
+======================================================================
+
+Next step: Evaluate model and compare with Transformer baseline
