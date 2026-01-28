@@ -53,14 +53,14 @@ class DLNSemanticARDiscrete(nn.Module):
         
         self.prop_length = embed_dim * 3
         
-        # DLN encoder
+        # DLN encoder (with 2 variable slots for efficiency)
         self.dln = LogicNetwork(
             prop_length=self.prop_length,
             num_props=10,
             output_dim=embed_dim * 4,  # Rich representation
             num_rules=num_rules,
             num_premises=3,
-            var_slots=2
+            var_slots=2  # Reduced from 4 to minimize parameters
         )
         
         # Prediction heads for next propositions
