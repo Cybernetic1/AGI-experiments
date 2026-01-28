@@ -114,14 +114,19 @@ def create_train_data(facts, pred_vocab, arg_vocab, negative_ratio=0.5):
 class RealDLNWrapper(nn.Module):
     """Wrapper around LogicNetwork to match our task format."""
     
-    def __init__(self, pred_vocab, arg_vocab, num_rules=8, num_premises=3, var_slots=4):
+    def __init__(self, pred_vocab, arg_vocab, num_rules=8, num_premises=3, var_slots=4, embed_dim=16):
         super().__init__()
         
         self.pred_vocab = pred_vocab
         self.arg_vocab = arg_vocab
+        self.embed_dim = embed_dim
         
-        # Proposition encoding length
-        self.prop_length = len(pred_vocab) + 2 * len(arg_vocab)
+        # Use embeddings instead of one-hot
+        self.pred_embed = nn.Embedding(len(pred_vocab), embed_dim)
+        self.arg_embed = nn.Embedding(len(arg_vocab), embed_dim)
+        
+        # Proposition encoding: [pred_emb, arg1_emb, arg2_emb]
+        self.prop_length = embed_dim * 3
         
         # Real DLN with cylindrification
         self.dln = LogicNetwork(
@@ -135,6 +140,18 @@ class RealDLNWrapper(nn.Module):
         
         self.output_layer = nn.Sigmoid()
     
+    def encode_prop(self, prop, device):
+        """Encode proposition using embeddings."""
+        pred_idx = self.pred_vocab.get(prop.predicate, 0)
+        arg1_idx = self.arg_vocab.get(prop.args[0] if len(prop.args) > 0 else "", 0)
+        arg2_idx = self.arg_vocab.get(prop.args[1] if len(prop.args) > 1 else "", 0)
+        
+        pred_emb = self.pred_embed(torch.tensor([pred_idx], device=device))
+        arg1_emb = self.arg_embed(torch.tensor([arg1_idx], device=device))
+        arg2_emb = self.arg_embed(torch.tensor([arg2_idx], device=device))
+        
+        return torch.cat([pred_emb, arg1_emb, arg2_emb], dim=-1).squeeze(0)
+    
     def forward(self, premises: List[Proposition], conclusion: Proposition):
         """
         Args:
@@ -145,11 +162,11 @@ class RealDLNWrapper(nn.Module):
         """
         device = next(self.parameters()).device
         
-        # Encode all propositions on correct device
+        # Encode all propositions using embeddings
         prop_vecs = []
         for p in premises:
-            prop_vecs.append(encode_proposition(p, self.pred_vocab, self.arg_vocab, device))
-        prop_vecs.append(encode_proposition(conclusion, self.pred_vocab, self.arg_vocab, device))
+            prop_vecs.append(self.encode_prop(p, device))
+        prop_vecs.append(self.encode_prop(conclusion, device))
         
         # Stack as working memory: (1, num_props, prop_length)
         working_memory = torch.stack(prop_vecs).unsqueeze(0)
@@ -225,11 +242,11 @@ def train_model(model, train_data, test_data, epochs, lr, device, verbose=False)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = nn.BCELoss()
     
-    total_loss = 0.0
     for epoch in range(epochs):
         model.train()
         random.shuffle(train_data)
-        
+
+        total_loss = 0.0
         for premises, conclusion, label in train_data:
             optimizer.zero_grad()
             
@@ -278,7 +295,7 @@ def run_sweep(predicates, args, pred_vocab, arg_vocab, train_data, test_data, ep
     for num_rules in [2, 4, 8, 16, 32]:
         print(f"\n  DLN ({num_rules} rules)...")
         dln = RealDLNWrapper(pred_vocab, arg_vocab, num_rules=num_rules, 
-                             num_premises=3, var_slots=4)
+                             num_premises=3, var_slots=4, embed_dim=16)
         dln_params = count_parameters(dln)
         dln_acc = train_model(dln, train_data, test_data, epochs, lr, device, verbose=True)
         
