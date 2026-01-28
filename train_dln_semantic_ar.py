@@ -121,6 +121,7 @@ class DLNSemanticEncoder(nn.Module):
 class DLNSemanticAR(nn.Module):
     """
     Semantic AR with real DLN as encoder.
+    Predicts actual next logic form, not just embedding.
     """
     
     def __init__(self, num_rules=6, embed_dim=16, hidden_dim=64):
@@ -158,6 +159,10 @@ class DLNSemanticAR(nn.Module):
         next_repr = self.predictor(current_repr)
         
         return next_repr
+    
+    def encode(self, logic: List[Tuple[str, str, str]]):
+        """Encode logic form to representation."""
+        return self.encoder(logic)
 
 
 class TinyStoriesSemanticDataset(Dataset):
@@ -210,38 +215,41 @@ def collate_logic_forms(batch):
 
 
 def train_epoch(model, dataloader, optimizer, device):
-    """Train one epoch."""
+    """
+    Train one epoch with SEPARATE encoder updates.
+    Key: Encoder learns to represent semantics, predictor learns transitions.
+    """
     model.train()
     total_loss = 0
     num_updates = 0
     
     for current_logics, next_logics in dataloader:
-        # Process each example in the batch
         for curr, nxt in zip(current_logics, next_logics):
             optimizer.zero_grad()
             
-            # Predict next
+            # Step 1: Update encoder to better represent BOTH current and next
+            curr_repr = model.encode(curr)
+            next_repr = model.encode(nxt)
+            
+            # Contrastive: representations should be different but related
+            # We want some distance but not random
+            repr_loss = F.mse_loss(curr_repr, next_repr) * 0.1  # Small pull towards similarity
+            
+            # Step 2: Update predictor to predict next from current
             pred_next = model(curr)
+            pred_loss = F.mse_loss(pred_next, next_repr.detach())
             
-            # Encode actual next
-            target_next = model.encoder(nxt)
+            # Combined loss
+            loss = pred_loss + repr_loss
             
-            # Loss: MSE between predicted and actual representations
-            loss = F.mse_loss(pred_next, target_next.detach())
-            
-            # Check for degenerate cases
-            if torch.isnan(loss) or loss.item() == 0.0:
-                # Skip this update if loss is invalid
+            if torch.isnan(loss):
                 continue
             
             loss.backward()
-            
-            # Gradient clipping
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
-            
             optimizer.step()
             
-            total_loss += loss.item()
+            total_loss += pred_loss.item()  # Only track prediction loss
             num_updates += 1
     
     return total_loss / num_updates if num_updates > 0 else 0.0
@@ -249,8 +257,7 @@ def train_epoch(model, dataloader, optimizer, device):
 
 def evaluate(model, dataloader, device):
     """
-    Evaluate on test set.
-    Metric: Cosine similarity between predicted and actual next representations.
+    Evaluate: Can the predictor correctly predict next representations?
     """
     model.eval()
     total_similarity = 0
@@ -259,16 +266,16 @@ def evaluate(model, dataloader, device):
     with torch.no_grad():
         for current_logics, next_logics in dataloader:
             for curr, nxt in zip(current_logics, next_logics):
-                # Predict
+                # Predict next
                 pred_next = model(curr)
                 
-                # Actual
-                target_next = model.encoder(nxt)
+                # Actual next encoding
+                actual_next = model.encode(nxt)
                 
                 # Cosine similarity
                 similarity = F.cosine_similarity(
                     pred_next.unsqueeze(0),
-                    target_next.unsqueeze(0)
+                    actual_next.unsqueeze(0)
                 ).item()
                 
                 total_similarity += similarity

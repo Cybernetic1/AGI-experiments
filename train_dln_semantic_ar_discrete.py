@@ -1,0 +1,343 @@
+#!/usr/bin/env python3
+"""
+Train Real DLN with Semantic-AR - DISCRETE PREDICTION VERSION
+==============================================================
+
+The DLN should predict actual next logic form (discrete tokens),
+not just smooth embeddings.
+
+Task: Given current sentence's logic, predict next sentence's:
+  - Relations (type, agent, patient, etc.)
+  - Entities (actual entity names)
+  
+This is much harder and tests real reasoning capability.
+"""
+
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.data import Dataset, DataLoader
+import json
+from pathlib import Path
+from typing import List, Tuple, Dict
+import argparse
+from tqdm import tqdm
+
+from neural_logic_core import LogicNetwork
+from davidsonian_extraction import DavidsonianExtractor
+
+
+class DLNSemanticARDiscrete(nn.Module):
+    """
+    DLN that predicts discrete next logic form.
+    """
+    
+    def __init__(self, num_rules=6, embed_dim=16):
+        super().__init__()
+        
+        self.embed_dim = embed_dim
+        
+        # Vocabularies
+        self.relations = ['type', 'agent', 'patient', 'recipient', 'manner', 
+                         'location', 'instrument', 'time', 'tense', 'theme', 'goal', 'quantifier']
+        self.relation_to_idx = {r: i for i, r in enumerate(self.relations)}
+        
+        self.entity_vocab = {}
+        self.idx_to_entity = {}
+        self.next_entity_idx = 0
+        self.max_entities = 500
+        
+        # Embeddings
+        self.relation_embed = nn.Embedding(len(self.relations) + 1, embed_dim)
+        self.entity_embed = nn.Embedding(self.max_entities, embed_dim)
+        
+        self.prop_length = embed_dim * 3
+        
+        # DLN encoder
+        self.dln = LogicNetwork(
+            prop_length=self.prop_length,
+            num_props=10,
+            output_dim=embed_dim * 4,  # Rich representation
+            num_rules=num_rules,
+            num_premises=3,
+            var_slots=2
+        )
+        
+        # Prediction heads for next propositions
+        # Predict up to 8 propositions in next sentence
+        self.num_output_props = 8
+        
+        # For each output proposition, predict relation and 2 entities
+        hidden_dim = embed_dim * 4
+        self.relation_head = nn.Linear(hidden_dim, len(self.relations) + 1)
+        self.entity1_head = nn.Linear(hidden_dim, self.max_entities)
+        self.entity2_head = nn.Linear(hidden_dim, self.max_entities)
+        self.num_props_head = nn.Linear(hidden_dim, self.num_output_props + 1)  # How many props
+    
+    def get_entity_idx(self, entity):
+        """Get or create entity index."""
+        if entity not in self.entity_vocab:
+            if self.next_entity_idx >= self.max_entities:
+                return 0
+            self.entity_vocab[entity] = self.next_entity_idx
+            self.idx_to_entity[self.next_entity_idx] = entity
+            self.next_entity_idx += 1
+        return self.entity_vocab[entity]
+    
+    def encode_proposition(self, entity, relation, value, device):
+        """Encode proposition."""
+        rel_idx = self.relation_to_idx.get(relation, len(self.relation_to_idx))
+        ent_idx = self.get_entity_idx(entity)
+        val_idx = self.get_entity_idx(value)
+        
+        rel_emb = self.relation_embed(torch.tensor([rel_idx], device=device))
+        ent_emb = self.entity_embed(torch.tensor([ent_idx], device=device))
+        val_emb = self.entity_embed(torch.tensor([val_idx], device=device))
+        
+        return torch.cat([rel_emb, ent_emb, val_emb], dim=-1).squeeze(0)
+    
+    def forward(self, current_logic: List[Tuple[str, str, str]]):
+        """
+        Predict next logic form.
+        
+        Returns:
+            num_props_logits: How many propositions
+            relation_logits: (num_output_props, num_relations)
+            entity1_logits: (num_output_props, num_entities)
+            entity2_logits: (num_output_props, num_entities)
+        """
+        device = next(self.parameters()).device
+        
+        # Encode current logic
+        if len(current_logic) == 0:
+            prop_vecs = [torch.zeros(self.prop_length, device=device) for _ in range(10)]
+        else:
+            prop_vecs = []
+            for entity, relation, value in current_logic[:10]:
+                prop_vecs.append(self.encode_proposition(entity, relation, value, device))
+            while len(prop_vecs) < 10:
+                prop_vecs.append(torch.zeros(self.prop_length, device=device))
+        
+        working_memory = torch.stack(prop_vecs).unsqueeze(0)
+        
+        # Process through DLN
+        repr = self.dln(working_memory).squeeze(0)  # (embed_dim * 4)
+        
+        # Predict number of propositions
+        num_props_logits = self.num_props_head(repr)
+        
+        # Predict each proposition
+        relation_logits = self.relation_head(repr)
+        entity1_logits = self.entity1_head(repr)
+        entity2_logits = self.entity2_head(repr)
+        
+        return num_props_logits, relation_logits, entity1_logits, entity2_logits
+
+
+def collate_fn(batch):
+    """Custom collate."""
+    return [item[0] for item in batch], [item[1] for item in batch]
+
+
+class TinyStoriesDataset(Dataset):
+    """Dataset for semantic AR."""
+    
+    def __init__(self, data_path, max_stories=200):
+        with open(data_path, 'r') as f:
+            data = json.load(f)
+        
+        self.examples = []
+        extractor = DavidsonianExtractor()
+        
+        print(f"Extracting semantic forms from {max_stories} stories...")
+        for story in tqdm(data[:max_stories]):
+            text = story.get('text', '')
+            if not text:
+                continue
+            
+            sentences = [s.strip() + '.' for s in text.replace('\n', ' ').split('.') if s.strip()]
+            
+            logic_forms = []
+            for sent in sentences:
+                logic = extractor.extract(sent)
+                if logic:
+                    logic_forms.append(logic)
+            
+            for i in range(len(logic_forms) - 1):
+                self.examples.append((logic_forms[i], logic_forms[i+1]))
+        
+        print(f"  Created {len(self.examples)} examples")
+    
+    def __len__(self):
+        return len(self.examples)
+    
+    def __getitem__(self, idx):
+        return self.examples[idx]
+
+
+def train_epoch(model, dataloader, optimizer, device):
+    """Train with discrete prediction."""
+    model.train()
+    total_loss = 0
+    num_updates = 0
+    
+    for curr_batch, next_batch in dataloader:
+        for curr_logic, next_logic in zip(curr_batch, next_batch):
+            optimizer.zero_grad()
+            
+            # Predict
+            num_props_logits, rel_logits, ent1_logits, ent2_logits = model(curr_logic)
+            
+            # Target: actual next logic (just use first proposition for simplicity)
+            if len(next_logic) > 0:
+                target_entity, target_rel, target_value = next_logic[0]
+                target_rel_idx = model.relation_to_idx.get(target_rel, len(model.relation_to_idx))
+                target_ent1_idx = model.get_entity_idx(target_entity)
+                target_ent2_idx = model.get_entity_idx(target_value)
+                target_num = min(len(next_logic), model.num_output_props)
+            else:
+                # Empty target
+                target_rel_idx = len(model.relation_to_idx)
+                target_ent1_idx = 0
+                target_ent2_idx = 0
+                target_num = 0
+            
+            # Losses
+            target_rel_t = torch.tensor([target_rel_idx], device=device)
+            target_ent1_t = torch.tensor([target_ent1_idx], device=device)
+            target_ent2_t = torch.tensor([target_ent2_idx], device=device)
+            target_num_t = torch.tensor([target_num], device=device)
+            
+            loss = (F.cross_entropy(rel_logits.unsqueeze(0), target_rel_t) +
+                   F.cross_entropy(ent1_logits.unsqueeze(0), target_ent1_t) +
+                   F.cross_entropy(ent2_logits.unsqueeze(0), target_ent2_t) +
+                   F.cross_entropy(num_props_logits.unsqueeze(0), target_num_t))
+            
+            if torch.isnan(loss):
+                continue
+            
+            loss.backward()
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            optimizer.step()
+            
+            total_loss += loss.item()
+            num_updates += 1
+    
+    return total_loss / num_updates if num_updates > 0 else 0.0
+
+
+def evaluate(model, dataloader, device):
+    """Evaluate discrete predictions."""
+    model.eval()
+    
+    correct_rel = 0
+    correct_ent1 = 0
+    correct_ent2 = 0
+    total = 0
+    
+    with torch.no_grad():
+        for curr_batch, next_batch in dataloader:
+            for curr_logic, next_logic in zip(curr_batch, next_batch):
+                if len(next_logic) == 0:
+                    continue
+                
+                # Predict
+                _, rel_logits, ent1_logits, ent2_logits = model(curr_logic)
+                
+                # Target
+                target_entity, target_rel, target_value = next_logic[0]
+                target_rel_idx = model.relation_to_idx.get(target_rel, len(model.relation_to_idx))
+                target_ent1_idx = model.entity_vocab.get(target_entity, 0)
+                target_ent2_idx = model.entity_vocab.get(target_value, 0)
+                
+                # Check predictions
+                pred_rel = rel_logits.argmax().item()
+                pred_ent1 = ent1_logits.argmax().item()
+                pred_ent2 = ent2_logits.argmax().item()
+                
+                if pred_rel == target_rel_idx:
+                    correct_rel += 1
+                if pred_ent1 == target_ent1_idx:
+                    correct_ent1 += 1
+                if pred_ent2 == target_ent2_idx:
+                    correct_ent2 += 1
+                
+                total += 1
+    
+    return {
+        'relation_acc': correct_rel / total * 100 if total > 0 else 0,
+        'entity1_acc': correct_ent1 / total * 100 if total > 0 else 0,
+        'entity2_acc': correct_ent2 / total * 100 if total > 0 else 0,
+    }
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--stories", type=int, default=200)
+    parser.add_argument("--num-rules", type=int, default=6)
+    parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--lr", type=float, default=0.001)
+    parser.add_argument("--device", type=str, default="cpu")
+    args = parser.parse_args()
+    
+    device = torch.device(args.device)
+    
+    print("="*70)
+    print("TRAIN REAL DLN - DISCRETE PREDICTION")
+    print("="*70)
+    
+    # Load dataset
+    dataset = TinyStoriesDataset("data/processed/tinystories_train.json", max_stories=args.stories)
+    
+    train_size = int(0.8 * len(dataset))
+    test_size = len(dataset) - train_size
+    train_set, test_set = torch.utils.data.random_split(dataset, [train_size, test_size])
+    
+    train_loader = DataLoader(train_set, batch_size=8, shuffle=True, collate_fn=collate_fn)
+    test_loader = DataLoader(test_set, batch_size=8, collate_fn=collate_fn)
+    
+    print(f"  Train: {len(train_set)}, Test: {len(test_set)}")
+    
+    # Create model
+    model = DLNSemanticARDiscrete(num_rules=args.num_rules, embed_dim=16)
+    model = model.to(device)
+    
+    total_params = sum(p.numel() for p in model.parameters())
+    dln_params = sum(p.numel() for p in model.dln.parameters())
+    print(f"\n  Total params: {total_params:,}")
+    print(f"  DLN params: {dln_params:,}")
+    
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    
+    # Training
+    print("\n" + "="*70)
+    print("TRAINING")
+    print("="*70)
+    
+    for epoch in range(args.epochs):
+        loss = train_epoch(model, train_loader, optimizer, device)
+        
+        if (epoch + 1) % 10 == 0:
+            metrics = evaluate(model, test_loader, device)
+            print(f"Epoch {epoch+1:3d}: Loss={loss:.4f}, Rel={metrics['relation_acc']:.1f}%, "
+                  f"Ent1={metrics['entity1_acc']:.1f}%, Ent2={metrics['entity2_acc']:.1f}%")
+        else:
+            print(f"Epoch {epoch+1:3d}: Loss={loss:.4f}")
+    
+    # Final eval
+    print("\n" + "="*70)
+    print("FINAL EVALUATION")
+    print("="*70)
+    
+    final_metrics = evaluate(model, test_loader, device)
+    print(f"\nRelation accuracy: {final_metrics['relation_acc']:.1f}%")
+    print(f"Entity1 accuracy:  {final_metrics['entity1_acc']:.1f}%")
+    print(f"Entity2 accuracy:  {final_metrics['entity2_acc']:.1f}%")
+    
+    print(f"\nRandom baselines:")
+    print(f"  Relations: {100.0/len(model.relations):.1f}%")
+    print(f"  Entities: {100.0/model.next_entity_idx:.1f}%")
+
+
+if __name__ == "__main__":
+    main()
