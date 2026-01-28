@@ -53,7 +53,7 @@ def build_vocabularies(facts):
     return sorted(predicates), sorted(args)
 
 
-def encode_proposition(prop, pred_vocab, arg_vocab, embed_dim=8):
+def encode_proposition(prop, pred_vocab, arg_vocab, device='cpu'):
     """
     Encode proposition as a vector.
     Simple one-hot encoding for now.
@@ -63,7 +63,7 @@ def encode_proposition(prop, pred_vocab, arg_vocab, embed_dim=8):
     arg2_idx = arg_vocab.get(prop.args[1] if len(prop.args) > 1 else "", 0)
     
     # Create simple encoding: [pred_onehot, arg1_onehot, arg2_onehot]
-    vec = torch.zeros(len(pred_vocab) + 2 * len(arg_vocab))
+    vec = torch.zeros(len(pred_vocab) + 2 * len(arg_vocab), device=device)
     vec[pred_idx] = 1.0
     vec[len(pred_vocab) + arg1_idx] = 1.0
     vec[len(pred_vocab) + len(arg_vocab) + arg2_idx] = 1.0
@@ -143,11 +143,13 @@ class RealDLNWrapper(nn.Module):
         Returns:
             prob: Probability that conclusion is true
         """
-        # Encode all propositions
+        device = next(self.parameters()).device
+        
+        # Encode all propositions on correct device
         prop_vecs = []
         for p in premises:
-            prop_vecs.append(encode_proposition(p, self.pred_vocab, self.arg_vocab))
-        prop_vecs.append(encode_proposition(conclusion, self.pred_vocab, self.arg_vocab))
+            prop_vecs.append(encode_proposition(p, self.pred_vocab, self.arg_vocab, device))
+        prop_vecs.append(encode_proposition(conclusion, self.pred_vocab, self.arg_vocab, device))
         
         # Stack as working memory: (1, num_props, prop_length)
         working_memory = torch.stack(prop_vecs).unsqueeze(0)
