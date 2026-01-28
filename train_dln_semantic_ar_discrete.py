@@ -176,19 +176,21 @@ class TinyStoriesDataset(Dataset):
 
 
 def train_epoch(model, dataloader, optimizer, device):
-    """Train with discrete prediction."""
+    """Train with discrete prediction - OPTIMIZED."""
     model.train()
     total_loss = 0
     num_updates = 0
     
     for curr_batch, next_batch in dataloader:
+        # Process batch more efficiently
+        batch_loss = 0
+        valid_count = 0
+        
         for curr_logic, next_logic in zip(curr_batch, next_batch):
-            optimizer.zero_grad()
-            
             # Predict
             num_props_logits, rel_logits, ent1_logits, ent2_logits = model(curr_logic)
             
-            # Target: actual next logic (just use first proposition for simplicity)
+            # Target
             if len(next_logic) > 0:
                 target_entity, target_rel, target_value = next_logic[0]
                 target_rel_idx = model.relation_to_idx.get(target_rel, len(model.relation_to_idx))
@@ -196,7 +198,6 @@ def train_epoch(model, dataloader, optimizer, device):
                 target_ent2_idx = model.get_entity_idx(target_value)
                 target_num = min(len(next_logic), model.num_output_props)
             else:
-                # Empty target
                 target_rel_idx = len(model.relation_to_idx)
                 target_ent1_idx = 0
                 target_ent2_idx = 0
@@ -213,14 +214,19 @@ def train_epoch(model, dataloader, optimizer, device):
                    F.cross_entropy(ent2_logits.unsqueeze(0), target_ent2_t) +
                    F.cross_entropy(num_props_logits.unsqueeze(0), target_num_t))
             
-            if torch.isnan(loss):
-                continue
-            
-            loss.backward()
+            if not torch.isnan(loss):
+                batch_loss += loss
+                valid_count += 1
+        
+        # Update once per batch (instead of per example)
+        if valid_count > 0:
+            optimizer.zero_grad()
+            avg_batch_loss = batch_loss / valid_count
+            avg_batch_loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
             
-            total_loss += loss.item()
+            total_loss += avg_batch_loss.item()
             num_updates += 1
     
     return total_loss / num_updates if num_updates > 0 else 0.0
@@ -275,9 +281,10 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--stories", type=int, default=200)
     parser.add_argument("--num-rules", type=int, default=6)
-    parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--epochs", type=int, default=20)  # Reduced from 50
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--device", type=str, default="cpu")
+    parser.add_argument("--early-stop-patience", type=int, default=5)  # Stop if no improvement for 5 epochs
     args = parser.parse_args()
     
     device = torch.device(args.device)
@@ -293,8 +300,8 @@ def main():
     test_size = len(dataset) - train_size
     train_set, test_set = torch.utils.data.random_split(dataset, [train_size, test_size])
     
-    train_loader = DataLoader(train_set, batch_size=8, shuffle=True, collate_fn=collate_fn)
-    test_loader = DataLoader(test_set, batch_size=8, collate_fn=collate_fn)
+    train_loader = DataLoader(train_set, batch_size=32, shuffle=True, collate_fn=collate_fn)
+    test_loader = DataLoader(test_set, batch_size=32, collate_fn=collate_fn)
     
     print(f"  Train: {len(train_set)}, Test: {len(test_set)}")
     
@@ -311,18 +318,33 @@ def main():
     
     # Training
     print("\n" + "="*70)
-    print("TRAINING")
+    print("TRAINING (with early stopping)")
     print("="*70)
+    
+    best_loss = float('inf')
+    patience_counter = 0
     
     for epoch in range(args.epochs):
         loss = train_epoch(model, train_loader, optimizer, device)
         
-        if True:     # (epoch + 1) % 5 == 0:
+        # Early stopping check
+        if loss < best_loss:
+            best_loss = loss
+            patience_counter = 0
+        else:
+            patience_counter += 1
+        
+        if (epoch + 1) % 5 == 0:
             metrics = evaluate(model, test_loader, device)
             print(f"Epoch {epoch+1:3d}: Loss={loss:.4f}, Rel={metrics['relation_acc']:.1f}%, "
                   f"Ent1={metrics['entity1_acc']:.1f}%, Ent2={metrics['entity2_acc']:.1f}%")
         else:
             print(f"Epoch {epoch+1:3d}: Loss={loss:.4f}")
+        
+        # Early stopping
+        if patience_counter >= args.early_stop_patience:
+            print(f"\nEarly stopping at epoch {epoch+1} (no improvement for {args.early_stop_patience} epochs)")
+            break
     
     # Final eval
     print("\n" + "="*70)
