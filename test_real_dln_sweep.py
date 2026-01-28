@@ -225,6 +225,7 @@ def train_model(model, train_data, test_data, epochs, lr, device, verbose=False)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     criterion = nn.BCELoss()
     
+    total_loss = 0.0
     for epoch in range(epochs):
         model.train()
         random.shuffle(train_data)
@@ -240,6 +241,9 @@ def train_model(model, train_data, test_data, epochs, lr, device, verbose=False)
             loss = criterion(pred, target)
             loss.backward()
             optimizer.step()
+            
+        total_loss += loss.item()
+        print(f"Epoch {epoch+1}: Loss = {total_loss/len(train_data):.4f}")
     
     # Evaluate on test
     model.eval()
