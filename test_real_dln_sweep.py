@@ -258,8 +258,8 @@ def train_model(model, train_data, test_data, epochs, lr, device, verbose=False)
             loss = criterion(pred, target)
             loss.backward()
             optimizer.step()
-            
-        total_loss += loss.item()
+            total_loss += loss.item()
+
         print(f"Epoch {epoch+1}: Loss = {total_loss/len(train_data):.4f}")
     
     # Evaluate on test
