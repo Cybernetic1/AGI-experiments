@@ -256,7 +256,7 @@ def train_epoch(model, dataloader, optimizer, device):
 
 
 def evaluate(model, dataloader, device):
-    """Evaluate discrete predictions."""
+    """Evaluate discrete predictions - BATCHED."""
     model.eval()
     
     correct_rel = 0
@@ -266,29 +266,30 @@ def evaluate(model, dataloader, device):
     
     with torch.no_grad():
         for curr_batch, next_batch in dataloader:
-            for curr_logic, next_logic in zip(curr_batch, next_batch):
+            # Batched forward pass
+            _, rel_logits, ent1_logits, ent2_logits = model(curr_batch)
+            # Shape: (batch_size, num_classes)
+            
+            # Get predictions for entire batch
+            pred_rels = rel_logits.argmax(dim=1).cpu().numpy()
+            pred_ent1s = ent1_logits.argmax(dim=1).cpu().numpy()
+            pred_ent2s = ent2_logits.argmax(dim=1).cpu().numpy()
+            
+            # Compare with targets
+            for i, next_logic in enumerate(next_batch):
                 if len(next_logic) == 0:
                     continue
                 
-                # Predict
-                _, rel_logits, ent1_logits, ent2_logits = model(curr_logic)
-                
-                # Target
                 target_entity, target_rel, target_value = next_logic[0]
                 target_rel_idx = model.relation_to_idx.get(target_rel, len(model.relation_to_idx))
-                target_ent1_idx = model.entity_vocab.get(target_entity, 0)
-                target_ent2_idx = model.entity_vocab.get(target_value, 0)
+                target_ent1_idx = model.get_entity_idx(target_entity)
+                target_ent2_idx = model.get_entity_idx(target_value)
                 
-                # Check predictions
-                pred_rel = rel_logits.argmax().item()
-                pred_ent1 = ent1_logits.argmax().item()
-                pred_ent2 = ent2_logits.argmax().item()
-                
-                if pred_rel == target_rel_idx:
+                if pred_rels[i] == target_rel_idx:
                     correct_rel += 1
-                if pred_ent1 == target_ent1_idx:
+                if pred_ent1s[i] == target_ent1_idx:
                     correct_ent1 += 1
-                if pred_ent2 == target_ent2_idx:
+                if pred_ent2s[i] == target_ent2_idx:
                     correct_ent2 += 1
                 
                 total += 1
