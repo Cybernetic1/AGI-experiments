@@ -213,6 +213,7 @@ def train_epoch(model, dataloader, optimizer, device):
     """Train one epoch."""
     model.train()
     total_loss = 0
+    num_updates = 0
     
     for current_logics, next_logics in dataloader:
         # Process each example in the batch
@@ -228,12 +229,22 @@ def train_epoch(model, dataloader, optimizer, device):
             # Loss: MSE between predicted and actual representations
             loss = F.mse_loss(pred_next, target_next.detach())
             
+            # Check for degenerate cases
+            if torch.isnan(loss) or loss.item() == 0.0:
+                # Skip this update if loss is invalid
+                continue
+            
             loss.backward()
+            
+            # Gradient clipping
+            torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+            
             optimizer.step()
             
             total_loss += loss.item()
+            num_updates += 1
     
-    return total_loss / len(dataloader.dataset)
+    return total_loss / num_updates if num_updates > 0 else 0.0
 
 
 def evaluate(model, dataloader, device):
@@ -328,15 +339,23 @@ def main():
         # Train
         train_loss = train_epoch(model, train_loader, optimizer, device)
         
-        # Evaluate
+        # Evaluate every 5 epochs
         if (epoch + 1) % 5 == 0:
             test_similarity = evaluate(model, test_loader, device)
-            print(f"Epoch {epoch+1:3d}: Loss = {train_loss:.4f}, Test Similarity = {test_similarity:.4f}")
+            
+            # Also check a sample prediction
+            with torch.no_grad():
+                sample_curr, sample_next = train_dataset[0]
+                pred = model(sample_curr)
+                target = model.encoder(sample_next)
+                sample_sim = F.cosine_similarity(pred.unsqueeze(0), target.unsqueeze(0)).item()
+            
+            print(f"Epoch {epoch+1:3d}: Loss = {train_loss:.6f}, Test Sim = {test_similarity:.4f}, Sample Sim = {sample_sim:.4f}")
             
             if test_similarity > best_similarity:
                 best_similarity = test_similarity
         else:
-            print(f"Epoch {epoch+1:3d}: Loss = {train_loss:.4f}")
+            print(f"Epoch {epoch+1:3d}: Loss = {train_loss:.6f}")
     
     # Final evaluation
     print("\n" + "="*70)
