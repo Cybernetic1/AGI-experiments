@@ -317,7 +317,7 @@ def main():
     for epoch in range(args.epochs):
         loss = train_epoch(model, train_loader, optimizer, device)
         
-        if (epoch + 1) % 10 == 0:
+        if True:     # (epoch + 1) % 5 == 0:
             metrics = evaluate(model, test_loader, device)
             print(f"Epoch {epoch+1:3d}: Loss={loss:.4f}, Rel={metrics['relation_acc']:.1f}%, "
                   f"Ent1={metrics['entity1_acc']:.1f}%, Ent2={metrics['entity2_acc']:.1f}%")
