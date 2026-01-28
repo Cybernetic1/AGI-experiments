@@ -292,10 +292,14 @@ def run_sweep(predicates, args, pred_vocab, arg_vocab, train_data, test_data, ep
     
     # Real DLN sweep: vary num_rules
     print("\nTesting Real DLN (with cylindrification) - varying num_rules...")
+    # Use smaller embed_dim to reduce parameter explosion
+    embed_dim = 8  # Reduced from 16
+    var_slots = 2  # Reduced from 4
+    
     for num_rules in [2, 4, 8, 16, 32]:
         print(f"\n  DLN ({num_rules} rules)...")
         dln = RealDLNWrapper(pred_vocab, arg_vocab, num_rules=num_rules, 
-                             num_premises=3, var_slots=4, embed_dim=16)
+                             num_premises=3, var_slots=var_slots, embed_dim=embed_dim)
         dln_params = count_parameters(dln)
         dln_acc = train_model(dln, train_data, test_data, epochs, lr, device, verbose=True)
         
