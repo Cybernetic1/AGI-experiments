@@ -96,40 +96,58 @@ class DLNSemanticARDiscrete(nn.Module):
         
         return torch.cat([rel_emb, ent_emb, val_emb], dim=-1).squeeze(0)
     
-    def forward(self, current_logic: List[Tuple[str, str, str]]):
+    def forward(self, current_logic):
         """
         Predict next logic form.
+        Supports both single example and batched inputs.
+        
+        Args:
+            current_logic: List[Tuple] for single, or List[List[Tuple]] for batch
         
         Returns:
-            num_props_logits: How many propositions
-            relation_logits: (num_output_props, num_relations)
-            entity1_logits: (num_output_props, num_entities)
-            entity2_logits: (num_output_props, num_entities)
+            num_props_logits, relation_logits, entity1_logits, entity2_logits
         """
         device = next(self.parameters()).device
         
-        # Encode current logic
-        if len(current_logic) == 0:
-            prop_vecs = [torch.zeros(self.prop_length, device=device) for _ in range(10)]
-        else:
-            prop_vecs = []
-            for entity, relation, value in current_logic[:10]:
-                prop_vecs.append(self.encode_proposition(entity, relation, value, device))
-            while len(prop_vecs) < 10:
-                prop_vecs.append(torch.zeros(self.prop_length, device=device))
+        # Check if batched
+        is_batch = isinstance(current_logic[0], list) if current_logic else False
         
-        working_memory = torch.stack(prop_vecs).unsqueeze(0)
+        if not is_batch:
+            current_logic = [current_logic]  # Make it a batch of 1
         
-        # Process through DLN
-        repr = self.dln(working_memory).squeeze(0)  # (embed_dim * 4)
+        batch_size = len(current_logic)
         
-        # Predict number of propositions
-        num_props_logits = self.num_props_head(repr)
+        # Encode entire batch at once
+        batch_wm = []
+        for logic in current_logic:
+            if len(logic) == 0:
+                prop_vecs = torch.zeros(10, self.prop_length, device=device)
+            else:
+                prop_vecs = []
+                for entity, relation, value in logic[:10]:
+                    prop_vecs.append(self.encode_proposition(entity, relation, value, device))
+                prop_vecs = torch.stack(prop_vecs)
+                # Pad to 10
+                if len(prop_vecs) < 10:
+                    padding = torch.zeros(10 - len(prop_vecs), self.prop_length, device=device)
+                    prop_vecs = torch.cat([prop_vecs, padding], dim=0)
+            batch_wm.append(prop_vecs)
         
-        # Predict each proposition
-        relation_logits = self.relation_head(repr)
-        entity1_logits = self.entity1_head(repr)
-        entity2_logits = self.entity2_head(repr)
+        working_memory = torch.stack(batch_wm)  # (batch_size, 10, prop_length)
+        
+        # Process through DLN (batched!)
+        repr = self.dln(working_memory)  # (batch_size, embed_dim * 2)
+        
+        # Predict (batched!)
+        num_props_logits = self.num_props_head(repr)  # (batch_size, num_output_props+1)
+        relation_logits = self.relation_head(repr)    # (batch_size, num_relations+1)
+        entity1_logits = self.entity1_head(repr)      # (batch_size, max_entities)
+        entity2_logits = self.entity2_head(repr)      # (batch_size, max_entities)
+        
+        if not is_batch:
+            # Return single example
+            return (num_props_logits[0], relation_logits[0], 
+                    entity1_logits[0], entity2_logits[0])
         
         return num_props_logits, relation_logits, entity1_logits, entity2_logits
 
@@ -176,21 +194,27 @@ class TinyStoriesDataset(Dataset):
 
 
 def train_epoch(model, dataloader, optimizer, device):
-    """Train with discrete prediction - OPTIMIZED."""
+    """Train with discrete prediction - TRUE BATCHING."""
     model.train()
     total_loss = 0
     num_updates = 0
     
     for curr_batch, next_batch in dataloader:
-        # Process batch more efficiently
-        batch_loss = 0
-        valid_count = 0
+        # Process entire batch at once!
+        optimizer.zero_grad()
         
-        for curr_logic, next_logic in zip(curr_batch, next_batch):
-            # Predict
-            num_props_logits, rel_logits, ent1_logits, ent2_logits = model(curr_logic)
-            
-            # Target
+        # Batched forward pass
+        num_props_logits, rel_logits, ent1_logits, ent2_logits = model(curr_batch)
+        # Shape: (batch_size, num_classes)
+        
+        # Prepare targets for entire batch
+        batch_size = len(curr_batch)
+        target_rels = []
+        target_ent1s = []
+        target_ent2s = []
+        target_nums = []
+        
+        for next_logic in next_batch:
             if len(next_logic) > 0:
                 target_entity, target_rel, target_value = next_logic[0]
                 target_rel_idx = model.relation_to_idx.get(target_rel, len(model.relation_to_idx))
@@ -203,30 +227,29 @@ def train_epoch(model, dataloader, optimizer, device):
                 target_ent2_idx = 0
                 target_num = 0
             
-            # Losses
-            target_rel_t = torch.tensor([target_rel_idx], device=device)
-            target_ent1_t = torch.tensor([target_ent1_idx], device=device)
-            target_ent2_t = torch.tensor([target_ent2_idx], device=device)
-            target_num_t = torch.tensor([target_num], device=device)
-            
-            loss = (F.cross_entropy(rel_logits.unsqueeze(0), target_rel_t) +
-                   F.cross_entropy(ent1_logits.unsqueeze(0), target_ent1_t) +
-                   F.cross_entropy(ent2_logits.unsqueeze(0), target_ent2_t) +
-                   F.cross_entropy(num_props_logits.unsqueeze(0), target_num_t))
-            
-            if not torch.isnan(loss):
-                batch_loss += loss
-                valid_count += 1
+            target_rels.append(target_rel_idx)
+            target_ent1s.append(target_ent1_idx)
+            target_ent2s.append(target_ent2_idx)
+            target_nums.append(target_num)
         
-        # Update once per batch (instead of per example)
-        if valid_count > 0:
-            optimizer.zero_grad()
-            avg_batch_loss = batch_loss / valid_count
-            avg_batch_loss.backward()
+        # Convert to tensors
+        target_rels = torch.tensor(target_rels, device=device)
+        target_ent1s = torch.tensor(target_ent1s, device=device)
+        target_ent2s = torch.tensor(target_ent2s, device=device)
+        target_nums = torch.tensor(target_nums, device=device)
+        
+        # Batched loss computation
+        loss = (F.cross_entropy(rel_logits, target_rels) +
+               F.cross_entropy(ent1_logits, target_ent1s) +
+               F.cross_entropy(ent2_logits, target_ent2s) +
+               F.cross_entropy(num_props_logits, target_nums))
+        
+        if not torch.isnan(loss):
+            loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
             
-            total_loss += avg_batch_loss.item()
+            total_loss += loss.item()
             num_updates += 1
     
     return total_loss / num_updates if num_updates > 0 else 0.0
