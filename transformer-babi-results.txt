@@ -1,0 +1,68 @@
+Using device: cuda                  
+Loading data...                                                                       
+Train examples: 10000                                                                 
+Test examples: 1000                                                                                                                                                         
+Vocabulary size: 30
+                                           
+Model: 2 layers, 64 dim
+Parameters: 70,814 
+                                           
+Training...                                
+Epoch  5: Loss=1.7485, Train=24.2%, Test=9.4%
+Epoch 10: Loss=1.7405, Train=24.7%, Test=9.3%
+Epoch 15: Loss=1.7251, Train=25.3%, Test=12.8%                                        
+Epoch 20: Loss=1.7176, Train=25.1%, Test=8.9%                                         
+                                                                                      
+============================================================
+FINAL RESULTS                                                                         
+============================================================
+Parameters:   70,814                       
+Test Accuracy: 8.9%                                                                   
+Training time: 80.4s
+============================================================
+
+Using device: cuda 
+Loading data...                                                                       
+Train examples: 10000
+Test examples: 1000
+Vocabulary size: 30
+
+Model: 3 layers, 128 dim
+Parameters: 405,150
+
+Training...
+Epoch  5: Loss=1.7854, Train=21.1%, Test=6.0%
+Epoch 10: Loss=1.7810, Train=21.4%, Test=4.1%
+Epoch 15: Loss=1.7948, Train=16.9%, Test=3.8%
+Epoch 20: Loss=1.7933, Train=16.8%, Test=18.2%
+
+============================================================
+FINAL RESULTS
+============================================================
+Parameters:   405,150
+Test Accuracy: 18.2%
+Training time: 104.4s
+============================================================
+
+Using device: cuda
+Loading data...
+Train examples: 10000
+Test examples: 1000
+Vocabulary size: 30
+
+Model: 4 layers, 256 dim
+Parameters: 2,123,806
+
+Training...
+Epoch  5: Loss=1.7974, Train=17.0%, Test=0.0%
+Epoch 10: Loss=1.7948, Train=16.8%, Test=0.0%
+Epoch 15: Loss=1.7933, Train=17.3%, Test=18.2%
+Epoch 20: Loss=1.7931, Train=16.8%, Test=0.0%
+
+============================================================
+FINAL RESULTS
+============================================================
+Parameters:   2,123,806
+Test Accuracy: 0.0%
+Training time: 123.6s
+============================================================
