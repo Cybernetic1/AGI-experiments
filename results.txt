@@ -1,60 +1,217 @@
-======================================================================
-TRAIN REAL DLN ON TINYSTORIES (TTT METHODOLOGY)
-======================================================================
-
-Loading 100 story sequences...
-  Loaded 17 sequences
-  Avg facts per sequence: 3.3
-  Predicates: 7
-  Arguments: 67
-
-Creating DLN with 6 rules...
-  Total parameters: 29,730
 
 ======================================================================
-PHASE 1: Concept Formation (AR Training)
+DLN DEBUGGING SESSION
+Goal: Understand why real DLN works on TTT but not TinyStories
 ======================================================================
-Epoch  1: Loss = 10.3618, Accuracy = 0.0%
-Epoch  2: Loss = 10.3670, Accuracy = 0.0%
-Epoch  3: Loss = 10.3607, Accuracy = 0.0%
-Epoch  4: Loss = 10.2884, Accuracy = 0.0%
-Epoch  5: Loss = 10.3060, Accuracy = 0.0%
-Epoch  6: Loss = 10.2475, Accuracy = 0.0%
-Epoch  7: Loss = 10.1100, Accuracy = 0.0%
-Epoch  8: Loss = 10.0026, Accuracy = 0.0%
-Epoch  9: Loss = 9.6382, Accuracy = 0.0%
-Epoch 10: Loss = 8.7217, Accuracy = 0.0%
-Epoch 11: Loss = 8.2252, Accuracy = 0.0%
-Epoch 12: Loss = 7.8539, Accuracy = 0.0%
-Epoch 13: Loss = 7.7711, Accuracy = 0.0%
-Epoch 14: Loss = 7.3662, Accuracy = 0.0%
-Epoch 15: Loss = 7.5555, Accuracy = 0.0%
-Epoch 16: Loss = 7.9855, Accuracy = 0.0%
-Epoch 17: Loss = 8.5478, Accuracy = 0.0%
-Epoch 18: Loss = 7.9763, Accuracy = 0.0%
-Epoch 19: Loss = 7.5518, Accuracy = 0.0%
-Epoch 20: Loss = 7.7856, Accuracy = 0.0%
-
 ======================================================================
-PHASE 2: Concept Valuation (RL Training)
-======================================================================
-Episode  20: Avg Reward = 0.325, Loss = 0.1206
-Episode  40: Avg Reward = 0.335, Loss = 0.0265
-Episode  60: Avg Reward = 0.330, Loss = 0.0249
-Episode  80: Avg Reward = 0.350, Loss = 0.0036
-Episode 100: Avg Reward = 0.305, Loss = 0.0001
-
-======================================================================
-PHASE 3: Joint Refinement (AR + RL)
-======================================================================
-Iteration 10: AR Loss = 2.6950, RL Loss = 0.0056
-Iteration 20: AR Loss = 2.7064, RL Loss = 0.0046
-Iteration 30: AR Loss = 2.6183, RL Loss = 0.0038
-Iteration 40: AR Loss = 2.5709, RL Loss = 0.0031
-Iteration 50: AR Loss = 2.5800, RL Loss = 0.0024
-
-======================================================================
-TRAINING COMPLETE
+DLN ARCHITECTURE INSPECTION
 ======================================================================
 
-Next step: Evaluate model and compare with Transformer baseline
+DLN Configuration:
+  Proposition length: 48
+  Number of propositions: 4
+  Number of rules: 2
+  Premises per rule: 3
+  Variable slots: 4
+  Total parameters: 58,210
+
+Per-rule parameters:
+  Constants: 144
+  Gammas: 144
+  Body layer 0: 196
+  Body layer 1: 196
+  Body layer 2: 196
+  Head: 5
+
+Testing forward pass...
+  Input shape: torch.Size([2, 4, 48])
+  Output shape: torch.Size([2, 1])
+  Output range: [0.000, 0.000]
+
+Testing gradient flow...
+  Parameters with gradient: 32/32
+  ✓ All parameters receiving gradients
+
+======================================================================
+SIMPLE LEARNING TEST
+======================================================================
+
+Task: Learn to output 1.0 when first proposition has high values
+
+Training for 50 iterations...
+  Iteration  0: Loss = 0.5312
+  Iteration 10: Loss = 0.4374
+  Iteration 20: Loss = 0.6223
+  Iteration 30: Loss = 0.5880
+  Iteration 40: Loss = 0.4315
+
+Final loss: 0.4740
+Initial loss: 0.5312
+Improvement: 10.8%
+✗ DLN struggling to learn even simple patterns
+  Possible issues:
+  - Learning rate too low
+  - Architecture mismatch
+  - Initialization problems
+
+======================================================================
+TTT vs TinyStories SETUP COMPARISON
+======================================================================
+
+----------------------------------------------------------------------
+TTT (WORKING):
+----------------------------------------------------------------------
+  Task: Predict next board state
+  Input: Board state (9 positions × 3 states = 27 dim)
+  Output: Next board state (27 dim)
+  Training: AR (predict next state) + RL (win/loss reward)
+  Data: Game trajectories
+  DLN config: 6 rules, 2 premises, 3 var_slots
+  Total params: 4,680
+  Result: 100% win rate
+
+----------------------------------------------------------------------
+TinyStories Logical Inference (NOT WORKING):
+----------------------------------------------------------------------
+  Task: Binary classification (fact true/false)
+  Input: 3 premises + 1 conclusion (4 props × 48 dim)
+  Output: Probability (1 dim)
+  Training: Binary cross-entropy on labels
+  Data: Random fact triples
+  DLN config: 2+ rules, 3 premises, 4 var_slots
+  Total params: 59K+ (10× larger than TTT!)
+  Result: Stuck at 50% (random guessing)
+
+----------------------------------------------------------------------
+KEY DIFFERENCES:
+----------------------------------------------------------------------
+  1. Task complexity:
+     TTT: Sequential, grounded in physical board
+     TinyStories: Abstract logical inference
+
+  2. Input representation:
+     TTT: Direct board encoding (hand-crafted features)
+     TinyStories: Learned embeddings → might be poor
+
+  3. Training signal:
+     TTT: Strong (win/loss + AR reconstruction)
+     TinyStories: Weak (single binary label)
+
+  4. Data quality:
+     TTT: Clean game trajectories
+     TinyStories: Noisy fact triples + synthetic negatives
+
+  5. Parameter scale:
+     TTT: 4.7K params (appropriate for task)
+     TinyStories: 59K+ params (might be over-parameterized)
+
+======================================================================
+LEARNING FAILURE DIAGNOSTICS
+======================================================================
+
+Possible causes:
+
+1. POOR EMBEDDINGS
+   - TinyStories uses learned embeddings (16-dim)
+   - Embeddings might not capture semantic meaning
+   - DLN tries to learn logic over meaningless vectors
+   → Test: Use pre-trained embeddings or one-hot (but smaller vocab)
+
+2. WRONG TASK FORMULATION
+   - Binary classification too simple for DLN
+   - DLN designed for sequential/structured reasoning
+   - No temporal or causal structure in our data
+   → Test: Use autoregressive task like TTT
+
+3. INSUFFICIENT TRAINING SIGNAL
+   - Each example only provides 1 bit of information (true/false)
+   - Synthetic negatives might be too random
+   - No reward shaping or intermediate supervision
+   → Test: Add auxiliary tasks or multi-task learning
+
+4. ARCHITECTURE MISMATCH
+   - Proposition format might not match what DLN expects
+   - 3 premises + 1 conclusion might not provide enough context
+   - Variable binding might not be needed for this task
+   → Test: Vary num_premises, var_slots
+
+5. HYPERPARAMETER ISSUES
+   - Learning rate (0.001 might be wrong)
+   - Batch size (1 example at a time vs batches)
+   - Loss function (BCE might not work well)
+   → Test: Grid search hyperparameters
+
+======================================================================
+PROPOSED FIXES (Priority Order)
+======================================================================
+
+1. REPLICATE TTT SUCCESS (HIGHEST PRIORITY)
+   Action: Adapt TTT training methodology to TinyStories
+   How:
+   - Use AR task: Given story facts 1..N-1, predict fact N
+   - Add RL: Reward model for generating coherent stories
+   - Use same 3-phase training: AR → RL → Joint
+   Time: 2-3 hours to implement and test
+
+2. FIX REPRESENTATION (MEDIUM PRIORITY)
+   Action: Improve input representation
+   How:
+   - Use pre-trained word embeddings (GloVe/Word2Vec)
+   - Or use larger embed_dim (32 → 64)
+   - Or use graph structure encoding
+   Time: 1-2 hours
+
+3. SIMPLIFY TASK (QUICK WIN)
+   Action: Start with easier logical inference
+   How:
+   - Single-hop inference only
+   - Deterministic rules (no ambiguity)
+   - More structured data (bAbI style)
+   Time: 1 hour
+
+4. DEBUG MODE (DETAILED ANALYSIS)
+   Action: Instrument DLN to see what it's learning
+   How:
+   - Log γ (cylindrification) values over time
+   - Visualize rule constants
+   - Check which rules fire on which examples
+   - Monitor gradient magnitudes
+   Time: 2-3 hours
+
+5. HYPERPARAMETER SWEEP (SYSTEMATIC)
+   Action: Grid search key hyperparameters
+   Parameters:
+   - Learning rate: [0.0001, 0.001, 0.01]
+   - Num rules: [2, 4, 8]
+   - Var slots: [2, 4, 8]
+   - Embed dim: [8, 16, 32]
+   Time: 4-6 hours (can parallelize)
+
+======================================================================
+RECOMMENDATION
+======================================================================
+
+For your mid-February presentation:
+
+1. SAFE OPTION: Present TTT result
+   - Real DLN (4.7K params)
+   - 100% win rate vs optimal opponent
+   - Clear success story
+   - Limitation: Only one task demonstrated
+
+2. AMBITIOUS OPTION: Fix TinyStories comparison
+   - Requires 1-2 weeks of debugging/experimentation
+   - Higher risk but stronger claim
+   - Shows generalization across tasks
+
+3. MIDDLE GROUND: Multiple simple tasks
+   - Get DLN working on 2-3 simple tasks
+   - Show consistent parameter efficiency
+   - More convincing than single task
+
+You have ~2 weeks until mid-Feb. Recommended path:
+  Week 1: Fix #1 (replicate TTT methodology on new task)
+  Week 2: If successful, run parameter sweep for presentation
+  Backup: Always have TTT result as fallback
+
+======================================================================
