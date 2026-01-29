@@ -220,7 +220,7 @@ if __name__ == '__main__':
     results.append(result_orig)
     
     # Test vectorized DLN
-    result_vec = run_experiment(LogicNetworkVectorized, "Vectorized DLN", num_rules=5)
+    result_vec = run_experiment(VectorizedLogicNetwork, "Vectorized DLN", num_rules=5)
     results.append(result_vec)
     
     # Compare
