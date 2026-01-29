@@ -92,6 +92,22 @@ class UnificationDataset(Dataset):
         return self.examples[idx]
 
 
+def collate_fn(batch):
+    """Pad logic forms to same length"""
+    logic_forms, targets = zip(*batch)
+    
+    # Find max length
+    max_len = max(len(lf) for lf in logic_forms)
+    
+    # Pad with dummy triple
+    padded_forms = []
+    for lf in logic_forms:
+        padded = list(lf) + [('PAD', 'PAD', 'PAD')] * (max_len - len(lf))
+        padded_forms.append(padded)
+    
+    return padded_forms, list(targets)
+
+
 class DLNUnification(nn.Module):
     """
     DLN model for unification tasks.
@@ -279,8 +295,8 @@ def main():
     test_size = len(dataset) - train_size
     train_dataset, test_dataset = torch.utils.data.random_split(dataset, [train_size, test_size])
     
-    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True)
-    test_loader = DataLoader(test_dataset, batch_size=args.batch_size)
+    train_loader = DataLoader(train_dataset, batch_size=args.batch_size, shuffle=True, collate_fn=collate_fn)
+    test_loader = DataLoader(test_dataset, batch_size=args.batch_size, collate_fn=collate_fn)
     
     print(f"\nDataset:")
     print(f"  Train: {len(train_dataset)} examples")
