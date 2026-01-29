@@ -11,7 +11,7 @@ import json
 import argparse
 from collections import Counter
 import time
-from neural_logic_core import LogicNetwork
+from neural_logic_core_vectorized import VectorizedLogicNetwork
 
 class BaBIDataset(Dataset):
     def __init__(self, data_file, max_facts=10):
@@ -115,8 +115,8 @@ class DLN_QA(nn.Module):
         # Proposition length = embed_dim (we'll average the word embeddings)
         prop_length = embed_dim
         
-        # Logic network
-        self.dln = LogicNetwork(
+        # Logic network (Vectorized!)
+        self.dln = VectorizedLogicNetwork(
             prop_length=prop_length,
             num_props=num_props,
             output_dim=embed_dim,
