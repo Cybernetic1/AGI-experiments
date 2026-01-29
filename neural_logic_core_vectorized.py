@@ -67,16 +67,15 @@ class VectorizedLogicNetwork(nn.Module):
         M, J, I = self.M, self.J, self.I
         
         # Step 1: Cylindrify working memory for all rules and premises
-        # wm: (B, W, L) → (B, 1, 1, W, 1, L)
-        wm_expanded = working_memory.view(B, 1, 1, W, 1, L)
+        # wm: (B, W, L) → (B, 1, 1, W, L)
+        wm_expanded = working_memory.unsqueeze(1).unsqueeze(1)  # (B, 1, 1, W, L)
         
-        # cyl: (M, J, I, L, L) → (1, M, J, 1, I, L, L)
-        cyl = self.cylindrification.unsqueeze(0).unsqueeze(3)
-        
-        # Apply cylindrification: (B, M, J, W, I, L)
-        wm_cylindrified = torch.einsum('bmjwil,bijkl->bmjwik', 
-                                       wm_expanded.expand(B, M, J, W, I, L),
-                                       cyl.expand(B, M, J, W, I, L, L))
+        # cyl: (M, J, I, L, L)
+        # For each premise, apply cylindrification matrices to working memory
+        # Result: (B, M, J, W, I, L)
+        wm_cylindrified = torch.einsum('bwl,mjikl->bmjwik', 
+                                       working_memory, 
+                                       self.cylindrification)
         
         # Step 2: Compute distances to premise constants
         # premises: (M, J, L) → (1, M, J, 1, 1, L)
