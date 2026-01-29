@@ -41,7 +41,12 @@ class UnificationDataset(Dataset):
         self.model = model
         
         # Load and process stories
-        with open(stories_file) as f:
+        stories_path = Path(stories_file)
+        if not stories_path.exists():
+            # Try alternate location
+            stories_path = Path('data/tinystories/stories_10000.txt')
+        
+        with open(stories_path) as f:
             stories = [line.strip() for line in f if line.strip()]
         
         if max_stories:
