@@ -161,13 +161,19 @@ def main():
     
     # Load TinyStories
     print(f"\nLoading {args.num_stories} stories from TinyStories...")
-    with open('data/TinyStories_all_data/data00.json', 'r') as f:
-        all_stories = []
-        for i, line in enumerate(f):
-            if i >= args.num_stories:
-                break
-            story = json.loads(line)
-            all_stories.append(story['story'])
+    all_stories = []
+    with open('data/tinystories/stories_10000.txt', 'r') as f:
+        story = []
+        for line in f:
+            line = line.strip()
+            if line.startswith('<|endoftext|>'):
+                if story:
+                    all_stories.append(' '.join(story))
+                    story = []
+                    if len(all_stories) >= args.num_stories:
+                        break
+            elif line:
+                story.append(line)
     
     # Split train/test
     split = int(0.8 * len(all_stories))
