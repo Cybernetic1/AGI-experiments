@@ -104,11 +104,9 @@ class VectorizedLogicNetwork(nn.Module):
         # selected: (B, M, J*L)
         selected_flat = selected_wm.view(B, M, J * L)
         
-        # heads: (M, J*L, output_dim) → (1, M, J*L, output_dim)
-        heads = self.rule_heads.unsqueeze(0)
-        
+        # heads: (M, J*L, output_dim)
         # Apply: (B, M, output_dim)
-        rule_outputs = torch.einsum('bmk,mkd->bmd', selected_flat, heads) + self.rule_bias
+        rule_outputs = torch.einsum('bmk,mkd->bmd', selected_flat, self.rule_heads) + self.rule_bias
         
         # Step 6: Sum over all rules: (B, output_dim)
         total_output = rule_outputs.sum(dim=1)
