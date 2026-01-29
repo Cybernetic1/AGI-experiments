@@ -9,7 +9,7 @@ from torch.utils.data import Dataset, DataLoader
 import json
 import time
 from neural_logic_core import LogicNetwork
-from neural_logic_core_vectorized import LogicNetworkVectorized
+from neural_logic_core_vectorized import VectorizedLogicNetwork
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Using device: {device}")
