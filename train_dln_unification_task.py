@@ -58,7 +58,7 @@ class UnificationDataset(Dataset):
             sentences = [s.strip() for s in story.split('.') if s.strip()]
             
             for sent in sentences:
-                triples = extractor.extract_semantic_form(sent)
+                triples = extractor.extract(sent)
                 if len(triples) < 2:
                     continue
                 
