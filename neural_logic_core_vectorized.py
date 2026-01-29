@@ -40,13 +40,14 @@ class VectorizedLogicNetwork(nn.Module):
         # Premise constants: [M, J, L] - all premises for all rules
         self.premise_constants = nn.Parameter(torch.randn(num_rules, num_premises, prop_length))
         
-        # Cylindrification matrices: [M, J, I, L, L] - one per premise
-        self.cylindrification = nn.Parameter(
-            torch.randn(num_rules, num_premises, var_slots, prop_length, prop_length) * 0.01
+        # Slot selectors: [M, J, I, W] - attention over working memory slots
+        # Much smaller than full cylindrification!
+        self.slot_selectors = nn.Parameter(
+            torch.randn(num_rules, num_premises, var_slots, num_props) * 0.1
         )
         
-        # Rule heads: [M, J*L, output_dim] - one MLP per rule
-        self.rule_heads = nn.Parameter(torch.randn(num_rules, num_premises * prop_length, output_dim))
+        # Rule heads: [M, J*L, output_dim] - batched weights for all rules
+        self.rule_weights = nn.Parameter(torch.randn(num_rules, num_premises * prop_length, output_dim))
         self.rule_bias = nn.Parameter(torch.zeros(num_rules, output_dim))
         
         # Initialize premise constants uniformly
@@ -66,49 +67,41 @@ class VectorizedLogicNetwork(nn.Module):
         B, W, L = working_memory.shape
         M, J, I = self.M, self.J, self.I
         
-        # Step 1: Cylindrify working memory for all rules and premises
-        # wm: (B, W, L) → (B, 1, 1, W, L)
-        wm_expanded = working_memory.unsqueeze(1).unsqueeze(1)  # (B, 1, 1, W, L)
+        # Step 1: Compute attention using slot selectors
+        # selectors: (M, J, I, W) → attention weights over working memory
+        # Apply softmax: (M, J, I, W)
+        slot_attention = F.softmax(self.slot_selectors, dim=-1)
         
-        # cyl: (M, J, I, L, L)
-        # For each premise, apply cylindrification matrices to working memory
-        # Result: (B, M, J, W, I, L)
-        wm_cylindrified = torch.einsum('bwl,mjikl->bmjwik', 
-                                       working_memory, 
-                                       self.cylindrification)
+        # Step 2: Select from working memory using slot attention
+        # wm: (B, W, L), attention: (M, J, I, W)
+        # Result: (B, M, J, I, L) - selected content for each slot
+        selected_slots = torch.einsum('bwl,mjiw->bmjil', working_memory, slot_attention)
         
-        # Step 2: Compute distances to premise constants
-        # premises: (M, J, L) → (1, M, J, 1, 1, L)
-        premises = self.premise_constants.view(1, M, J, 1, 1, L)
+        # Step 3: Average over variable slots: (B, M, J, L)
+        selected_avg = selected_slots.mean(dim=3)
         
-        # Broadcast and compute squared distances: (B, M, J, W, I)
-        diff = wm_cylindrified - premises
-        distances = (diff ** 2).sum(dim=-1)  # Sum over L dimension
+        # Step 4: Compute match scores with premise constants
+        # premises: (M, J, L), selected: (B, M, J, L)
+        # Distance: (B, M, J)
+        diff = selected_avg - self.premise_constants.unsqueeze(0)
+        match_scores = -(diff ** 2).sum(dim=-1)  # (B, M, J) - negative distance
         
-        # Step 3: Softmax over working memory and variables
-        # Flatten W and I: (B, M, J, W*I)
-        distances_flat = distances.view(B, M, J, W * I)
-        attention = F.softmax(-distances_flat / temperature, dim=-1)  # (B, M, J, W*I)
+        # Step 5: Softmax over premises: (B, M, J)
+        premise_attention = F.softmax(match_scores / temperature, dim=-1)
         
-        # Step 4: Select working memory using attention
-        # Reshape: (B, M, J, W, I)
-        attention_reshaped = attention.view(B, M, J, W, I)
+        # Step 6: Weight selected content by premise attention
+        # (B, M, J, L) weighted by (B, M, J)
+        weighted_selected = selected_avg * premise_attention.unsqueeze(-1)  # (B, M, J, L)
         
-        # Average over variable slots: (B, M, J, W)
-        attention_avg = attention_reshaped.mean(dim=-1)
         
-        # Apply to working memory: (B, M, J, L)
-        selected_wm = torch.einsum('bmjw,bwl->bmjl', attention_avg, working_memory)
+        # Step 7: Flatten premises and apply rule heads
+        # weighted: (B, M, J, L) → (B, M, J*L)
+        rule_inputs = weighted_selected.view(B, M, J * L)
         
-        # Step 5: Flatten premises and apply rule heads
-        # selected: (B, M, J*L)
-        selected_flat = selected_wm.view(B, M, J * L)
+        # Apply rule heads: (M, J*L, output_dim)
+        rule_outputs = torch.einsum('bmk,mkd->bmd', rule_inputs, self.rule_weights) + self.rule_bias
         
-        # heads: (M, J*L, output_dim)
-        # Apply: (B, M, output_dim)
-        rule_outputs = torch.einsum('bmk,mkd->bmd', selected_flat, self.rule_heads) + self.rule_bias
-        
-        # Step 6: Sum over all rules: (B, output_dim)
+        # Step 8: Sum over all rules: (B, output_dim)
         total_output = rule_outputs.sum(dim=1)
         
         return total_output
