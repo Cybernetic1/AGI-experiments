@@ -1,0 +1,114 @@
+<mxfile host="app.diagrams.net" modified="2026-01-31T12:00:00.000Z" agent="5.0" version="22.1.0" editor="mxGraph" type="device">
+  <diagram id="logic-net" name="LogicNet">
+    <mxGraphModel dx="1280" dy="720" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <!-- Layers row 1: WM, Rules, Concepts -->
+        <mxCell id="WM" value="① Working Memory\n(propositions)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E3F2FD;strokeColor=#1565C0;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="300" y="40" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="Rules" value="② Logic Rules\n(fuzzy match + γ)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF3E0;strokeColor=#EF6C00;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="300" y="120" width="140" height="60" as="geometry"/>
+        </mxCell>
+        <mxCell id="Concepts" value="③ Concepts\n(aggregate features)" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#F3E5F5;strokeColor=#8E24AA;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="310" y="210" width="120" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Layer row 2: Subject / Relation / Object branches -->
+        <mxCell id="SubjProj" value="④ Subject Projection\nconcepts→entity space" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="80" y="300" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="RelHead" value="⑥ Relation Head\nconcepts + S" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF9C4;strokeColor=#F9A825;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="300" y="300" width="140" height="50" as="geometry"/>
+        </mxCell>
+        <mxCell id="ObjProj" value="⑦ Object Projection\nconcepts + S + R" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C2185B;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="520" y="300" width="140" height="50" as="geometry"/>
+        </mxCell>
+
+        <!-- Attention + selections row -->
+        <mxCell id="SubjAttn" value="⑤ Attention over entities\n(+ NEW)" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#E8F5E9;strokeColor=#2E7D32;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="110" y="380" width="80" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="Relation" value="⑨ R" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#FFF59D;strokeColor=#FBC02D;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="330" y="385" width="60" height="30" as="geometry"/>
+        </mxCell>
+        <mxCell id="ObjAttn" value="Attention over entities" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#FCE4EC;strokeColor=#C2185B;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="550" y="380" width="80" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Final selections -->
+        <mxCell id="Subject" value="⑧ S" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#C8E6C9;strokeColor=#2E7D32;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="130" y="450" width="40" height="40" as="geometry"/>
+        </mxCell>
+        <mxCell id="Object" value="⑩ O" style="shape=ellipse;whiteSpace=wrap;html=1;fillColor=#F8BBD0;strokeColor=#C2185B;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="570" y="450" width="40" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Output -->
+        <mxCell id="Output" value="⑪ [S, R, O]" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F5F5F5;strokeColor=#424242;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="460" width="120" height="40" as="geometry"/>
+        </mxCell>
+
+        <!-- Edges: main downward flow -->
+        <mxCell id="e1" edge="1" parent="1" source="WM" target="Rules">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e2" edge="1" parent="1" source="Rules" target="Concepts">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e3" edge="1" parent="1" source="Concepts" target="SubjProj">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e4" edge="1" parent="1" source="Concepts" target="RelHead">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e5" edge="1" parent="1" source="Concepts" target="ObjProj">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Subject branch -->
+        <mxCell id="e6" edge="1" parent="1" source="SubjProj" target="SubjAttn">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e7" edge="1" parent="1" source="SubjAttn" target="Subject">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Relation branch with conditioning from S -->
+        <mxCell id="e8" edge="1" parent="1" source="RelHead" target="Relation">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e9" edge="1" parent="1" source="Subject" target="RelHead" style="strokeColor=#2E7D32;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Object branch with conditioning from S and R -->
+        <mxCell id="e10" edge="1" parent="1" source="ObjProj" target="ObjAttn">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e11" edge="1" parent="1" source="Subject" target="ObjProj" style="strokeColor=#2E7D32;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e12" edge="1" parent="1" source="Relation" target="ObjProj" style="strokeColor=#FBC02D;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e13" edge="1" parent="1" source="ObjAttn" target="Object">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+
+        <!-- Output assembly -->
+        <mxCell id="e14" edge="1" parent="1" source="Subject" target="Output">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e15" edge="1" parent="1" source="Relation" target="Output">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="e16" edge="1" parent="1" source="Object" target="Output">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

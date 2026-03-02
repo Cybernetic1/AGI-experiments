@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns
+     http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+
+  <!-- Created by Graph::Easy v0.76 at Sat Jan 31 17:59:35 2026 -->
+
+  <key id="d0" for="edge" attr.name="arrowstyle" attr.type="string">
+    <default>open</default>
+  </key>
+  <key id="d1" for="graph" attr.name="colorscheme" attr.type="string">
+    <default>w3c</default>
+  </key>
+  <key id="d2" for="graph" attr.name="flow" attr.type="string">
+    <default>east</default>
+  </key>
+  <key id="d3" for="graph" attr.name="title" attr.type="string">
+    <default></default>
+  </key>
+  <key id="d4" for="node" attr.name="font" attr.type="string">
+    <default>serif</default>
+  </key>
+  <key id="d5" for="node" attr.name="fontsize" attr.type="string">
+    <default>1em</default>
+  </key>
+  <key id="d6" for="node" attr.name="label" attr.type="string"/>
+  <key id="d7" for="node" attr.name="shape" attr.type="string">
+    <default>rect</default>
+  </key>
+  <key id="d8" for="node" attr.name="fill" attr.type="string">
+    <default>inherit</default>
+  </key>
+  <key id="d9" for="edge" attr.name="font" attr.type="string">
+    <default>serif</default>
+  </key>
+  <key id="e0" for="edge" attr.name="fontsize" attr.type="string">
+    <default>1em</default>
+  </key>
+  <key id="e1" for="edge" attr.name="label" attr.type="string"/>
+  <key id="e2" for="edge" attr.name="style" attr.type="string">
+    <default>solid</default>
+  </key>
+  <key id="e3" for="edge" attr.name="color" attr.type="string">
+    <default>black</default>
+  </key>
+
+  <graph id="G" edgedefault="directed">
+    <data key="d1">x11</data>
+    <data key="d2">south</data>
+    <data key="d3">LogicNet</data>
+    <node id="Concepts">
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">③ Concepts\n(aggregate features)</data>
+      <data key="d7">ellipse</data>
+    </node>
+    <node id="ObjAttn">
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">Attention over entities</data>
+      <data key="d7">ellipse</data>
+    </node>
+    <node id="ObjProj">
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">⑦ Object Projection\nconcepts + S + R</data>
+      <data key="d7">rounded</data>
+    </node>
+    <node id="Object">
+      <data key="d8">#f8bbd0</data>
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">⑩ O</data>
+    </node>
+    <node id="Output">
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">⑪ Proposition [S, R, O]</data>
+      <data key="d7">rounded</data>
+    </node>
+    <node id="RelHead">
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">⑥ Relation Head\nconcepts + S</data>
+      <data key="d7">rounded</data>
+    </node>
+    <node id="Relation">
+      <data key="d8">#fff59d</data>
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">⑨ R</data>
+    </node>
+    <node id="Rules">
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">② Logic Rules\n(fuzzy match + γ)</data>
+      <data key="d7">rounded</data>
+    </node>
+    <node id="SubjAttn">
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">⑤ Attention over entities\n(+ NEW)</data>
+      <data key="d7">ellipse</data>
+    </node>
+    <node id="SubjProj">
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">④ Subject Projection\nconcepts→entity space</data>
+      <data key="d7">rounded</data>
+    </node>
+    <node id="Subject">
+      <data key="d8">#c8e6c9</data>
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">⑧ S</data>
+    </node>
+    <node id="WM">
+      <data key="d4">Helvetica</data>
+      <data key="d5">10px</data>
+      <data key="d6">① Working Memory\n(propositions)</data>
+      <data key="d7">rounded</data>
+    </node>
+
+    <edge source="Concepts" target="ObjProj">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">concepts</data>
+    </edge>
+    <edge source="Concepts" target="RelHead">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">concepts</data>
+    </edge>
+    <edge source="Concepts" target="SubjProj">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">concepts</data>
+    </edge>
+    <edge source="ObjAttn" target="Object">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">select O</data>
+    </edge>
+    <edge source="ObjProj" target="ObjAttn">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">query</data>
+    </edge>
+    <edge source="Object" target="Output">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">O</data>
+    </edge>
+    <edge source="RelHead" target="Relation">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">select R</data>
+    </edge>
+    <edge source="Relation" target="ObjProj">
+      <data key="d0">filled</data>
+      <data key="e3">goldenrod4</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">condition on R</data>
+    </edge>
+    <edge source="Relation" target="Output">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">R</data>
+    </edge>
+    <edge source="Rules" target="Concepts">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">rule activations</data>
+    </edge>
+    <edge source="SubjAttn" target="Subject">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">select S</data>
+    </edge>
+    <edge source="SubjProj" target="SubjAttn">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">query</data>
+    </edge>
+    <edge source="Subject" target="ObjProj">
+      <data key="d0">filled</data>
+      <data key="e3">green4</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">condition on S</data>
+    </edge>
+    <edge source="Subject" target="RelHead">
+      <data key="d0">filled</data>
+      <data key="e3">green4</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">condition on S</data>
+    </edge>
+    <edge source="Subject" target="Output">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">S</data>
+    </edge>
+    <edge source="WM" target="Rules">
+      <data key="d0">filled</data>
+      <data key="d9">Helvetica</data>
+      <data key="e0">9px</data>
+      <data key="e1">WM</data>
+    </edge>
+  </graph>
+</graphml>
