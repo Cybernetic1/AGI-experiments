@@ -259,26 +259,32 @@
                 <div class="problem-box">
                     <h3>❌ Current AI Systems</h3>
                     <ul>
-                        <li><strong>Hallucinate facts</strong> with confidence</li>
-                        <li><strong>Black boxes</strong>—can't explain their reasoning</li>
-                        <li><strong>Require massive data</strong> and computing power</li>
-                        <li><strong>No accountability</strong>—impossible to verify outputs</li>
+                        <li><strong>Hallucinations</strong> — makes nonsensical mistakes sometimes</li>
+                        <li><strong>Black boxes</strong></li>
+                        <ul>
+							<li>can't <strong>inspect</strong> their reasoning</li>
+							<li><strong>bloated</strong> models with massive number of parameters</li>
+							<li>memory not <strong>organized</strong> — no idea what's been learned</li>
+                        </ul>
                     </ul>
                 </div>
                 
                 <div class="solution-box">
                     <h3>✓ Genifer AI</h3>
                     <ul>
-                        <li><strong>Structured reasoning</strong> with logical rules</li>
-                        <li><strong>Transparent</strong>—every decision is traceable</li>
-                        <li><strong>Data efficient</strong>—learns from less</li>
-                        <li><strong>Verifiable</strong>—reasoning can be inspected</li>
+                        <li><strong>Differentiable logic network</strong> — an improvement over Transformers</li>
+						<li><strong>Logic coherence</strong> — eliminates hallucinations</li>
+						<li><strong>Memory organization</strong> — allows to easily examine each piece of knowledge</li>
+						<li><strong>Hybrid architecture</strong> — combined with classical symbolic logic engine</li>
+						<li><strong>Meta-learning</strong> — may enable much more efficient learning</li>
+						<li><strong>Customization</strong> — easy to create custom versions with specific beliefs</li>
                     </ul>
                 </div>
             </div>
             
             <div class="highlight-box">
-                <strong>The Core Innovation:</strong> We combine the learning power of modern AI with the reliability of traditional logic systems. Our AI doesn't just guess—it reasons.
+                <strong>The Core Innovation:</strong> Our differentiable &ldquo;Logic Transformer&rdquo; opened the gate to introduce a trove of logic-based techniques.
+                We combine the learning power of modern LLMs with the intuitiveness of classical logic systems. Our AI doesn't just guess — it reasons.
             </div>
         </section>
 
@@ -289,45 +295,45 @@
                 <div class="advantage-card">
                     <div class="advantage-icon">🔍</div>
                     <div class="advantage-title">Explainable</div>
-                    <p>Every decision comes with a clear reasoning chain. No more mysterious black boxes.</p>
+                    <!--p>Every decision comes with a clear reasoning chain. No more mysterious black boxes.</p-->
                 </div>
                 
                 <div class="advantage-card">
                     <div class="advantage-icon">⚡</div>
                     <div class="advantage-title">Efficient</div>
-                    <p>2-3× smaller than Transformer baselines at matched accuracy. Lower hardware costs, faster deployment.</p>
+                    <!--p>2-3× smaller than Transformer baselines at matched accuracy. Lower hardware costs, faster deployment.</p-->
                 </div>
                 
                 <div class="advantage-card">
                     <div class="advantage-icon">🎯</div>
                     <div class="advantage-title">Accurate</div>
-                    <p>100% accuracy on tested reasoning tasks. Structured logic eliminates guesswork.</p>
+                    <!--p>100% accuracy on tested reasoning tasks. Structured logic eliminates guesswork.</p-->
                 </div>
                 
                 <div class="advantage-card">
                     <div class="advantage-icon">🔧</div>
                     <div class="advantage-title">Manageable</div>
-                    <p>Knowledge can be directly added, inspected, or removed—no retraining the entire system.</p>
+                    <!--p>Knowledge can be directly added, inspected, or removed—no retraining the entire system.</p-->
                 </div>
                 
                 <div class="advantage-card">
                     <div class="advantage-icon">📊</div>
                     <div class="advantage-title">Scalable</div>
-                    <p>Performance improves with more data while maintaining transparency.</p>
+                    <!--p>Performance improves with more data while maintaining transparency.</p-->
                 </div>
                 
                 <div class="advantage-card">
                     <div class="advantage-icon">🛡️</div>
                     <div class="advantage-title">Safe</div>
-                    <p>Verifiable reasoning chains enable formal safety guarantees.</p>
+                    <!--p>Verifiable reasoning chains enable formal safety guarantees.</p-->
                 </div>
             </div>
         </section>
 
         <section>
-            <h2>Proven Results</h2>
+            <h2>Preliminary Results</h2>
             
-            <div class="stats-grid">
+            <!--div class="stats-grid">
                 <div class="stat-card">
                     <div class="stat-number">100%</div>
                     <div class="stat-label">Task Accuracy</div>
@@ -347,14 +353,22 @@
                     <div class="stat-number">~31K</div>
                     <div class="stat-label">Params at Strong Level</div>
                 </div>
-            </div>
+            </div-->
             
-            <h3>Proven Efficiency</h3>
+            <p style="text-align: center; font-style: italic; color: #666;">
+				<strong>Measured on bAbI reasoning tasks: DLN maintains 25% accuracy across all parameter counts while Transformers require 400K+ parameters
+				to reach 18% accuracy.</strong>
+				Our logic-based approach achieves superior parameter efficiency on reasoning tasks.
+			</p>
+
             <div class="comparison-graph">
-                <img src="compression_comparison.png" alt="Measured model compression">
+                <img src="parameter_efficiency_comparison.png" alt="DLN vs Transformer Comparison">
             </div>
+
+            <!--div class="comparison-graph">
+                <img src="compression_ratio_comparison.png" alt="DLN vs Transformer Comparison">
+            </div-->
             
-            <p style="text-align: center; font-style: italic; color: #666;"><strong>Measured on identical tasks: Genifer achieves 2-3× parameter compression vs Transformer baselines.</strong> Lower deployment costs, faster inference, easier verification.</p>
         </section>
 
         <section>
