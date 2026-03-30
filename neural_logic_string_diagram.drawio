@@ -1,0 +1,155 @@
+<mxfile host="app.diagrams.net" modified="2026-01-31T00:00:00.000Z" agent="drawio-gpt" version="22.0.0" editor="autogen" type="device">
+  <diagram id="string-diagram" name="Neural Logic String Diagram">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <!-- Title -->
+        <mxCell id="title" value="Neural Logic Network: String Diagram (draw.io)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=22;fontStyle=1;fontColor=#333333" vertex="1" parent="1">
+          <mxGeometry x="420" y="10" width="760" height="40" as="geometry" />
+        </mxCell>
+
+        <!-- Legend container -->
+        <mxCell id="legend-box" value="" style="rounded=1;arcSize=10;fillColor=#f5f5f5;strokeColor=#999999;strokeWidth=1" vertex="1" parent="1">
+          <mxGeometry x="520" y="70" width="320" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-text" value="Legend" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;fontColor=#444444" vertex="1" parent="1">
+          <mxGeometry x="540" y="80" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-wire" value="" style="shape=line;strokeColor=#2196F3;strokeWidth=3" vertex="1" parent="1">
+          <mxGeometry x="540" y="110" width="60" height="0" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-wire-text" value="Data wire (tensor)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=14;fontColor=#333333;align=left" vertex="1" parent="1">
+          <mxGeometry x="610" y="100" width="200" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-op" value="" style="rounded=0;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff" vertex="1" parent="1">
+          <mxGeometry x="540" y="135" width="50" height="22" as="geometry" />
+        </mxCell>
+        <mxCell id="legend-op-text" value="Operation" style="text;html=1;strokeColor=none;fillColor=none;fontSize=14;fontColor=#333333;align=left" vertex="1" parent="1">
+          <mxGeometry x="610" y="132" width="200" height="24" as="geometry" />
+        </mxCell>
+
+        <!-- Single-rule dashed container -->
+        <mxCell id="rule-box" value="" style="rounded=1;arcSize=12;fillColor=none;strokeColor=#9c27b0;strokeWidth=2;dashed=1;dashPattern=5 5" vertex="1" parent="1">
+          <mxGeometry x="120" y="160" width="1250" height="640" as="geometry" />
+        </mxCell>
+        <mxCell id="rule-label" value="Single Rule Processing (repeat M times)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;fontColor=#9c27b0" vertex="1" parent="1">
+          <mxGeometry x="520" y="170" width="420" height="24" as="geometry" />
+        </mxCell>
+
+        <!-- INPUT WM -->
+        <mxCell id="input-text" value="INPUT\nWorking Memory" style="text;html=1;strokeColor=none;fillColor=none;fontSize=14;fontStyle=1;fontColor=#1565c0;align=left" vertex="1" parent="1">
+          <mxGeometry x="40" y="300" width="120" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="wm-wire" value="" style="shape=line;strokeColor=#2196F3;strokeWidth=3;endArrow=classic;endFill=1" vertex="1" parent="1">
+          <mxGeometry x="140" y="330" width="140" height="0" as="geometry" />
+        </mxCell>
+
+        <!-- Match Score -->
+        <mxCell id="match" value="Match Score\n(for each premise j)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="280" y="300" width="160" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="gamma-text" value="γ[j,:]" style="text;html=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;fontColor=#e91e63" vertex="1" parent="1">
+          <mxGeometry x="300" y="250" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="c-text" value="c[j,:]" style="text;html=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;fontColor=#e91e63" vertex="1" parent="1">
+          <mxGeometry x="360" y="250" width="60" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="gamma-wire" value="" style="shape=line;strokeColor=#e91e63;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="320" y="270" width="0" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="c-wire" value="" style="shape=line;strokeColor=#e91e63;strokeWidth=2" vertex="1" parent="1">
+          <mxGeometry x="380" y="270" width="0" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- Softmax -->
+        <mxCell id="softmax" value="Softmax (-scores/τ)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="480" y="300" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="match-to-softmax" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#4caf50;strokeWidth=3;endArrow=block;endFill=1" edge="1" parent="1" source="match" target="softmax">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Einsum -->
+        <mxCell id="einsum" value="Einsum bw,bwl→bl" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="660" y="300" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="softmax-to-einsum" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#ff9800;strokeWidth=3;endArrow=block;endFill=1" edge="1" parent="1" source="softmax" target="einsum">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Body -->
+        <mxCell id="body" value="Body[j]\nLinear(L→I)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="840" y="260" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="slot" value="SlotSelect[j]\nLinear(L→L×I)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="840" y="340" width="140" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="einsum-to-body" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9c27b0;strokeWidth=3;endArrow=block;endFill=1;html=1" edge="1" parent="1" source="einsum" target="body">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="einsum-to-slot" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#795548;strokeWidth=3;endArrow=block;endFill=1;html=1" edge="1" parent="1" source="einsum" target="slot">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Accumulate -->
+        <mxCell id="accumulate" value="Accumulate\nΣ over j\nγ_avg·vars + slots·props" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff;fontSize=13;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1040" y="300" width="170" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="body-to-acc" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#673ab7;strokeWidth=3;endArrow=block;endFill=1;html=1" edge="1" parent="1" source="body" target="accumulate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="slot-to-acc" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#673ab7;strokeWidth=3;endArrow=block;endFill=1;dashed=1;html=1" edge="1" parent="1" source="slot" target="accumulate">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Head -->
+        <mxCell id="head" value="Head\nLinear(I→output_dim)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1240" y="310" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="acc-to-head" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#9c27b0;strokeWidth=3;endArrow=block;endFill=1;html=1" edge="1" parent="1" source="accumulate" target="head">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Confidence & weighting -->
+        <mxCell id="confidence" value="Confidence\nexp(-match_quality)" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1040" y="470" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="match-quality-edge" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#4caf50;strokeWidth=3;endArrow=block;endFill=1;html=1" edge="1" parent="1" source="match" target="confidence">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="mult" value="×" style="ellipse;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff;fontSize=20;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1230" y="490" width="40" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="head-to-mult" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#d32f2f;strokeWidth=3;endArrow=block;endFill=1;html=1" edge="1" parent="1" source="head" target="mult">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="conf-to-mult" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#b71c1c;strokeWidth=3;endArrow=block;endFill=1;html=1" edge="1" parent="1" source="confidence" target="mult">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Sum rules -->
+        <mxCell id="sum-rules" value="Sum Rules\nΣ over m∈{1..M}" style="rounded=1;whiteSpace=wrap;html=1;strokeColor=#333333;fillColor=#ffffff;fontSize=14;fontStyle=1" vertex="1" parent="1">
+          <mxGeometry x="1320" y="480" width="170" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="mult-to-sum" value="" style="edgeStyle=orthogonalEdgeStyle;strokeColor=#b71c1c;strokeWidth=4;endArrow=block;endFill=1;html=1" edge="1" parent="1" source="mult" target="sum-rules">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+        <!-- Output -->
+        <mxCell id="output-text" value="OUTPUT\nweighted_out" style="text;html=1;strokeColor=none;fillColor=none;fontSize=16;fontStyle=1;fontColor=#b71c1c;align=center" vertex="1" parent="1">
+          <mxGeometry x="1360" y="570" width="120" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Loop annotations -->
+        <mxCell id="loop-j" value="loop j=1..J" style="text;html=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;fontColor=#f57c00;align=center" vertex="1" parent="1">
+          <mxGeometry x="560" y="380" width="120" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="loop-m" value="loop m=1..M (repeat for each rule)" style="text;html=1;strokeColor=none;fillColor=none;fontSize=12;fontStyle=1;fontColor=#9c27b0;align=center" vertex="1" parent="1">
+          <mxGeometry x="420" y="780" width="360" height="24" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

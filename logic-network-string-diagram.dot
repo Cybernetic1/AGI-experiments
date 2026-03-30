@@ -1,0 +1,56 @@
+digraph LogicNet {
+    rankdir=TB;
+    node [shape=box, style=rounded, fontsize=10, fontname="Helvetica"];
+    edge [fontname="Helvetica", fontsize=9];
+
+    // Nodes
+    WM         [label="① Working Memory\n(propositions)"];
+    Rules      [label="② Logic Rules\n(fuzzy match + γ)"];
+    Concepts   [shape=ellipse, label="③ Concepts\n(aggregate features)"];
+
+    SubjProj   [label="④ Subject Projection\nconcepts→entity space"];
+    SubjAttn   [shape=ellipse, label="⑤ Attention over entities\n(+ NEW)"];
+    Subject    [shape=circle, label="⑧ S" style=filled fillcolor="#c8e6c9"];
+
+    RelHead    [label="⑥ Relation Head\nconcepts + S"];
+    Relation   [shape=circle, label="⑨ R" style=filled fillcolor="#fff59d"];
+
+    ObjProj    [label="⑦ Object Projection\nconcepts + S + R"];
+    ObjAttn    [shape=ellipse, label="Attention over entities"];
+    Object     [shape=circle, label="⑩ O" style=filled fillcolor="#f8bbd0"];
+
+    Output     [label="⑪ Proposition [S, R, O]"];
+
+    // Main downward flow
+    WM -> Rules   [label="WM"];
+    Rules -> Concepts [label="rule activations"];
+
+    Concepts -> SubjProj   [label="concepts"];
+    SubjProj -> SubjAttn   [label="query"];
+    SubjAttn -> Subject    [label="select S"];
+
+    Concepts -> RelHead    [label="concepts"];
+    Concepts -> ObjProj    [label="concepts"];
+
+    // Conditioning (feedback) edges
+    Subject -> RelHead [label="condition on S", penwidth=2, color="green4"];
+    Subject -> ObjProj [label="condition on S", penwidth=2, color="green4"];
+    Relation -> ObjProj [label="condition on R", penwidth=2, color="goldenrod4"];
+
+    // Relation selection
+    RelHead -> Relation [label="select R"];
+
+    // Object selection
+    ObjProj -> ObjAttn  [label="query"];
+    ObjAttn -> Object   [label="select O"];
+
+    // Final output assembly
+    Subject -> Output [label="S"];
+    Relation -> Output [label="R"];
+    Object -> Output [label="O"];
+
+    // Optional ranking for readability
+    {rank=same; SubjProj; RelHead; ObjProj;}
+    {rank=same; SubjAttn; Relation; ObjAttn;}
+    {rank=same; Subject; Object;}
+}
