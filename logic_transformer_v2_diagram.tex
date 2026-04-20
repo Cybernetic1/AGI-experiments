@@ -1,0 +1,131 @@
+\documentclass[tikz,border=10pt]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{shapes,arrows,positioning,fit,backgrounds,calc}
+
+\begin{document}
+
+\tikzset{
+  wm/.style={rectangle, draw=blue!60, fill=blue!10, thick, minimum width=2.5cm, minimum height=0.6cm, font=\small},
+  rule/.style={rectangle, draw=red!60, fill=red!10, thick, minimum width=2cm, minimum height=0.6cm, font=\small},
+  premise/.style={rectangle, draw=orange!60, fill=orange!10, thick, minimum width=2.5cm, minimum height=0.6cm, font=\small},
+  selected/.style={rectangle, draw=green!60, fill=green!20, thick, minimum width=2.5cm, minimum height=0.6cm, font=\small},
+  matrix/.style={rectangle, draw=purple!60, fill=purple!10, thick, minimum width=1.8cm, minimum height=1.8cm, font=\footnotesize},
+  arrow/.style={->, >=stealth, thick},
+  match/.style={->, >=stealth, thick, dashed, blue},
+  binding/.style={->, >=stealth, thick, dashed, purple},
+  attention/.style={->, >=stealth, very thick, green!60!black},
+}
+
+\begin{tikzpicture}[node distance=0.8cm]
+
+% Title
+\node[font=\Large\bfseries] at (0, 8.5) {Logic Transformer V2 Lightweight: Premise Matching};
+
+% Working Memory
+\node[font=\bfseries] (wm_title) at (-5, 7) {Working Memory (W propositions)};
+\node[wm] (wm0) [below=0.3cm of wm_title] {[john, father, bob]};
+\node[wm] (wm1) [below=0.2cm of wm0] {[bob, father, alice]};
+\node[wm] (wm2) [below=0.2cm of wm1] {[sue, mother, bob]};
+\node[wm] (wm3) [below=0.2cm of wm2] {[alice, child, bob]};
+\node[font=\small] (wm_dots) [below=0.1cm of wm3] {$\vdots$};
+
+% Rule with 2 premises
+\node[font=\bfseries] (rule_title) at (5, 7) {Rule (J=2 premises)};
+\node[premise] (p1) [below=0.3cm of rule_title] {Premise 1: [?, father, ?]};
+\node[premise] (p2) [below=0.4cm of p1] {Premise 2: [?, father, ?]};
+
+% Gamma values
+\node[font=\tiny, right=0.1cm of p1.east] {$\gamma=[0.9, 0.0, 0.9]$};
+\node[font=\tiny, right=0.1cm of p2.east] {$\gamma=[0.9, 0.0, 0.9]$};
+
+% === PREMISE 1 MATCHING ===
+\node[font=\bfseries, blue] at (0, 3.5) {Step 1: Premise 1 Matches WM (Cylindrification)};
+
+% Match scores
+\node[font=\small] (score_label) at (-5, 2.5) {Match scores:};
+\node[font=\small, align=left] (scores) at (-5, 1.5) {
+  $\text{score}[0] = 0.1 \times \Delta^2 + 0.9 \times 0^2 + 0.1 \times \Delta^2 = \textbf{LOW}$ \\
+  $\text{score}[1] = 0.1 \times \Delta^2 + 0.9 \times 0^2 + 0.1 \times \Delta^2 = \textbf{LOW}$ \\
+  $\text{score}[2] = 0.1 \times \Delta^2 + 0.9 \times \text{large}^2 + ... = \textbf{HIGH}$
+};
+
+% Attention weights
+\node[font=\small] (attn_label) at (5, 2.5) {Attention:};
+\node[font=\small, align=left] (attn) at (5, 1.5) {
+  $\text{softmax}(-\text{scores})$ \\
+  $= [0.3, 0.3, 0.1, ...]$
+};
+
+% Selected proposition
+\node[selected] (sel1) at (0, 0) {Selected 1: [john, father, bob]};
+
+% Arrows for premise 1 matching
+\draw[match] (p1.west) to[out=180, in=0] node[above, pos=0.3, font=\tiny] {cylindrification} (wm0.east);
+\draw[match] (p1.west) to[out=180, in=0] (wm1.east);
+\draw[attention] (wm0.south) to[out=270, in=120] (sel1.north);
+\draw[attention] (wm1.south) to[out=270, in=60] (sel1.north);
+
+% === PREMISE 2 MATCHING ===
+\node[font=\bfseries, blue] at (0, -1.5) {Step 2: Premise 2 Matches WM (Cylindrification + Binding)};
+
+% Binding Matrix
+\node[matrix, align=center] (bmatrix) at (-5, -3.5) {
+  \textbf{Binding Matrix B} \\[0.1cm]
+  \begin{tabular}{c|ccc}
+    & 0 & 1 & 2 \\ \hline
+    0 & 0 & 0 & 0 \\
+    1 & 0 & 0 & 0 \\
+    2 & \textcolor{red}{\textbf{1.0}} & 0 & 0
+  \end{tabular}
+};
+
+% Binding constraint explanation
+\node[font=\tiny, align=center, below=0.1cm of bmatrix] {
+  $B[2,0]=1.0$ means: \\
+  prev[2] should match curr[0]
+};
+
+% Binding scores
+\node[font=\small, align=left] (bind_scores) at (2, -3.5) {
+  \textbf{Cylindrification:} \\
+  $\quad \text{cyl\_score}[0] = \textbf{LOW}$ \\
+  $\quad \text{cyl\_score}[1] = \textbf{LOW}$ \\[0.2cm]
+  \textbf{Binding penalty:} \\
+  $\quad B[2,0] \times (\text{bob} - \text{john})^2 = \textbf{HIGH}$ \\
+  $\quad B[2,0] \times (\text{bob} - \text{bob})^2 = \textbf{0}$ \\[0.2cm]
+  \textbf{Total:} \\
+  $\quad \text{score}[0] = \text{LOW} + \textbf{HIGH} = \text{HIGH}$ \\
+  $\quad \text{score}[1] = \text{LOW} + \textbf{0} = \text{LOW}$ $\checkmark$
+};
+
+% Selected proposition 2
+\node[selected] (sel2) at (0, -7) {Selected 2: [bob, father, alice]};
+
+% Arrows for premise 2 matching
+\draw[binding] (sel1.south) to[out=270, in=90] node[left, pos=0.5, font=\tiny, align=center] {provides\\bob} (bmatrix.north);
+\draw[binding] (bmatrix.south) to[out=270, in=180] node[below, pos=0.3, font=\tiny] {enforce: curr[0]=bob} (sel2.west);
+\draw[match] (p2.west) to[out=180, in=20] node[above, pos=0.2, font=\tiny, align=center] {cylindrification\\(both match father)} (wm0.east);
+\draw[match] (p2.west) to[out=180, in=0] (wm1.east);
+\draw[attention] (wm1.south) to[out=270, in=90] node[right, pos=0.7, font=\tiny] {strong} (sel2.north);
+\draw[attention, opacity=0.3] (wm0.south) to[out=270, in=150] node[left, pos=0.8, font=\tiny] {weak} (sel2.north);
+
+% Legend
+\node[font=\bfseries] at (-5, -9) {Legend:};
+\draw[match] (-5, -9.5) -- (-4, -9.5) node[right, font=\small] {Cylindrification matching};
+\draw[binding] (-5, -10) -- (-4, -10) node[right, font=\small] {Binding constraint};
+\draw[attention] (-5, -10.5) -- (-4, -10.5) node[right, font=\small] {Soft attention (selection)};
+
+% Key insight box
+\node[draw, rectangle, thick, fill=yellow!20, align=left, font=\small] at (5, -9.5) {
+  \textbf{Key Insight:} \\
+  Without binding matrix, \\
+  both WM[0] and WM[1] \\
+  match equally well! \\[0.1cm]
+  Binding matrix breaks \\
+  the tie by enforcing \\
+  prev[2] = curr[0]
+};
+
+\end{tikzpicture}
+
+\end{document}
