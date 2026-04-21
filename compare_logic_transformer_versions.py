@@ -13,6 +13,7 @@ import torch.optim as optim
 from neural_logic_core import LogicNetwork
 from logic_transformer_v2 import LogicTransformerV2
 from logic_transformer_v2_lightweight import LogicTransformerV2Lightweight
+from logic_transformer_v2_simplified import LogicTransformerV2Simplified
 
 
 def create_transitive_dataset(num_samples=100, num_props=10, prop_length=3):
@@ -140,15 +141,33 @@ def main():
     
     losses_v2_light = train_and_evaluate(model_v2_light, dataset, num_epochs=50, lr=0.01)
     
+    # Create V2 Simplified model (Up+Down only)
+    print("\n" + "=" * 80)
+    print("TRAINING V2 SIMPLIFIED (Up+Down Model)")
+    print("=" * 80)
+    model_v2_simple = LogicTransformerV2Simplified(
+        prop_length=prop_length,
+        num_props=num_props,
+        output_dim=output_dim,
+        num_rules=num_rules,
+        num_premises=num_premises,
+        var_slots=var_slots,
+    )
+    print(f"V2 Simplified Parameters: {sum(p.numel() for p in model_v2_simple.parameters())}")
+    
+    losses_v2_simple = train_and_evaluate(model_v2_simple, dataset, num_epochs=50, lr=0.01)
+    
     # Compare results
     print("\n" + "=" * 80)
     print("RESULTS COMPARISON")
     print("=" * 80)
-    print(f"V1 Final Loss:        {losses_v1[-1]:.4f}")
-    print(f"V2 Heavy Final Loss:  {losses_v2_heavy[-1]:.4f}")
-    print(f"V2 Light Final Loss:  {losses_v2_light[-1]:.4f}")
-    print(f"\nV2 Heavy vs V1: {100 * (losses_v1[-1] - losses_v2_heavy[-1]) / losses_v1[-1]:+.1f}%")
-    print(f"V2 Light vs V1: {100 * (losses_v1[-1] - losses_v2_light[-1]) / losses_v1[-1]:+.1f}%")
+    print(f"V1 Final Loss:          {losses_v1[-1]:.4f}")
+    print(f"V2 Heavy Final Loss:    {losses_v2_heavy[-1]:.4f}")
+    print(f"V2 Light Final Loss:    {losses_v2_light[-1]:.4f}")
+    print(f"V2 Simplified Final:    {losses_v2_simple[-1]:.4f}")
+    print(f"\nV2 Heavy vs V1:      {100 * (losses_v1[-1] - losses_v2_heavy[-1]) / losses_v1[-1]:+.1f}%")
+    print(f"V2 Light vs V1:      {100 * (losses_v1[-1] - losses_v2_light[-1]) / losses_v1[-1]:+.1f}%")
+    print(f"V2 Simplified vs V1: {100 * (losses_v1[-1] - losses_v2_simple[-1]) / losses_v1[-1]:+.1f}%")
     
     # Test generalization
     print("\n" + "=" * 80)
@@ -160,49 +179,57 @@ def main():
     model_v1.eval()
     model_v2_heavy.eval()
     model_v2_light.eval()
+    model_v2_simple.eval()
     
     criterion = nn.MSELoss()
     
     test_loss_v1 = 0.0
     test_loss_v2_heavy = 0.0
     test_loss_v2_light = 0.0
+    test_loss_v2_simple = 0.0
     
     with torch.no_grad():
         for wm, target in test_dataset:
             output_v1 = model_v1(wm)
             output_v2_heavy = model_v2_heavy(wm)
             output_v2_light = model_v2_light(wm)
+            output_v2_simple = model_v2_simple(wm)
             
             test_loss_v1 += criterion(output_v1, target).item()
             test_loss_v2_heavy += criterion(output_v2_heavy, target).item()
             test_loss_v2_light += criterion(output_v2_light, target).item()
+            test_loss_v2_simple += criterion(output_v2_simple, target).item()
     
     test_loss_v1 /= len(test_dataset)
     test_loss_v2_heavy /= len(test_dataset)
     test_loss_v2_light /= len(test_dataset)
+    test_loss_v2_simple /= len(test_dataset)
     
-    print(f"V1 Test Loss:        {test_loss_v1:.4f}")
-    print(f"V2 Heavy Test Loss:  {test_loss_v2_heavy:.4f}")
-    print(f"V2 Light Test Loss:  {test_loss_v2_light:.4f}")
-    print(f"\nV2 Heavy Generalization: {100 * (test_loss_v1 - test_loss_v2_heavy) / test_loss_v1:+.1f}%")
-    print(f"V2 Light Generalization: {100 * (test_loss_v1 - test_loss_v2_light) / test_loss_v1:+.1f}%")
+    print(f"V1 Test Loss:          {test_loss_v1:.4f}")
+    print(f"V2 Heavy Test Loss:    {test_loss_v2_heavy:.4f}")
+    print(f"V2 Light Test Loss:    {test_loss_v2_light:.4f}")
+    print(f"V2 Simplified Test:    {test_loss_v2_simple:.4f}")
+    print(f"\nV2 Heavy Generalization:      {100 * (test_loss_v1 - test_loss_v2_heavy) / test_loss_v1:+.1f}%")
+    print(f"V2 Light Generalization:      {100 * (test_loss_v1 - test_loss_v2_light) / test_loss_v1:+.1f}%")
+    print(f"V2 Simplified Generalization: {100 * (test_loss_v1 - test_loss_v2_simple) / test_loss_v1:+.1f}%")
     
-    # Show learned rules
+    # Show learned rules from simplified model
     print("\n" + "=" * 80)
-    print("LEARNED RULES - V2 LIGHTWEIGHT (showing binding matrices)")
+    print("LEARNED RULES - V2 SIMPLIFIED (Up+Down)")
     print("=" * 80)
-    print(model_v2_light.interpret_rules(prop_names=['subject', 'relation', 'object']))
+    print(model_v2_simple.interpret_rules(prop_names=['subject', 'relation', 'object']))
     
     print("\n" + "=" * 80)
     print("CONCLUSION")
     print("=" * 80)
-    print("V2 Lightweight achieves cross-premise binding with minimal overhead:")
-    print("  - V1: 480 params (baseline)")
-    print(f"  - V2 Heavy: {sum(p.numel() for p in model_v2_heavy.parameters())} params (40x increase)")
-    print(f"  - V2 Light: {sum(p.numel() for p in model_v2_light.parameters())} params (1.1x increase)")
-    print("\nBinding matrices learn position-wise constraints (e.g., arg2→arg1)")
-    print("without expensive attention machinery, preserving the efficiency")
-    print("advantage over traditional Transformers!")
+    print("Parameter efficiency comparison:")
+    print(f"  - V1:             {sum(p.numel() for p in model_v1.parameters())} params (baseline)")
+    print(f"  - V2 Heavy:       {sum(p.numel() for p in model_v2_heavy.parameters())} params (40x increase)")
+    print(f"  - V2 Light:       {sum(p.numel() for p in model_v2_light.parameters())} params (1.1x increase)")
+    print(f"  - V2 Simplified:  {sum(p.numel() for p in model_v2_simple.parameters())} params (0.5x - SMALLER than V1!)")
+    print("\nV2 Simplified uses simple Up+Down matrices for variable slots,")
+    print("removing redundant body networks and slot selectors while keeping")
+    print("the cross-premise binding matrix for variable consistency!")
     print("=" * 80)
 
 
