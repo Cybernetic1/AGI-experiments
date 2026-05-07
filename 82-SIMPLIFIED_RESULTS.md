@@ -111,7 +111,7 @@ The other versions serve as stepping stones showing that:
 
 ## Implementation
 
-File: `logic_transformer_v2_simplified.py`
+File: `logic_transformer_v2_1.py`
 
 Key changes from V2 Lightweight:
 1. Replace `body` networks with single `up` matrix

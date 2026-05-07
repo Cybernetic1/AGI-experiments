@@ -13,7 +13,7 @@ import torch.optim as optim
 from neural_logic_core import LogicNetwork
 from logic_transformer_v2 import LogicTransformerV2
 from logic_transformer_v2_lightweight import LogicTransformerV2Lightweight
-from logic_transformer_v2_simplified import LogicTransformerV2Simplified
+from logic_transformer_v2_1 import LogicTransformerV2Simplified
 
 
 def create_transitive_dataset(num_samples=100, num_props=10, prop_length=3):

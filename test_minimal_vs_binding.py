@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from logic_transformer_minimal import LogicTransformerMinimal
-from logic_transformer_v2_simplified import LogicTransformerV2Simplified
+from logic_transformer_v2_1 import LogicTransformerV2Simplified
 
 
 def create_transitive_dataset(num_samples=50):
