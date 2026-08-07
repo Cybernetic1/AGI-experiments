@@ -25,9 +25,22 @@ python -m spacy download en_core_web_sm
 
 ```bash
 python pot-demo/spacy_logical_form.py
+python pot-demo/generate_dataset.py --core-only --balanced --agreement-only --count 100 --output pot-demo/data/pairs.jsonl
+python pot-demo/export_lt_examples.py --input pot-demo/data/pairs.jsonl --output pot-demo/data/lt_pairs.jsonl
+python pot-demo/train_pot.py --data pot-demo/data/lt_pairs.jsonl
+python pot-demo/train_pot_seq.py --data pot-demo/data/lt_pairs.jsonl
+python pot-demo/train_pot_clause.py --data pot-demo/data/lt_pairs.jsonl
 ```
 
 ## Use
 
 - spaCy handles tokenization, POS, dependency structure, and basic entity hints.
 - LT can then learn the mapping from parsed structure to logical form and program-like supervision.
+- The synthetic generator gives a first paired dataset for training and comparison.
+- `--balanced` keeps template families roughly even.
+- `--agreement-only` filters out cases where spaCy and the gold template disagree.
+- The exporter converts clause strings into LT-friendly proposition dictionaries.
+- `train_pot.py` is a minimal baseline that learns the exported clause sets.
+- `train_pot_seq.py` is the autoregressive decoder baseline for ordered logical forms.
+- `--core-only` removes boilerplate clauses to make the sequence task smaller first.
+- `train_pot_clause.py` uses a pointer-style clause copier over the input clause list.

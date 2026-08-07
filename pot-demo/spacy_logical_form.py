@@ -7,7 +7,7 @@ semantic parsing on top of a structured NL representation.
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 import re
 
 import spacy
@@ -36,8 +36,7 @@ PREP_ROLE_MAP = {
     "under": "location",
 }
 ENTITY_LABELS = {"PERSON", "ORG", "GPE", "LOC", "NORP", "FAC", "PRODUCT", "EVENT"}
-
-
+CLAUSE_RE = re.compile(r"^(?P<pred>[a-z_]+)\((?P<args>.*)\)\.$")
 def _sanitize_atom(text: str) -> str:
     text = str(text).strip().lower()
     text = re.sub(r"[^a-z0-9_]+", "_", text)
@@ -49,10 +48,57 @@ def _var_name(prefix: str, index: int) -> str:
     return f"?{prefix}{index}"
 
 
+def _clause_key(clause: "Clause"):
+    return (clause.predicate, clause.args)
+
+
+def render_clauses(clauses: List["Clause"]) -> str:
+    return "\n".join(clause.render() for clause in sorted(clauses, key=_clause_key))
+
+
+def parse_clause_line(line: str):
+    match = CLAUSE_RE.match(line.strip())
+    if not match:
+        return None
+    raw_args = match.group("args").strip()
+    args = [arg.strip() for arg in raw_args.split(",")] if raw_args else []
+    return match.group("pred"), args
+
+
+def canonicalize_form(text: str) -> str:
+    clauses = []
+    for line in str(text).splitlines():
+        parsed = parse_clause_line(line)
+        if parsed is not None:
+            clauses.append(parsed)
+
+    rename: Dict[str, str] = {}
+    counters: Dict[str, int] = {"?e": 0, "?x": 0, "?v": 0}
+
+    def canon_var(name: str) -> str:
+        if not name.startswith("?"):
+            return name
+        prefix = "?e" if name.startswith("?e") else "?x" if name.startswith("?x") else "?v"
+        if name not in rename:
+            counters[prefix] = counters.get(prefix, 0) + 1
+            rename[name] = f"{prefix}{counters[prefix]}"
+        return rename[name]
+
+    canonical = []
+    for pred, args in clauses:
+        if pred == "tense":
+            continue
+        pred = "patient" if pred == "theme" else pred
+        canonical.append((pred, tuple(canon_var(arg) for arg in args)))
+
+    canonical.sort(key=lambda item: (item[0], item[1]))
+    return "\n".join(f"{pred}({', '.join(args)})." for pred, args in canonical)
+
+
 @dataclass(frozen=True)
 class Clause:
     predicate: str
-    args: tuple[str, ...]
+    args: Tuple[str, ...]
 
     def render(self) -> str:
         return f"{self.predicate}({', '.join(self.args)})."
@@ -66,7 +112,10 @@ class LogicalForm:
     event_vars: List[str] = field(default_factory=list)
 
     def render(self) -> str:
-        return "\n".join(clause.render() for clause in self.clauses)
+        return render_clauses(self.clauses)
+
+    def as_lines(self) -> List[str]:
+        return [clause.render() for clause in self.clauses]
 
 
 class SpacyLogicalFormParser:
@@ -104,6 +153,14 @@ class SpacyLogicalFormParser:
             lf.clauses.append(Clause("type", (var, _sanitize_atom(label))))
         return var
 
+    def _entity_kind(self, token) -> str:
+        label = str(getattr(token, "ent_type_", "") or "").upper()
+        if label in ENTITY_LABELS:
+            return label.lower()
+        if token.pos_ in {"PROPN", "PRON"}:
+            return "person"
+        return "noun"
+
     def _add_event(self, lf: LogicalForm, verb) -> str:
         event_var = self._event_var(lf)
         lf.clauses.append(Clause("event", (event_var,)))
@@ -125,7 +182,7 @@ class SpacyLogicalFormParser:
 
             for token in sent:
                 if token.pos_ in {"NOUN", "PROPN", "PRON", "NUM"} and token.dep_ in {"nsubj", "nsubjpass", "obj", "dobj", "iobj", "dative", "pobj", "attr", "appos"}:
-                    self._add_mention(lf, token.text, token.ent_type_ or token.pos_)
+                    self._add_mention(lf, token.lemma_ if token.pos_ == "NOUN" else token.text, self._entity_kind(token))
 
             for verb in sent:
                 if verb.pos_ not in {"VERB", "AUX"}:
@@ -138,14 +195,14 @@ class SpacyLogicalFormParser:
                 for child in verb.children:
                     role = ROLE_MAP.get(child.dep_)
                     if role:
-                        entity_var = self._add_mention(lf, child.text, child.ent_type_ or child.pos_)
+                        entity_var = self._add_mention(lf, child.lemma_ if child.pos_ == "NOUN" else child.text, self._entity_kind(child))
                         lf.clauses.append(Clause(role, (event_var, entity_var)))
                         continue
 
                     if child.dep_ == "prep":
                         pobj = next((c for c in child.children if c.dep_ == "pobj"), None)
                         if pobj is not None:
-                            entity_var = self._add_mention(lf, pobj.text, pobj.ent_type_ or pobj.pos_)
+                            entity_var = self._add_mention(lf, pobj.lemma_ if pobj.pos_ == "NOUN" else pobj.text, self._entity_kind(pobj))
                             role = PREP_ROLE_MAP.get(child.lemma_.lower(), "modifier")
                             lf.clauses.append(Clause(role, (event_var, entity_var)))
                         continue
@@ -158,10 +215,24 @@ class SpacyLogicalFormParser:
                         lf.clauses.append(Clause("manner", (event_var, _sanitize_atom(child.text))))
                         continue
 
+                for noun in sent:
+                    if noun.pos_ not in {"NOUN", "PROPN"}:
+                        continue
+                    for det in noun.children:
+                        if det.dep_ != "det":
+                            continue
+                        quant = det.lower_
+                        if quant in {"every", "each", "all"}:
+                            entity_var = self._add_mention(lf, noun.lemma_ if noun.pos_ == "NOUN" else noun.text, self._entity_kind(noun))
+                            lf.clauses.append(Clause("quantifier", (entity_var, "forall")))
+                        elif quant in {"a", "an", "some", "another"}:
+                            entity_var = self._add_mention(lf, noun.lemma_ if noun.pos_ == "NOUN" else noun.text, self._entity_kind(noun))
+                            lf.clauses.append(Clause("quantifier", (entity_var, "exists")))
+
                 if any(tok.lower_ in {"how", "what", "who", "which"} for tok in sent):
                     query_var = self._entity_var(lf, f"query_{event_var}")
                     lf.clauses.append(Clause("query", (event_var, query_var)))
-                    if any(tok.lower_ == "how" and tok.nbor(1).lower_ == "many" for tok in sent if tok.i + 1 < len(doc)):
+                    if any(tok.lower_ == "how" for tok in sent) and any(tok.lower_ == "many" for tok in sent):
                         lf.clauses.append(Clause("query_kind", (event_var, "quantity")))
 
         if not lf.clauses:
