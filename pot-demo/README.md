@@ -25,9 +25,13 @@ python -m spacy download en_core_web_sm
 
 ```bash
 python pot-demo/spacy_logical_form.py
+python pot-demo/generate_dataset.py --count 100 --output pot-demo/data/pairs.jsonl
+python pot-demo/export_lt_examples.py --input pot-demo/data/pairs.jsonl --output pot-demo/data/lt_pairs.jsonl
 ```
 
 ## Use
 
 - spaCy handles tokenization, POS, dependency structure, and basic entity hints.
 - LT can then learn the mapping from parsed structure to logical form and program-like supervision.
+- The synthetic generator gives a first paired dataset for training and comparison.
+- The exporter converts clause strings into LT-friendly proposition dictionaries.
