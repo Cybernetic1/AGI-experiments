@@ -21,6 +21,7 @@ from spacy_logical_form import (
     SpacyLogicalFormParser,
     _sanitize_atom,
     canonicalize_form,
+    parse_clause_line,
     render_clauses,
 )
 
@@ -44,6 +45,7 @@ UNIVERSAL_PAIRS = [
     ("student", "works", "work"),
     ("cat", "runs", "run"),
 ]
+CORE_DROP_PREDS = {"entity", "type", "tense", "question", "quantifier", "query_kind"}
 
 
 @dataclass(frozen=True)
@@ -57,6 +59,21 @@ class Example:
 
 def _render(clauses: List[Clause]) -> str:
     return render_clauses(clauses)
+
+
+def _filter_form(text: str, core_only: bool) -> str:
+    if not core_only:
+        return canonicalize_form(text)
+    clauses = []
+    for line in canonicalize_form(text).splitlines():
+        parsed = parse_clause_line(line)
+        if parsed is None:
+            continue
+        pred, args = parsed
+        if pred in CORE_DROP_PREDS:
+            continue
+        clauses.append(f"{pred}({', '.join(args)}).")
+    return "\n".join(clauses)
 
 
 def _with_entity(var: str, name: str, kind: str = "person") -> List[Clause]:
@@ -142,6 +159,10 @@ FAMILIES: List[Callable[[random.Random], Example]] = [
 
 
 def build_examples(count: int, seed: int) -> List[Example]:
+    return build_examples_core(count, seed, core_only=False)
+
+
+def build_examples_core(count: int, seed: int, core_only: bool) -> List[Example]:
     rng = random.Random(seed)
     parser = SpacyLogicalFormParser()
     examples: List[Example] = []
@@ -149,8 +170,8 @@ def build_examples(count: int, seed: int) -> List[Example]:
         family = rng.choice(FAMILIES)
         example = family(rng)
         parsed = parser.parse(example.text).render()
-        gold = canonicalize_form(example.logical_form)
-        parsed = canonicalize_form(parsed)
+        gold = _filter_form(example.logical_form, core_only)
+        parsed = _filter_form(parsed, core_only)
         examples.append(
             Example(
                 text=example.text,
@@ -168,9 +189,10 @@ def main():
     parser.add_argument("--count", type=int, default=50)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output", default="data/pot_pairs.jsonl")
+    parser.add_argument("--core-only", action="store_true", help="Drop boilerplate clauses like entity/type/tense")
     args = parser.parse_args()
 
-    examples = build_examples(args.count, args.seed)
+    examples = build_examples_core(args.count, args.seed, args.core_only)
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as f:
