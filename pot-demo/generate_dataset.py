@@ -118,6 +118,56 @@ def family_location(rng: random.Random) -> Example:
     return Example(text, _render(clauses), "", "location", False)
 
 
+def family_transitive(rng: random.Random) -> Example:
+    subj, obj = rng.sample(NAMES, 2)
+    verb = rng.choice(["saw", "liked", "helped", "met"])
+    text = f"{subj} {verb} {obj}."
+    clauses = [
+        *_with_entity("?x1", subj),
+        *_with_entity("?x2", obj),
+        Clause("event", ("?e1",)),
+        Clause("predicate", ("?e1", _sanitize_atom(verb))),
+        Clause("agent", ("?e1", "?x1")),
+        Clause("patient", ("?e1", "?x2")),
+    ]
+    return Example(text, _render(clauses), "", "transitive", False)
+
+
+def family_mixed(rng: random.Random) -> Example:
+    subj, recip, _ = rng.sample(NAMES, 3)
+    thing = rng.choice(THINGS)
+    place = rng.choice(PLACES)
+    article = "an" if thing[0] in "aeiou" else "a"
+    text = f"{subj} gave {recip} {article} {thing} in the {place}."
+    clauses = [
+        *_with_entity("?x1", subj),
+        *_with_entity("?x2", recip),
+        *_with_entity("?x3", thing, "noun"),
+        *_with_entity("?x4", place, "noun"),
+        Clause("event", ("?e1",)),
+        Clause("predicate", ("?e1", "give")),
+        Clause("agent", ("?e1", "?x1")),
+        Clause("recipient", ("?e1", "?x2")),
+        Clause("patient", ("?e1", "?x3")),
+        Clause("location", ("?e1", "?x4")),
+    ]
+    return Example(text, _render(clauses), "", "mixed", False)
+
+
+def family_state(rng: random.Random) -> Example:
+    subj = rng.choice(NAMES)
+    adj = rng.choice(["happy", "sad", "tired", "calm"])
+    text = f"{subj} is {adj}."
+    clauses = [
+        *_with_entity("?x1", subj),
+        Clause("event", ("?e1",)),
+        Clause("predicate", ("?e1", "be")),
+        Clause("agent", ("?e1", "?x1")),
+        Clause("state", ("?e1", _sanitize_atom(adj))),
+    ]
+    return Example(text, _render(clauses), "", "state", False)
+
+
 def family_count(rng: random.Random) -> Example:
     subj = rng.choice(NAMES)
     thing = rng.choice(THINGS)
@@ -153,32 +203,58 @@ def family_universal(rng: random.Random) -> Example:
 FAMILIES: List[Callable[[random.Random], Example]] = [
     family_give,
     family_location,
+    family_transitive,
+    family_mixed,
+    family_state,
     family_count,
     family_universal,
 ]
 
-
-def build_examples(count: int, seed: int) -> List[Example]:
-    return build_examples_core(count, seed, core_only=False)
+FAMILY_NAMES = ["give", "location", "transitive", "mixed", "state", "count", "universal"]
 
 
-def build_examples_core(count: int, seed: int, core_only: bool) -> List[Example]:
+def _family_stream(seed: int, balanced: bool):
+    rng = random.Random(seed)
+    if balanced:
+        while True:
+            order = list(range(len(FAMILIES)))
+            rng.shuffle(order)
+            for index in order:
+                yield index
+    else:
+        while True:
+            yield rng.randrange(len(FAMILIES))
+
+
+def build_examples(count: int, seed: int, core_only: bool, balanced: bool = False, agreement_only: bool = False) -> List[Example]:
+    return build_examples_core(count, seed, core_only=core_only, balanced=balanced, agreement_only=agreement_only)
+
+
+def build_examples_core(count: int, seed: int, core_only: bool, balanced: bool, agreement_only: bool) -> List[Example]:
     rng = random.Random(seed)
     parser = SpacyLogicalFormParser()
     examples: List[Example] = []
-    for _ in range(count):
-        family = rng.choice(FAMILIES)
-        example = family(rng)
+    attempts = 0
+    family_indices = _family_stream(seed, balanced)
+    while len(examples) < count:
+        attempts += 1
+        if attempts > count * 500:
+            raise RuntimeError("Could not generate enough aligned examples; try relaxing --agreement-only")
+        family_idx = next(family_indices)
+        example = FAMILIES[family_idx](rng)
         parsed = parser.parse(example.text).render()
         gold = _filter_form(example.logical_form, core_only)
         parsed = _filter_form(parsed, core_only)
+        aligned = parsed == gold
+        if agreement_only and not aligned:
+            continue
         examples.append(
             Example(
                 text=example.text,
                 logical_form=gold,
                 parser_form=parsed,
                 family=example.family,
-                agreement=parsed == gold,
+                agreement=aligned,
             )
         )
     return examples
@@ -190,9 +266,11 @@ def main():
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--output", default="data/pot_pairs.jsonl")
     parser.add_argument("--core-only", action="store_true", help="Drop boilerplate clauses like entity/type/tense")
+    parser.add_argument("--balanced", action="store_true", help="Cycle through families to keep the corpus balanced")
+    parser.add_argument("--agreement-only", action="store_true", help="Keep only examples where spaCy and gold agree")
     args = parser.parse_args()
 
-    examples = build_examples_core(args.count, args.seed, args.core_only)
+    examples = build_examples_core(args.count, args.seed, args.core_only, args.balanced, args.agreement_only)
     out_path = Path(args.output)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     with out_path.open("w", encoding="utf-8") as f:
