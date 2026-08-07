@@ -5,3 +5,4 @@ transformers>=4.30.0
 datasets>=2.12.0
 tiktoken>=0.4.0
 tqdm>=4.65.0
+spacy>=3.7.0
