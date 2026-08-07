@@ -14,6 +14,21 @@ SUB_HINTS = {
     "left", "remain", "remains", "gave away", "spent", "loss", "lose",
     "lost", "take away", "difference", "fewer", "less",
 }
+CONTENT_STOPWORDS = {
+    "a", "an", "and", "are", "as", "at", "be", "by", "do", "does", "did",
+    "for", "from", "has", "have", "how", "if", "in", "is", "it", "many",
+    "much", "of", "on", "or", "the", "to", "what", "when", "where", "who",
+    "why", "with", "would", "will", "can", "could", "should", "there",
+    "their", "they", "them", "then", "than", "into", "over", "under",
+}
+
+MATH_HINTS = {
+    "factor", "factors", "product", "multiply", "multiplied", "times",
+    "double", "twice", "divide", "divided", "quotient", "ratio", "fraction",
+    "perimeter", "area", "volume", "radius", "diameter", "square", "squared",
+    "root", "roots", "solve", "solving", "equation", "equations", "denominator",
+    "numerator", "asymptote", "asymptotes", "polynomial", "graph", "system",
+}
 
 
 def _detect_operation(text: str) -> str:
@@ -28,6 +43,23 @@ def _detect_operation(text: str) -> str:
 def extract_propositions(text: str, source: str = "text"):
     lower = str(text).lower()
     numbers = re.findall(r"-?\d+(?:\.\d+)?", lower)
+    words = [
+        word
+        for word in re.findall(r"[a-z]+", lower)
+        if word not in CONTENT_STOPWORDS and len(word) > 2
+    ]
+    formulas = []
+    for raw_formula in re.findall(r"\$([^$]+)\$", str(text)):
+        normalized = re.sub(r"\s+", " ", raw_formula.strip())
+        if normalized:
+            formulas.append(normalized)
+    for line in str(text).splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+        if "=" in stripped or "\\boxed" in stripped:
+            normalized = re.sub(r"\s+", " ", stripped)
+            formulas.append(normalized)
     operation = _detect_operation(lower)
     props = []
 
@@ -36,6 +68,27 @@ def extract_propositions(text: str, source: str = "text"):
             "pred": f"{source}:number",
             "args": [f"n{i}", num],
             "numeric_value": float(num),
+        })
+
+    for i, word in enumerate(words[:6]):
+        props.append({
+            "pred": f"{source}:word",
+            "args": [f"w{i}", word],
+            "numeric_value": None,
+        })
+
+    for i, formula in enumerate(formulas[:4]):
+        props.append({
+            "pred": f"{source}:formula",
+            "args": [f"f{i}", formula[:96]],
+            "numeric_value": None,
+        })
+
+    for i, hint in enumerate(sorted(MATH_HINTS & set(words))[:4]):
+        props.append({
+            "pred": f"{source}:mathhint",
+            "args": [f"h{i}", hint],
+            "numeric_value": None,
         })
 
     if operation != "unknown":
@@ -61,8 +114,19 @@ def extract_propositions(text: str, source: str = "text"):
     return props
 
 
-def build_example_props(question: str, cot: str = ""):
-    return extract_propositions(question, source="question") + extract_propositions(cot, source="cot")
+def build_example_props(question: str, cot: str = "", meta=None):
+    props = extract_propositions(question, source="question") + extract_propositions(cot, source="cot")
+    meta = meta or {}
+    subject = str(meta.get("subject", "")).strip().lower()
+    level = str(meta.get("level", "")).strip().lower()
+    problem_type = str(meta.get("type", "")).strip().lower()
+    if subject:
+        props.append({"pred": "meta:subject", "args": [subject], "numeric_value": None})
+    if level:
+        props.append({"pred": "meta:level", "args": [level], "numeric_value": None})
+    if problem_type:
+        props.append({"pred": "meta:type", "args": [problem_type], "numeric_value": None})
+    return props
 
 
 def extract_gsm8k_arithmetic(cot: str):
@@ -129,6 +193,54 @@ def extract_gsm8k_steps(cot: str):
             "result": result.strip() if result is not None else None,
             "expr": expr,
         })
+    return steps
+
+
+def extract_math_steps(cot: str):
+    """
+    Parse generic MATH-style derivation steps from worked solutions.
+    The parser prefers explicit boxed answers and equation lines, then
+    keeps numeric results in order of appearance.
+    """
+    text = str(cot)
+    steps = []
+
+    def add_step(expr: str, result):
+        result_text = result.strip() if result is not None else None
+        if result_text is None:
+            return
+        if not re.search(r"-?\d+(?:\.\d+)?", result_text):
+            return
+        if steps and steps[-1].get("result") == result_text:
+            return
+        steps.append({
+            "op": "unknown",
+            "left": None,
+            "right": None,
+            "result": result_text,
+            "expr": expr.strip(),
+        })
+
+    for line in text.splitlines():
+        stripped = line.strip()
+        if not stripped:
+            continue
+
+        boxed = re.findall(r"\\boxed\{([^{}]+)\}", stripped)
+        if boxed:
+            add_step(stripped, boxed[-1])
+            continue
+
+        if "=" in stripped or "\\approx" in stripped or "\\Rightarrow" in stripped:
+            numbers = re.findall(r"-?\d+(?:\.\d+)?", stripped)
+            if numbers:
+                add_step(stripped, numbers[-1])
+
+    if not steps:
+        boxed = re.findall(r"\\boxed\{([^{}]+)\}", text)
+        if boxed and re.search(r"-?\d+(?:\.\d+)?", boxed[-1]):
+            add_step(text, boxed[-1])
+
     return steps
 
 def load_jsonl(path):

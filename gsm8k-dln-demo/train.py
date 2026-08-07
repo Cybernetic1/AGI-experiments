@@ -10,12 +10,18 @@ import random
 import torch
 import torch.nn.functional as F
 
-from model import LTArithmeticModel, answer_to_int_string, parse_numeric_answer
+from model import (
+    LTArithmeticModel,
+    answer_to_int_string,
+    is_pure_integer_answer,
+    parse_numeric_answer,
+)
 from preprocess_gsm8k import (
     load_jsonl,
     build_example_props,
     extract_gsm8k_arithmetic,
     extract_gsm8k_steps,
+    extract_math_steps,
 )
 
 
@@ -24,10 +30,11 @@ FALLBACK_DATA_PATH = Path("synthetic_gsm8k_demo.jsonl")
 CHECKPOINT_PATH = Path("checkpoints/lt_gsm8k_demo.pt")
 
 
-def split_data(data, train_ratio=0.8):
-    if len(data) < 2:
+def split_data(data, holdout_ratio=0.0):
+    if len(data) < 2 or holdout_ratio <= 0.0:
         return data, data
-    cutoff = max(1, int(len(data) * train_ratio))
+    cutoff = max(1, int(len(data) * (1.0 - holdout_ratio)))
+    cutoff = min(cutoff, len(data) - 1)
     return data[:cutoff], data[cutoff:]
 
 
@@ -71,8 +78,31 @@ def _answer_bucket(answer: str, max_bucket: int):
     return max(0, min(max_bucket - 1, value))
 
 
+def _answer_value(answer: str) -> float:
+    return float(parse_numeric_answer(answer))
+
+
+def _signed_log1p(value: torch.Tensor) -> torch.Tensor:
+    return torch.sign(value) * torch.log1p(torch.abs(value))
+
+
+def _is_math_example(example) -> bool:
+    return "subject" in example
+
+
+def _filter_math_examples(data):
+    filtered = []
+    skipped = 0
+    for ex in data:
+        if _is_math_example(ex) and not is_pure_integer_answer(ex["answer"]):
+            skipped += 1
+            continue
+        filtered.append(ex)
+    return filtered, skipped
+
+
 def _step_buckets(example, max_bucket: int):
-    steps = extract_gsm8k_steps(example.get("cot", ""))
+    steps = extract_math_steps(example.get("cot", "")) if "subject" in example else extract_gsm8k_steps(example.get("cot", ""))
     if not steps:
         return None, _answer_bucket(example["answer"], max_bucket)
     first = steps[0].get("result")
@@ -83,7 +113,7 @@ def _step_buckets(example, max_bucket: int):
 
 
 def make_props(example):
-    return build_example_props(example["question"], example.get("cot", ""))
+    return example.get("_props") or build_example_props(example["question"], example.get("cot", ""), example)
 
 
 def batch_metrics(model, data):
@@ -107,10 +137,17 @@ def batch_metrics(model, data):
     with torch.no_grad():
         for ex in data:
             props = make_props(ex)
-            _, info = model(props, return_info=True)
+            pred_value, info = model(props, return_info=True)
+            pred_bucket = int(info["answer_logits"].argmax().item())
             gold_answer = answer_to_int_string(ex["answer"])
             gold_bucket = _answer_bucket(ex["answer"], model.answer_buckets)
             gold_step1_bucket, gold_step2_bucket = _step_buckets(ex, model.answer_buckets)
+            if _is_math_example(ex):
+                if pred_bucket == gold_bucket:
+                    answer_correct += 1
+            else:
+                if pred_bucket == gold_bucket:
+                    answer_correct += 1
             losses.append(
                 F.cross_entropy(
                     info["answer_logits"].unsqueeze(0),
@@ -118,8 +155,6 @@ def batch_metrics(model, data):
                 ).item()
             )
 
-            if int(info["answer_logits"].argmax().item()) == gold_bucket:
-                answer_correct += 1
             if int(info["answer_logits"].argmax().item()) == gold_bucket:
                 bucket_correct += 1
             if gold_step1_bucket is not None:
@@ -169,6 +204,9 @@ def batch_metrics(model, data):
 def main():
     parser = argparse.ArgumentParser(description="Train a tiny LT bootstrap model")
     parser.add_argument("--data-path", default=None)
+    parser.add_argument("--epochs", type=int, default=20)
+    parser.add_argument("--value-loss-weight", type=float, default=0.05)
+    parser.add_argument("--holdout-ratio", type=float, default=0.0)
     args = parser.parse_args()
 
     data_path = Path(args.data_path) if args.data_path else (
@@ -181,15 +219,22 @@ def main():
     if not data:
         raise ValueError(f"No examples found in {data_path}")
 
+    for ex in data:
+        ex["_props"] = build_example_props(ex["question"], ex.get("cot", ""), ex)
+
+    data, skipped = _filter_math_examples(data)
+    if skipped:
+        print(f"Filtered out {skipped} non-numeric MATH examples")
+
     random.shuffle(data)
-    train_data, eval_data = split_data(data)
+    train_data, eval_data = split_data(data, args.holdout_ratio)
 
     model = LTArithmeticModel(feature_dim=32)
     optim = torch.optim.Adam(model.parameters(), lr=1e-3)
     total_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
     print(f"Model parameters: {total_params}")
 
-    for epoch in range(10):
+    for epoch in range(args.epochs):
         random.shuffle(train_data)
         model.train()
         train_losses = []
@@ -198,9 +243,15 @@ def main():
             props = make_props(ex)
             gold = _gold_arithmetic(ex)
             gold_bucket = _answer_bucket(ex["answer"], model.answer_buckets)
+            gold_value = torch.tensor([_answer_value(ex["answer"])], dtype=torch.float32)
             gold_step1_bucket, gold_step2_bucket = _step_buckets(ex, model.answer_buckets)
-            _, info = model(props, return_info=True, step1_bucket_override=gold_step1_bucket)
-            loss = 0.5 * F.cross_entropy(info["answer_logits"].unsqueeze(0), torch.tensor([gold_bucket], dtype=torch.long))
+            pred_value, info = model(props, return_info=True, step1_bucket_override=gold_step1_bucket)
+            answer_ce_weight = 0.05 if _is_math_example(ex) else 0.5
+            loss = answer_ce_weight * F.cross_entropy(info["answer_logits"].unsqueeze(0), torch.tensor([gold_bucket], dtype=torch.long))
+            loss = loss + max(args.value_loss_weight, 0.4 if _is_math_example(ex) else 0.0) * F.smooth_l1_loss(
+                _signed_log1p(pred_value.unsqueeze(0)),
+                _signed_log1p(gold_value),
+            )
             if _has_arithmetic_gold(gold):
                 loss = loss + 0.2 * F.cross_entropy(info["op_logits"].unsqueeze(0), torch.tensor([_op_index(gold["op"])], dtype=torch.long))
             if gold_step1_bucket is not None:

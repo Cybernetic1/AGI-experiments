@@ -19,6 +19,7 @@ from datasets import load_dataset
 
 DEFAULT_DATASET = "nlile/hendrycks-MATH-benchmark"
 NUMERIC_RE = re.compile(r"-?\d+(?:\.\d+)?$")
+INTEGER_RE = re.compile(r"-?\d+$")
 
 
 def _parse_csv_list(value):
@@ -48,6 +49,11 @@ def _extract_final_answer(example):
 def _is_numeric_answer(answer: str) -> bool:
     text = str(answer).strip().replace(",", "")
     return bool(NUMERIC_RE.search(text))
+
+
+def _is_integer_answer(answer: str) -> bool:
+    text = str(answer).strip().replace(",", "")
+    return bool(INTEGER_RE.fullmatch(text))
 
 
 def _keep_example(example, subjects=None, levels=None, types=None):
@@ -91,6 +97,7 @@ def main():
     parser.add_argument("--levels", default="")
     parser.add_argument("--types", default="")
     parser.add_argument("--numeric-only", action="store_true", help="Keep only examples with numeric answers")
+    parser.add_argument("--integers-only", action="store_true", help="Keep only examples with integer answers")
     parser.add_argument("--limit-train", type=int, default=0)
     parser.add_argument("--limit-test", type=int, default=0)
     args = parser.parse_args()
@@ -110,6 +117,10 @@ def main():
     if args.numeric_only:
         train_split = train_split.filter(lambda ex: _is_numeric_answer(_extract_final_answer(ex)))
         test_split = test_split.filter(lambda ex: _is_numeric_answer(_extract_final_answer(ex)))
+
+    if args.integers_only:
+        train_split = train_split.filter(lambda ex: _is_integer_answer(_extract_final_answer(ex)))
+        test_split = test_split.filter(lambda ex: _is_integer_answer(_extract_final_answer(ex)))
 
     if args.limit_train > 0:
         train_split = train_split.select(range(min(args.limit_train, len(train_split))))

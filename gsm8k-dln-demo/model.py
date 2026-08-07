@@ -59,6 +59,43 @@ def parse_numeric_answer(answer) -> float:
     return float(match.group(0))
 
 
+PURE_NUMERIC_RE = re.compile(r"^-?\d+(?:\.\d+)?$")
+PURE_INTEGER_RE = re.compile(r"^-?\d+$")
+
+
+def is_pure_numeric_answer(answer) -> bool:
+    text = str(answer).strip().replace(",", "")
+    return bool(PURE_NUMERIC_RE.fullmatch(text))
+
+
+def is_pure_integer_answer(answer) -> bool:
+    text = str(answer).strip().replace(",", "")
+    return bool(PURE_INTEGER_RE.fullmatch(text))
+
+
+def normalize_numeric_answer(answer) -> str:
+    if isinstance(answer, (int, float)):
+        value = float(answer)
+    else:
+        text = str(answer).strip().replace(",", "")
+        if not PURE_NUMERIC_RE.fullmatch(text):
+            raise ValueError(f"Could not normalize numeric answer from: {answer!r}")
+        value = float(text)
+    if float(value).is_integer():
+        return str(int(round(value)))
+    text = format(float(value), ".6f")
+    return text.rstrip("0").rstrip(".")
+
+
+def numeric_answers_match(predicted, gold) -> bool:
+    try:
+        pred_norm = normalize_numeric_answer(predicted)
+        gold_norm = normalize_numeric_answer(gold)
+    except ValueError:
+        return False
+    return pred_norm == gold_norm
+
+
 def answer_to_int_string(answer) -> str:
     value = parse_numeric_answer(answer)
     if float(value).is_integer():
@@ -154,7 +191,7 @@ class LTArithmeticModel(nn.Module):
         self.feature_dim = feature_dim
         self.num_buckets = num_buckets
         self.prop_length = 16
-        self.num_props = 12
+        self.num_props = 24
         self.answer_buckets = 2001
         self.logic_core = LogicNetwork(
             prop_length=self.prop_length,
@@ -170,7 +207,7 @@ class LTArithmeticModel(nn.Module):
         )
         self.prop_attn = nn.Linear(feature_dim, 1)
         self.context_proj = nn.Sequential(
-            nn.Linear(feature_dim * 4 + 9, feature_dim),
+            nn.Linear(feature_dim * 5 + 9, feature_dim),
             nn.ReLU(),
             nn.Linear(feature_dim, feature_dim),
         )
@@ -302,6 +339,7 @@ class LTArithmeticModel(nn.Module):
         number_entries = []
         number_vecs = []
         number_prop_indices = []
+        word_vecs = []
         for prop, vec in zip(props, prop_vecs):
             if self._is_number_prop(prop):
                 value = self._prop_number_value(prop)
@@ -309,12 +347,18 @@ class LTArithmeticModel(nn.Module):
                     number_entries.append(value)
                     number_vecs.append(vec)
                     number_prop_indices.append(len(number_prop_indices))
+            if str(prop.get("pred", "")).endswith(":word"):
+                word_vecs.append(vec)
 
         if not number_entries:
             number_entries = [0.0]
             number_vecs = [pooled]
 
         number_vecs = torch.stack(number_vecs, dim=0)
+        if word_vecs:
+            word_summary = torch.stack(word_vecs, dim=0).mean(dim=0)
+        else:
+            word_summary = torch.zeros_like(pooled)
         op_logits = self.op_head(logic_state)
         op_probs = torch.softmax(op_logits, dim=-1)
         number_summary = self._summarize_numbers(number_entries, pooled.device)
@@ -325,7 +369,7 @@ class LTArithmeticModel(nn.Module):
             pad = pooled.unsqueeze(0).expand(2 - top_prop_count, -1)
             top_prop_vecs = torch.cat([top_prop_vecs, pad], dim=0)
         context_features = torch.cat(
-            [logic_state, pooled, top_prop_vecs[0], top_prop_vecs[1], number_summary, op_probs],
+            [logic_state, pooled, top_prop_vecs[0], top_prop_vecs[1], word_summary, number_summary, op_probs],
             dim=-1,
         )
         context = self.context_proj(context_features)

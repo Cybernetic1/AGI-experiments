@@ -46,10 +46,10 @@ If you want a quick smoke test, you can also use:
 
 ## MATH workflow
 
-The MATH path uses the accessible mirror and filters to numeric answers so it matches the current compact LT answer head:
+The MATH path uses the accessible mirror and filters to integer answers so it matches the current compact LT answer bucket head:
 
 ```bash
-python download_math.py --numeric-only --subjects algebra,prealgebra --limit-train 50 --limit-test 10
+python download_math.py --numeric-only --integers-only --subjects algebra,prealgebra --limit-train 50 --limit-test 10
 python train.py --data-path data/math/train.jsonl
 python eval.py --data-path data/math/test.jsonl
 ```
@@ -64,7 +64,7 @@ python download_math.py --dataset qwedsacf/competition_math
 
 ## Notes on current scope
 
-This demo currently handles numeric-answer MATH examples best. That is enough for a compact proof-of-concept, but it does not yet fully cover symbolic answers or a dedicated MATH step parser.
+This demo currently handles integer-answer MATH examples best. That is enough for a compact proof-of-concept, but it does not yet fully cover symbolic answers or a dedicated MATH step parser.
 
 For GSM8K, the step supervision is richer because the dataset includes annotated arithmetic traces. For MATH, the current code mainly learns from the final answer and the worked solution text.
 

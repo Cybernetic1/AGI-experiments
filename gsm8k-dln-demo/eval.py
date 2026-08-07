@@ -9,8 +9,19 @@ import argparse
 import torch
 import torch.nn.functional as F
 
-from model import LTArithmeticModel, answer_to_int_string, parse_numeric_answer
-from preprocess_gsm8k import load_jsonl, build_example_props, extract_gsm8k_arithmetic, extract_gsm8k_steps
+from model import (
+    LTArithmeticModel,
+    answer_to_int_string,
+    is_pure_integer_answer,
+    parse_numeric_answer,
+)
+from preprocess_gsm8k import (
+    load_jsonl,
+    build_example_props,
+    extract_gsm8k_arithmetic,
+    extract_gsm8k_steps,
+    extract_math_steps,
+)
 
 
 DEFAULT_DATA_PATH = Path("data/gsm8k/main_test.jsonl")
@@ -43,7 +54,7 @@ def _answer_bucket(answer: str, max_bucket: int):
 
 
 def _step_buckets(example, max_bucket: int):
-    steps = extract_gsm8k_steps(example.get("cot", ""))
+    steps = extract_math_steps(example.get("cot", "")) if "subject" in example else extract_gsm8k_steps(example.get("cot", ""))
     if not steps:
         return None, _answer_bucket(example["answer"], max_bucket)
     first = steps[0].get("result")
@@ -55,6 +66,21 @@ def _step_buckets(example, max_bucket: int):
 
 def _has_arithmetic_gold(gold):
     return gold.get("op") != "unknown" and gold.get("left") is not None and gold.get("right") is not None
+
+
+def _is_math_example(example) -> bool:
+    return "subject" in example
+
+
+def _filter_math_examples(data):
+    filtered = []
+    skipped = 0
+    for ex in data:
+        if _is_math_example(ex) and not is_pure_integer_answer(ex["answer"]):
+            skipped += 1
+            continue
+        filtered.append(ex)
+    return filtered, skipped
 
 
 def main():
@@ -71,6 +97,11 @@ def main():
         raise FileNotFoundError(f"Missing data file: {data_path}")
 
     data = load_jsonl(str(data_path))
+    for ex in data:
+        ex["_props"] = build_example_props(ex["question"], ex.get("cot", ""), ex)
+    data, skipped = _filter_math_examples(data)
+    if skipped:
+        print(f"Filtered out {skipped} non-numeric MATH examples")
     checkpoint = torch.load(CHECKPOINT_PATH, map_location="cpu")
     model = LTArithmeticModel(
         feature_dim=checkpoint["feature_dim"],
@@ -94,13 +125,16 @@ def main():
 
     with torch.no_grad():
         for ex in data:
-            props = build_example_props(ex["question"], ex.get("cot", ""))
-            _, info = model(props, return_info=True)
+            props = ex.get("_props") or build_example_props(ex["question"], ex.get("cot", ""))
+            _pred_value, info = model(props, return_info=True)
             gold_answer = answer_to_int_string(ex["answer"])
             gold_bucket = _answer_bucket(ex["answer"], model.answer_buckets)
             gold_step1_bucket, gold_step2_bucket = _step_buckets(ex, model.answer_buckets)
             pred_bucket = int(info["answer_logits"].argmax().item())
-            if pred_bucket == gold_bucket:
+            if _is_math_example(ex):
+                if pred_bucket == gold_bucket:
+                    answer_correct += 1
+            elif pred_bucket == gold_bucket:
                 answer_correct += 1
             if int(info["answer_logits"].argmax().item()) == gold_bucket:
                 bucket_correct += 1
