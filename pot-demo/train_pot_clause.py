@@ -13,6 +13,7 @@ from pathlib import Path
 import argparse
 import json
 import random
+import numpy as np
 from typing import Dict, List, Optional, Sequence, Tuple
 
 import torch
@@ -214,7 +215,28 @@ def main():
     parser.add_argument("--holdout", type=float, default=0.2)
     parser.add_argument("--seed", type=int, default=0)
     parser.add_argument("--agreement-only", action="store_true", help="Train only on rows where parser and gold agree")
+    parser.add_argument("--deterministic", action="store_true", help="Enable deterministic PyTorch/CUDA behavior and seed RNGs")
     args = parser.parse_args()
+
+    # Seed RNGs for reproducibility when deterministic requested
+    if args.deterministic:
+        random.seed(args.seed)
+        np.random.seed(args.seed)
+        torch.manual_seed(args.seed)
+        try:
+            if torch.cuda.is_available():
+                torch.cuda.manual_seed_all(args.seed)
+        except Exception:
+            pass
+        # Try to enable fully deterministic algorithms where available
+        try:
+            torch.use_deterministic_algorithms(True)
+        except Exception:
+            try:
+                torch.backends.cudnn.deterministic = True
+                torch.backends.cudnn.benchmark = False
+            except Exception:
+                print("Warning: could not enable deterministic cuDNN settings", flush=True)
 
     data_path = Path(args.data)
     if not data_path.exists():
@@ -236,11 +258,15 @@ def main():
     input_vocab = build_input_vocab(rows)
     max_positions = max(len(row["input_props"]) for row in rows)
     model = PoTPointerDecoder(len(input_vocab), max_positions, args.hidden)
-    optim = torch.optim.Adam(model.parameters(), lr=1e-3)
+    optim = torch.optim.AdamW(model.parameters(), lr=1e-3)
+    scheduler = torch.optim.lr_scheduler.StepLR(optim, step_size=10, gamma=0.5)
 
     train_inputs = [encode_input(row, input_vocab) for row in train_rows]
     train_targets = [build_target_positions(row) for row in train_rows]
     max_len = max(len(t) for t in train_targets if t is not None)
+
+    best_exact = -1.0
+    best_epoch = -1
 
     print(f"Rows: train={len(train_rows)} eval={len(eval_rows)} in_vocab={len(input_vocab)} max_len={max_len}", flush=True)
     for epoch in range(args.epochs):
@@ -262,16 +288,35 @@ def main():
             )
             optim.zero_grad()
             loss.backward()
+            # gradient clipping
+            torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
             optim.step()
             total_loss += loss.item()
 
-        if (epoch + 1) % 10 == 0 or epoch == 0:
-            metrics = evaluate(model, eval_rows, input_vocab)
-            print(
-                f"Epoch {epoch + 1:02d} | loss={total_loss / max(1, len(train_rows)):.4f} "
-                f"| exact={metrics['exact']:.3f} | clause_acc={metrics['clause_acc']:.3f}",
-                flush=True,
-            )
+        # scheduler step
+        try:
+            scheduler.step()
+        except Exception:
+            pass
+
+        metrics = evaluate(model, eval_rows, input_vocab)
+        print(
+            f"Epoch {epoch + 1:02d} | loss={total_loss / max(1, len(train_rows)):.4f} "
+            f"| exact={metrics['exact']:.3f} | clause_acc={metrics['clause_acc']:.3f}",
+            flush=True,
+        )
+
+        # save best checkpoint by exact-match
+        if metrics["exact"] > best_exact:
+            best_exact = metrics["exact"]
+            best_epoch = epoch
+            ck = {
+                "model_state": model.state_dict(),
+                "optim_state": optim.state_dict(),
+                "epoch": epoch,
+                "exact": best_exact,
+            }
+            torch.save(ck, f"/tmp/pot_clause_seed{args.seed}_best.pt")
 
     metrics = evaluate(model, eval_rows, input_vocab)
     print(f"Final exact: {metrics['exact']:.3f}", flush=True)
