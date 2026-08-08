@@ -190,10 +190,12 @@ def main():
     torch.manual_seed(42)
     np.random.seed(42)
 
-    rows = tpt.load_rows(Path('/tmp/pot_lt_pairs_clean_balanced2.jsonl'))
+    rows = tpt.load_rows(Path('/tmp/pot_diverse_lt_pairs.jsonl'))
     train_rows, eval_rows = tpt.split_rows(rows, holdout=0.2, seed=0)
-    train_rows = [r for r in train_rows if r.get('agreement')]
-    eval_rows = [r for r in eval_rows if r.get('agreement')]
+    
+    # We DO NOT filter by agreement anymore, because the diverse dataset expects disagreement
+    # train_rows = [r for r in train_rows if r.get('agreement')]
+    # eval_rows = [r for r in eval_rows if r.get('agreement')]
 
     src_vocab = tpt.build_input_vocab(rows)
     tgt_vocab = tpt.build_clause_vocab(rows)

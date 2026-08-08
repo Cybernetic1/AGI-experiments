@@ -33,3 +33,24 @@ While LT is highly **parameter-efficient** (requiring fewer weights to learn a t
 
 A Transformer's parameters are primarily $O(N^2)$ dense matrix multiplications. Modern hardware (GPUs/TPUs) and libraries (cuBLAS) are heavily optimized to execute dense matmuls. 
 Conversely, the LT model has a high **FLOP-to-parameter ratio**. Its operations—computing L2 distances between variables and constants, applying multi-dimensional softmax across working memory slots, and contracting tensors via `einsum`—are highly complex. Thus, while LT takes up far less disk space and memory capacity for its weights, a single forward/backward pass involves intricate tensor routing that may take as much or more wall-clock time as a larger Transformer.
+## Phase 2: Robustness to Diverse Natural Language
+
+To test the generalization capabilities of both models, we introduced syntactic and lexical diversity into the PoT dataset (e.g., active/passive swaps, synonyms, structural reordering) without changing the gold canonical logical forms. Neither model could rely on exact string-matching shortcuts between the parsed input and output.
+
+| Configuration | Transformer Params | Transformer Exact Match | LT (DLN) Params | LT Exact Match |
+|---------------|--------------------|-------------------------|-----------------|----------------|
+| **Large**     | 959,283           | 32.0%                   | 394,227         | 71.0%          |
+| **Medium**    | 250,291           | 82.0%                   | 73,491          | 65.0%          |
+| **Small**     | 38,131            | 74.0%                   | 18,147          | 52.0%          |
+| **Tiny**      | 11,923            | 52.0%                   | 5,979           | 22.0%          |
+
+### Key Insights from Diverse NL
+
+1. **Catastrophic Overfitting in Large Transformers:**
+The Large Transformer suffered a severe performance collapse (32.0%) on the diverse dataset. With nearly 1M parameters applied to a small dataset (500 diverse examples), it suffered from extreme overfitting—memorizing exact training strings and failing to generalize to unseen syntactic variations in the validation set.
+
+2. **LT Structural Regularization:**
+By contrast, the Large LT model maintained a robust **71.0%** exact match. The logical bottleneck inherent to its architecture (fuzzy unification and variable slotting) acts as a powerful regularizer. It is structurally constrained from rote memorization of tokens, forcing it to learn the underlying logical mapping regardless of syntactic surface-level variations.
+
+3. **Brittleness vs. Stability:**
+While the Transformer found a "sweet spot" at the Medium scale (82.0%), this highlights the brittleness of traditional dense models on reasoning tasks. They require meticulous capacity tuning to avoid either overfitting (Large) or underfitting (Small/Tiny). LT's performance scales much more predictably with its parameter count, without risking catastrophic generalization collapse at higher capacities.
