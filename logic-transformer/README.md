@@ -1,16 +1,12 @@
 # Logic Transformer (LT)
 
-This directory contains the standalone, bare-bones implementation of the **Logic Transformer (LT)**, also referred to as the Differentiable Logic Network (DLN). 
+This directory contains the standalone, bare-bones implementation of the **Logic Transformer (LT)** (also referred to as the Differentiable Logic Network or DLN). 
 
-It is designed to be fully self-contained so it can be easily ported to new repositories.
+It is designed to be fully self-contained so it can be easily integrated as a sub-module in larger neurosymbolic projects.
 
-## Tri-System Neurosymbolic Architecture
+## Overview
 
-This LT module acts as **System 1** in a broader tri-system cognitive architecture:
-
-1. **System 1 (Logic Transformer):** Fast, differentiable, fuzzy logic rule application using gradient-based representation learning. It processes continuous semantic working memory and unifies patterns softly.
-2. **System 2 (Rete Engine):** An exact forward-chaining engine designed for deterministic, discrete, and efficient pattern matching over established facts.
-3. **System 3 (ProbLog):** A probabilistic backward-chaining inference engine intended for deep, complex reasoning and goal-directed planning.
+The Logic Transformer applies fuzzy, differentiable logic rules in parallel over a continuous working memory. It allows for gradient-based representation learning of logical operations, acting as a fast, neural pattern-matcher for semantic structures.
 
 ## Usage
 
@@ -25,7 +21,7 @@ prop_length = 64   # Dimension of semantic embeddings
 max_props = 20     # Max statements in working memory
 output_dim = 64    # Dimension of the conclusion
 
-# Initialize the LT (System 1)
+# Initialize the LT module
 lt = LogicTransformer(
     prop_length=prop_length,
     max_props=max_props,
